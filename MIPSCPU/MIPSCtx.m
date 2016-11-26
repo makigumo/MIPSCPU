@@ -372,7 +372,9 @@ static inline RegClass capstoneRegisterToRegClass(mips_reg reg) {
         disasm->instruction.pcRegisterValue = disasm->virtualAddr + insn[0].size;
 
         void *insn_copy = malloc(insn[0].size);
-        disasm->instruction.userData = memcpy(&insn_copy, &insn[0], insn[0].size);
+        if (insn_copy) {
+            disasm->instruction.userData = (uintptr_t) memcpy(&insn_copy, &insn[0], insn[0].size);
+        }
 
         int op_index;
         for (op_index = 0; op_index < insn[0].detail->mips.op_count; op_index++) {
@@ -412,7 +414,7 @@ static inline RegClass capstoneRegisterToRegClass(mips_reg reg) {
             cs_mips_op lastOp = insn->detail->mips.operands[lastOperand];
             if (lastOp.type == MIPS_OP_IMM) {
                 disasm->instruction.addressValue = (Address) lastOp.imm;
-                disasm->operand[lastOperand].type = DISASM_OPERAND_MEMORY_TYPE;
+                disasm->operand[lastOperand].type = DISASM_OPERAND_CONSTANT_TYPE | DISASM_OPERAND_RELATIVE;
                 disasm->operand[lastOperand].memory.displacement = (Address) lastOp.imm;
             } else if (lastOp.type == MIPS_OP_REG) {
                 disasm->operand[lastOperand].type = DISASM_OPERAND_REGISTER_TYPE | DISASM_OPERAND_RELATIVE;
