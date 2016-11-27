@@ -714,10 +714,25 @@ static inline int regIndexFromType(uint64_t type) {
             }
 
             if (operand->memory.displacement != 0) {
-                [line append:[file formatNumber:(uint64_t) operand->memory.displacement
-                                             at:disasm->virtualAddr
-                                    usingFormat:format
-                                     andBitSize:32]];
+                BOOL varNameAdded = NO;
+                if (format == Format_StackVariable) {
+                    NSObject <HPProcedure> *proc = [file procedureAt:disasm->virtualAddr];
+                    if (proc) {
+                        NSString *varName = [proc resolvedVariableNameForDisplacement:operand->memory.displacement
+                                                                      usingCPUContext:self];
+                        if (varName) {
+                            [line appendVariableName:varName
+                                    withDisplacement:operand->memory.displacement];
+                            varNameAdded = YES;
+                        }
+                    }
+                }
+                if (!varNameAdded) {
+                    [line append:[file formatNumber:(uint64_t) operand->memory.displacement
+                                                 at:disasm->virtualAddr
+                                        usingFormat:format
+                                         andBitSize:operand->size]];
+                }
             }
 
             [line appendRawString:@"("];
@@ -727,7 +742,12 @@ static inline int regIndexFromType(uint64_t type) {
 
             [line appendRawString:@")"];
         } else {
-            [line appendRawString:@"FIXME"];
+            if (operand->memory.displacement != 0) {
+                [line append:[file formatNumber:(uint64_t) operand->memory.displacement
+                                             at:disasm->virtualAddr
+                                    usingFormat:format
+                                     andBitSize:operand->size]];
+            }
         }
     } else {
         NSString *symbol = [_file nameForVirtualAddress:(Address) operand->memory.displacement];
