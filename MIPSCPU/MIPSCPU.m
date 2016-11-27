@@ -135,11 +135,11 @@
 }
 
 - (BOOL)registerIndexIsStackPointer:(NSUInteger)reg ofClass:(RegClass)reg_class {
-    return reg_class == RegClass_GeneralPurposeRegister && reg == 10;
+    return reg_class == RegClass_GeneralPurposeRegister && reg == 9;
 }
 
 - (BOOL)registerIndexIsFrameBasePointer:(NSUInteger)reg ofClass:(RegClass)reg_class {
-    return reg_class == RegClass_GeneralPurposeRegister && reg == 11;
+    return reg_class == RegClass_GeneralPurposeRegister && reg == 10;
 }
 
 - (BOOL)registerIndexIsProgramCounter:(NSUInteger)reg {
