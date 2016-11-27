@@ -15,7 +15,10 @@
 #import <Hopper/DisasmStruct.h>
 
 #define OPERAND(insn, op_index) insn.detail->mips.operands[op_index]
-#define REG_MASK(reg) DISASM_BUILD_REGISTER_CLS_MASK(capstoneRegisterToRegClass(reg)) | DISASM_BUILD_REGISTER_INDEX_MASK(capstoneRegisterToRegIndex(reg))
+#define OPERAND_IS_REG(insn, op_index, op_reg) \
+    (OPERAND(insn, op_index).type == MIPS_OP_REG && OPERAND(insn, op_index).reg == op_reg)
+#define REG_MASK(reg) \
+    (DISASM_BUILD_REGISTER_CLS_MASK(capstoneRegisterToRegClass(reg)) | DISASM_BUILD_REGISTER_INDEX_MASK(capstoneRegisterToRegIndex(reg)))
 
 @implementation MIPSCtx {
     MIPSCPU *_cpu;
@@ -81,6 +84,18 @@ static inline void clear_operands_from(DisasmStruct *disasm, int index) {
 }
 
 - (BOOL)hasProcedurePrologAt:(Address)address {
+/*
+    // a typical function might save registers it wants to preserve on the stack, e.g. ra
+    uint32_t word = [_file readUInt32AtVirtualAddress:address];
+    BOOL hasPrecedingRet = NO;
+    if ([_file hasCodeAt:address - 4]) {
+        uint32_t prev_word = [_file readUInt32AtVirtualAddress:address - 4];
+        hasPrecedingRet = prev_word == 0x03e00008; // jr ra = return from procedure
+    }
+    return (word & 0xff000000) == 0x3c000000 // lui reg, n
+            || (word & 0xffff8000) == 0x27bd8000 // addiu sp, sp, -n = allocate space on stack for n/4 registers
+            || hasPrecedingRet;
+*/
     return NO;
 }
 
@@ -316,13 +331,17 @@ static inline RegClass capstoneRegisterToRegClass(mips_reg reg) {
                             disasm->instruction.branchType = DISASM_BRANCH_NONE;
                             disasm->instruction.addressValue = 0;
                             disasm->instruction.pcRegisterValue = disasm->virtualAddr + insn[0].size + insn[1].size;
+
                             DisasmOperand *reg_op = disasm->operand;
                             reg_op->type = DISASM_OPERAND_REGISTER_TYPE;
                             reg_op->type |= REG_MASK(li_reg);
+                            reg_op->accessMode = DISASM_ACCESS_WRITE;
+
                             DisasmOperand *imm_op = disasm->operand + 1;
                             imm_op->type = DISASM_OPERAND_CONSTANT_TYPE;
                             imm_op->immediateValue = li_imm & 0xffffffff;
                             imm_op->size = 32;
+                            reg_op->accessMode = DISASM_ACCESS_READ;
                             isPseudoIns = YES;
                             pseudoInsSize = 8;
                         }
@@ -347,20 +366,65 @@ static inline RegClass capstoneRegisterToRegClass(mips_reg reg) {
                         DisasmOperand *reg_op = disasm->operand;
                         reg_op->type = DISASM_OPERAND_REGISTER_TYPE;
                         reg_op->type |= REG_MASK(li_reg);
+                        reg_op->accessMode = DISASM_ACCESS_WRITE;
 
                         DisasmOperand *mem_op = disasm->operand + 1;
                         mem_op->type = DISASM_OPERAND_MEMORY_TYPE;
                         mem_op->memory.displacement = (uint32_t) ((lui_imm
                                 << 16) + (int32_t) OPERAND(insn[1], 1).mem.disp);
                         mem_op->size = 32;
+                        mem_op->accessMode = DISASM_ACCESS_READ;
                         isPseudoIns = YES;
                         pseudoInsSize = 8;
                     }
                 }
             }
         }
-        // load address
-        // la $t9, 0x4050720 ->
+        // branch to L1 if $t1 < $t2
+        // blt $t1, $t2, L1 -> slt $at, $t1, $t2; bne $at, $0, L1
+        // blt $t1, $t2, L1 -> slt $at, $t1, $t2; bnez $at, L1
+        // also bgt, bge, ble
+        // slt = set on less then
+        if (insn[0].id == MIPS_INS_SLT) {
+
+            mips_insn branch = (insn[1].id == MIPS_INS_BNEZ) || (insn[1].id == MIPS_INS_BNE && OPERAND_IS_REG(insn[1], 1, MIPS_REG_ZERO)) ?
+                    MIPS_INS_BNEZ : MIPS_INS_INVALID;
+
+            if (branch && OPERAND(insn[0], 0).type == OPERAND(insn[1], 0).type == MIPS_OP_REG &&
+                    OPERAND(insn[0], 0).reg == OPERAND(insn[1], 0).reg) {
+
+                mips_reg left_reg = OPERAND(insn[0], 1).reg;
+                mips_reg right_reg = OPERAND(insn[0], 2).reg;
+                int64_t imm = OPERAND(insn[1], 1).imm;
+
+                switch (branch) {
+                    case MIPS_INS_BNEZ:
+                        strcpy(disasm->instruction.mnemonic, "blt");
+                        disasm->instruction.branchType = DISASM_BRANCH_JL;
+                        break;
+                }
+                disasm->instruction.addressValue = (Address) imm;
+                disasm->instruction.pcRegisterValue = disasm->virtualAddr + insn[0].size + insn[1].size;
+
+                DisasmOperand *left_op = disasm->operand;
+                left_op->type = DISASM_OPERAND_REGISTER_TYPE;
+                left_op->type |= REG_MASK(left_reg);
+                left_op->accessMode = DISASM_ACCESS_READ;
+
+                DisasmOperand *middle_op = disasm->operand + 1;
+                middle_op->type = DISASM_OPERAND_REGISTER_TYPE;
+                middle_op->type |= REG_MASK(right_reg);
+                middle_op->accessMode = DISASM_ACCESS_READ;
+
+                DisasmOperand *right_op = disasm->operand + 2;
+                right_op->type = DISASM_OPERAND_CONSTANT_TYPE | DISASM_OPERAND_RELATIVE;
+                right_op->immediateValue = imm;
+                right_op->size = 32;
+                right_op->accessMode = DISASM_ACCESS_READ;
+                isPseudoIns = YES;
+                pseudoInsSize = 8;
+            }
+        }
     }
     if (count > 2) {
         // and $t0, $t0, 0xFFFFFF00 -> lui $at, 0xFFFF; ori $at, 0xFF00; and $t0, $t0, $at
@@ -421,17 +485,19 @@ static inline RegClass capstoneRegisterToRegClass(mips_reg reg) {
                 disasm->operand[lastOperand].type |= REG_MASK(lastOp.reg);
             }
             disasm->operand[lastOperand].isBranchDestination = 1;
-            disasm->instruction.branchType = DISASM_BRANCH_JMP;
 
             // jumps
+            // TODO handle branch delay slot
+            // disasm->instruction.pcRegisterValue = disasm->virtualAddr + insn[0].size + insn[1].size;
             switch (insn->id) {
-                case MIPS_INS_BNE:
-                case MIPS_INS_BNEZ:
+                case MIPS_INS_BNE: //  Branch on Not Equal
+                case MIPS_INS_BNEZ: //  Branch on Not Equal to Zero
                     disasm->instruction.condition = DISASM_INST_COND_NE;
                     disasm->instruction.branchType = DISASM_BRANCH_JNE;
                     break;
-                case MIPS_INS_BEQ:
-                case MIPS_INS_BEQZ:
+                case MIPS_INS_BEQ: //  Branch on Equal
+                case MIPS_INS_BEQZ: //  Branch on Equal to Zero
+                case MIPS_INS_BEQL: //  Branch on Equal Likely
                     disasm->instruction.condition = DISASM_INST_COND_EQ;
                     disasm->instruction.branchType = DISASM_BRANCH_JE;
                     break;
@@ -448,17 +514,26 @@ static inline RegClass capstoneRegisterToRegClass(mips_reg reg) {
                     disasm->instruction.branchType = DISASM_BRANCH_JLE;
                     break;
                 case MIPS_INS_BLTZ:
+                case MIPS_INS_BLTZAL:
                     disasm->instruction.condition = DISASM_INST_COND_LT;
                     disasm->instruction.branchType = DISASM_BRANCH_JL;
                     break;
                 case MIPS_INS_JAL:
                 case MIPS_INS_JALR:
+                case MIPS_INS_BAL:
                     disasm->instruction.condition = DISASM_INST_COND_AL;
                     disasm->instruction.branchType = DISASM_BRANCH_CALL;
                     break;
                 case MIPS_INS_JR:
+                    disasm->instruction.condition = DISASM_INST_COND_AL;
                     disasm->instruction.branchType = DISASM_BRANCH_RET;
                     break;
+                case MIPS_INS_BC1F:
+                    // TODO
+                    break;
+                default:
+                    disasm->instruction.condition = DISASM_INST_COND_AL;
+                    disasm->instruction.branchType = DISASM_BRANCH_JMP;
             }
 
         } else if (cs_insn_group(_handle, &insn[0], MIPS_GRP_CALL)) {
@@ -475,8 +550,10 @@ static inline RegClass capstoneRegisterToRegClass(mips_reg reg) {
             disasm->operand[lastOperand].isBranchDestination = 1;
             disasm->instruction.branchType = DISASM_BRANCH_CALL;
         } else if (cs_insn_group(_handle, &insn[0], MIPS_GRP_RET) || cs_insn_group(_handle, &insn[0], MIPS_GRP_IRET)) {
+            disasm->instruction.condition = DISASM_INST_COND_AL;
             disasm->instruction.branchType = DISASM_BRANCH_RET;
         }
+
 
         cs_regs regs_read, regs_write;
         uint8_t read_count, write_count;
@@ -514,7 +591,17 @@ static inline RegClass capstoneRegisterToRegClass(mips_reg reg) {
                       ofSegment:(NSObject <HPSegment> *)segment
                 calledAddresses:(NSMutableArray<NSNumber *> *)calledAddresses
                       callsites:(NSMutableArray<NSNumber *> *)callSitesAddresses {
-
+/*
+    cs_insn *insn = (cs_insn*)disasm->instruction.userData;
+    if (insn) {
+        switch(insn->id) {
+            case MIPS_INS_J:
+                *next = BAD_ADDRESS;
+                [branches addObject:[NSNumber numberWithUnsignedLongLong:disasm->virtualAddr + (int16_t)insn->detail->mips.operands[0].imm]];
+                break;
+        }
+    }
+*/
 }
 
 - (void)performInstructionSpecificAnalysis:(DisasmStruct *)disasm
@@ -577,16 +664,25 @@ static inline int regIndexFromType(uint64_t type) {
     NSObject <HPASMLine> *line = [services blankASMLine];
 
     if (operand->type & DISASM_OPERAND_CONSTANT_TYPE) {
-        // small values in decimal
-        if (operand->immediateValue > -10 && operand->immediateValue < 10) {
-            format = Format_Decimal;
+        NSString *symbol = [_file nameForVirtualAddress:(Address) operand->immediateValue];
+        if (symbol) {
+            [line appendFormattedAddress:symbol withValue:(Address) operand->immediateValue];
+        } else {
+            if (format == Format_Default) {
+                // small values in decimal
+                if (operand->immediateValue > -100 && operand->immediateValue < 100) {
+                    format = Format_Decimal;
+                }
+                if (strncmp(disasm->instruction.mnemonic, "addiu", 5) == 0) {
+                    format |= Format_Signed;
+                }
+            }
+            [line appendRawString:@"#"];
+            [line append:[file formatNumber:(uint64_t) operand->immediateValue
+                                         at:disasm->virtualAddr
+                                usingFormat:format
+                                 andBitSize:32]];
         }
-        if (strncmp(disasm->instruction.mnemonic, "addiu", 5) == 0) {
-            format |= Format_Signed;
-        }
-
-        [line appendRawString:@"#"];
-        [line append:[file formatNumber:(uint64_t) operand->immediateValue at:disasm->virtualAddr usingFormat:format andBitSize:32]];
     } else if (operand->type & DISASM_OPERAND_REGISTER_TYPE) {
         RegClass regCls = regClassFromType(operand->type);
         int regIdx = regIndexFromType(operand->type);
@@ -600,10 +696,6 @@ static inline int regIndexFromType(uint64_t type) {
 
     } else if (operand->type & DISASM_OPERAND_MEMORY_TYPE) {
 
-        if (operand->memory.displacement != 0) {
-            [line append:[file formatNumber:(uint64_t) operand->memory.displacement at:disasm->virtualAddr usingFormat:format andBitSize:32]];
-        }
-
         if (operand->type & DISASM_OPERAND_REGISTER_INDEX_MASK) {
             RegClass regCls = regClassFromType(operand->type);
             int regIdx = regIndexFromType(operand->type);
@@ -613,19 +705,41 @@ static inline int regIndexFromType(uint64_t type) {
                                                  withBitSize:32
                                                  andPosition:DISASM_LOWPOSITION];
 
-            if (reg_name != nil) {
-                [line appendRawString:@"("];
-                [line appendRegister:reg_name
-                             ofClass:regCls
-                            andIndex:regIdx];
-
-                [line appendRawString:@")"];
+            if (format == Format_Default) {
+                if ([reg_name isEqualToString:@"sp"]) {
+                    format = Format_StackVariable;
+                } else {
+                    format = Format_Offset;
+                }
             }
 
+            if (operand->memory.displacement != 0) {
+                [line append:[file formatNumber:(uint64_t) operand->memory.displacement
+                                             at:disasm->virtualAddr
+                                    usingFormat:format
+                                     andBitSize:32]];
+            }
+
+            [line appendRawString:@"("];
+            [line appendRegister:reg_name
+                         ofClass:regCls
+                        andIndex:regIdx];
+
+            [line appendRawString:@")"];
+        } else {
+            [line appendRawString:@"FIXME"];
         }
     } else {
-        if (format == Format_Default) format = Format_Address;
-        [line append:[file formatNumber:(uint64_t) operand->memory.displacement at:disasm->virtualAddr usingFormat:format andBitSize:32]];
+        NSString *symbol = [_file nameForVirtualAddress:(Address) operand->memory.displacement];
+        if (symbol) {
+            [line appendFormattedAddress:symbol withValue:(Address) operand->memory.displacement];
+        } else {
+            if (format == Format_Default) format = Format_Address;
+            [line append:[file formatNumber:(uint64_t) operand->memory.displacement
+                                         at:disasm->virtualAddr
+                                usingFormat:format
+                                 andBitSize:32]];
+        }
     }
 
     [line setIsOperand:operandIndex startingAtIndex:0];
@@ -641,9 +755,14 @@ static inline int regIndexFromType(uint64_t type) {
     NSObject <HPASMLine> *line = [services blankASMLine];
 
     for (int op_index = 0; op_index <= DISASM_MAX_OPERANDS; op_index++) {
-        NSObject <HPASMLine> *part = [self buildOperandString:disasm forOperandIndex:op_index inFile:file raw:raw];
+        NSObject <HPASMLine> *part = [self buildOperandString:disasm
+                                              forOperandIndex:op_index
+                                                       inFile:file
+                                                          raw:raw];
         if (part == nil) break;
-        if (op_index) [line appendRawString:@", "];
+        if (op_index) {
+            [line appendRawString:@", "];
+        }
         [line append:part];
     }
 
