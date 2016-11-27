@@ -9,16 +9,21 @@ This is an experimental, highly unsophisticated plugin prototype using the [caps
 
 ## Status
 
-* Disassembly should roughly work
+* Disassembly should mostly work (with mnemonic and operand formatting) 
 * Branch typing is incomplete (still need to figure out the different `DISASM_BRANCH_*` types)
 * NOPping should work
 
 ## TODO
 
-* Extend instruction analysis for Hopper to do its magic
-* Disassemble into pseudo instructions (ideally as a second syntax option)
-* String references (?)
-* Add support for assembling instruction (using keystone)
-* Support for EB (big endian), 64 bit
-* Find ways to utilize some of `performBranchesAnalysis:`, `performInstructionSpecificAnalysis:`, `performProcedureAnalysis:`, `hasProcedurePrologAt:` etc.
-* Use compact capstone engine for smaller footprint
+* [ ] Extend instruction analysis for Hopper to do its magic
+* [ ] Disassemble into pseudo instructions (ideally as a second syntax option)
+    * Find a way to make 
+* [x] String references (?)
+* [ ] Add support for assembling instruction (using keystone)
+* [ ] Support for EB (big endian), 64 bit
+* [ ] Find ways to utilize some of `performBranchesAnalysis:`, `performInstructionSpecificAnalysis:`, `performProcedureAnalysis:`, `hasProcedurePrologAt:` etc.
+* [ ] Use compact capstone engine for smaller footprint
+
+## Resources
+
+* https://imgtec.com/documentation/
