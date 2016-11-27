@@ -10,7 +10,7 @@
 		07F966D818C5BA1200B394AF /* CoreFoundation.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 07F966D718C5BA1200B394AF /* CoreFoundation.framework */; };
 		07F966E718C5BA6500B394AF /* MIPSCPU.m in Sources */ = {isa = PBXBuildFile; fileRef = 07F966E618C5BA6500B394AF /* MIPSCPU.m */; };
 		07F966EB18C5BAFE00B394AF /* MIPSCtx.m in Sources */ = {isa = PBXBuildFile; fileRef = 07F966EA18C5BAFE00B394AF /* MIPSCtx.m */; };
-		3738176D1DE9F70E0082A38B /* README.md in Sources */ = {isa = PBXBuildFile; fileRef = 3738176C1DE9F70E0082A38B /* README.md */; };
+		371377771DEA2CEC00488C71 /* README.md in Resources */ = {isa = PBXBuildFile; fileRef = 3738176C1DE9F70E0082A38B /* README.md */; };
 		3738176F1DE9F9F00082A38B /* LICENSE in Resources */ = {isa = PBXBuildFile; fileRef = 3738176E1DE9F9F00082A38B /* LICENSE */; };
 		37AABE1A1DD9B825002E3755 /* InfoPlist.strings in Resources */ = {isa = PBXBuildFile; fileRef = 07F966DC18C5BA1200B394AF /* InfoPlist.strings */; };
 		37CE6F141DD9566F00F8B01A /* libcapstone.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 37CE6F131DD9566F00F8B01A /* libcapstone.a */; };
@@ -149,6 +149,7 @@
 			isa = PBXResourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				371377771DEA2CEC00488C71 /* README.md in Resources */,
 				3738176F1DE9F9F00082A38B /* LICENSE in Resources */,
 				37AABE1A1DD9B825002E3755 /* InfoPlist.strings in Resources */,
 			);
@@ -178,7 +179,6 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				3738176D1DE9F70E0082A38B /* README.md in Sources */,
 				07F966E718C5BA6500B394AF /* MIPSCPU.m in Sources */,
 				07F966EB18C5BAFE00B394AF /* MIPSCtx.m in Sources */,
 			);
