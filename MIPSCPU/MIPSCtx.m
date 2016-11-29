@@ -341,7 +341,7 @@ static inline RegClass capstoneRegisterToRegClass(mips_reg reg) {
                             imm_op->type = DISASM_OPERAND_CONSTANT_TYPE;
                             imm_op->immediateValue = li_imm & 0xffffffff;
                             imm_op->size = 32;
-                            reg_op->accessMode = DISASM_ACCESS_READ;
+                            imm_op->accessMode = DISASM_ACCESS_READ;
                             isPseudoIns = YES;
                             pseudoInsSize = 8;
                         }
