@@ -335,8 +335,13 @@ static inline RegClass capstoneRegisterToRegClass(mips_reg reg) {
 
                             strcpy(disasm->instruction.mnemonic, "li");
                             disasm->instruction.branchType = DISASM_BRANCH_NONE;
-                            disasm->instruction.addressValue = 0;
+                            if (li_reg == MIPS_REG_GP) {
+                                disasm->instruction.addressValue = li_imm;
+                            } else {
+                                disasm->instruction.addressValue = 0;
+                            }
                             disasm->instruction.pcRegisterValue = disasm->virtualAddr + insn[0].size + insn[1].size;
+                            disasm->instruction.length = 8;
 
                             DisasmOperand *reg_op = disasm->operand;
                             reg_op->type = DISASM_OPERAND_REGISTER_TYPE;
@@ -368,6 +373,7 @@ static inline RegClass capstoneRegisterToRegClass(mips_reg reg) {
                         disasm->instruction.branchType = DISASM_BRANCH_NONE;
                         disasm->instruction.addressValue = 0;
                         disasm->instruction.pcRegisterValue = disasm->virtualAddr + insn[0].size + insn[1].size;
+                        disasm->instruction.length = 8;
 
                         DisasmOperand *reg_op = disasm->operand;
                         reg_op->type = DISASM_OPERAND_REGISTER_TYPE;
@@ -411,6 +417,7 @@ static inline RegClass capstoneRegisterToRegClass(mips_reg reg) {
                 }
                 disasm->instruction.addressValue = (Address) imm;
                 disasm->instruction.pcRegisterValue = disasm->virtualAddr + insn[0].size + insn[1].size;
+                disasm->instruction.length = 8;
 
                 DisasmOperand *left_op = disasm->operand;
                 left_op->type = DISASM_OPERAND_REGISTER_TYPE;
@@ -440,6 +447,7 @@ static inline RegClass capstoneRegisterToRegClass(mips_reg reg) {
         disasm->instruction.branchType = DISASM_BRANCH_NONE;
         disasm->instruction.addressValue = 0;
         disasm->instruction.pcRegisterValue = disasm->virtualAddr + insn[0].size;
+        disasm->instruction.length = 4;
 
         void *insn_copy = malloc(insn[0].size);
         if (insn_copy) {
@@ -494,6 +502,7 @@ static inline RegClass capstoneRegisterToRegClass(mips_reg reg) {
 
             // jumps
             // TODO handle branch delay slot
+            // Compact branches do not have delay slots.
             // disasm->instruction.pcRegisterValue = disasm->virtualAddr + insn[0].size + insn[1].size;
             switch (insn->id) {
                 case MIPS_INS_BNE: //  Branch on Not Equal
@@ -558,6 +567,510 @@ static inline RegClass capstoneRegisterToRegClass(mips_reg reg) {
         } else if (cs_insn_group(_handle, &insn[0], MIPS_GRP_RET) || cs_insn_group(_handle, &insn[0], MIPS_GRP_IRET)) {
             disasm->instruction.condition = DISASM_INST_COND_AL;
             disasm->instruction.branchType = DISASM_BRANCH_RET;
+        }
+
+        switch (insn[0].id) {
+            case MIPS_INS_ABS: //  Floating Point Absolute Value
+                disasm->operand[0].accessMode = DISASM_ACCESS_WRITE;
+                disasm->operand[1].accessMode = DISASM_ACCESS_READ;
+                break;
+            case MIPS_INS_ADD: //  Add Word
+                disasm->operand[0].accessMode = DISASM_ACCESS_WRITE;
+                disasm->operand[1].accessMode = DISASM_ACCESS_READ;
+                disasm->operand[2].accessMode = DISASM_ACCESS_READ;
+                break;
+            case MIPS_INS_ADDU: //  Add Unsigned Word
+                disasm->operand[0].accessMode = DISASM_ACCESS_WRITE;
+                disasm->operand[1].accessMode = DISASM_ACCESS_READ;
+                disasm->operand[2].accessMode = DISASM_ACCESS_READ;
+                break;
+            case MIPS_INS_ADDI: //  Add Immediate Word
+                disasm->operand[0].accessMode = DISASM_ACCESS_WRITE;
+                disasm->operand[1].accessMode = DISASM_ACCESS_READ;
+                disasm->operand[2].accessMode = DISASM_ACCESS_READ;
+                disasm->operand[2].size = 16;
+                break;
+            case MIPS_INS_ADDIU: //  Add Immediate Word Unsigned
+                disasm->operand[0].accessMode = DISASM_ACCESS_WRITE;
+                disasm->operand[1].accessMode = DISASM_ACCESS_READ;
+                disasm->operand[2].accessMode = DISASM_ACCESS_READ;
+                disasm->operand[2].size = 16;
+                break;
+            case MIPS_INS_ADDIUPC: //  Add Immediate to PC (unsigned - non-trapping)
+                disasm->operand[0].accessMode = DISASM_ACCESS_WRITE;
+                disasm->operand[1].accessMode = DISASM_ACCESS_READ;
+                disasm->operand[2].accessMode = DISASM_ACCESS_READ;
+                disasm->operand[2].size = 19;
+                disasm->operand[2].shiftAmount = 2;
+                disasm->operand[2].shiftMode = DISASM_SHIFT_LSL;
+                break;
+            case MIPS_INS_ALIGN: //  Concatenate two GPRs, and extract a contiguous subset at a byte position
+                break;
+            case MIPS_INS_ALUIPC: //  IAligned Add Upper Immediate to PC
+                disasm->operand[0].accessMode = DISASM_ACCESS_WRITE;
+                disasm->operand[1].accessMode = DISASM_ACCESS_READ;
+                disasm->operand[1].size = 16;
+                disasm->operand[1].shiftAmount = 16;
+                disasm->operand[1].shiftMode = DISASM_SHIFT_LSL;
+                break;
+            case MIPS_INS_AND: //  and
+                disasm->operand[0].accessMode = DISASM_ACCESS_WRITE;
+                disasm->operand[1].accessMode = DISASM_ACCESS_READ;
+                disasm->operand[2].accessMode = DISASM_ACCESS_READ;
+                break;
+            case MIPS_INS_ANDI: //  and immediate
+                disasm->operand[0].accessMode = DISASM_ACCESS_WRITE;
+                disasm->operand[1].accessMode = DISASM_ACCESS_READ;
+                disasm->operand[2].accessMode = DISASM_ACCESS_READ;
+                disasm->operand[2].size = 16;
+                break;
+            case MIPS_INS_AUI: //  Add Immediate to Upper Bits
+                disasm->operand[0].accessMode = DISASM_ACCESS_WRITE;
+                disasm->operand[1].accessMode = DISASM_ACCESS_READ;
+                disasm->operand[2].accessMode = DISASM_ACCESS_READ;
+                disasm->operand[2].size = 16;
+                disasm->operand[2].shiftAmount = 16;
+                disasm->operand[2].shiftMode = DISASM_SHIFT_LSL;
+                break;
+            case MIPS_INS_AUIPC: //  Add Upper Immediate to PC
+                disasm->operand[0].accessMode = DISASM_ACCESS_WRITE;
+                disasm->operand[1].accessMode = DISASM_ACCESS_READ;
+                disasm->operand[1].size = 16;
+                disasm->operand[1].shiftAmount = 16;
+                disasm->operand[1].shiftMode = DISASM_SHIFT_LSL;
+                break;
+            case MIPS_INS_B: //  Unconditional Branch
+                disasm->operand[0].accessMode = DISASM_ACCESS_READ;
+                disasm->operand[0].size = 16;
+                disasm->operand[0].shiftAmount = 2;
+                disasm->operand[0].shiftMode = DISASM_SHIFT_LSL;
+                disasm->instruction.pcRegisterValue = disasm->virtualAddr + 8;
+                break;
+            case MIPS_INS_BAL: //  Branch and Link
+                disasm->operand[0].accessMode = DISASM_ACCESS_READ;
+                disasm->operand[0].size = 16;
+                disasm->operand[0].shiftAmount = 2;
+                disasm->operand[0].shiftMode = DISASM_SHIFT_LSL;
+                disasm->instruction.pcRegisterValue = disasm->virtualAddr + 8;
+                disasm->instruction.condition = DISASM_INST_COND_AL;
+                disasm->instruction.branchType = DISASM_BRANCH_CALL;
+                disasm->implicitlyWrittenRegisters[0] |= REG_MASK(MIPS_REG_RA);
+                break;
+            case MIPS_INS_BALC: //  Branch and Link, Compact
+                disasm->operand[0].accessMode = DISASM_ACCESS_READ;
+                disasm->operand[0].size = 26;
+                disasm->operand[0].shiftAmount = 2;
+                disasm->operand[0].shiftMode = DISASM_SHIFT_LSL;
+                disasm->instruction.pcRegisterValue = disasm->virtualAddr + 4;
+                disasm->instruction.condition = DISASM_INST_COND_AL;
+                disasm->instruction.branchType = DISASM_BRANCH_CALL;
+                disasm->implicitlyWrittenRegisters[0] |= REG_MASK(MIPS_REG_RA);
+                break;
+            case MIPS_INS_BC: //  Branch, Compact
+                disasm->operand[0].accessMode = DISASM_ACCESS_READ;
+                disasm->operand[0].size = 26;
+                disasm->operand[0].shiftAmount = 2;
+                disasm->operand[0].shiftMode = DISASM_SHIFT_LSL;
+                disasm->instruction.addressValue = disasm->virtualAddr + 4 + disasm->operand[0].immediateValue;
+                disasm->instruction.pcRegisterValue = disasm->virtualAddr + 4;
+                disasm->instruction.condition = DISASM_INST_COND_AL;
+                disasm->instruction.branchType = DISASM_BRANCH_CALL;
+                disasm->implicitlyWrittenRegisters[0] |= REG_MASK(MIPS_REG_RA);
+                break;
+            case MIPS_INS_BC1EQZ: //  Branch if Coprocessor 1 (FPU) Register Bit 0 Equal to Zero
+                disasm->instruction.condition = DISASM_INST_COND_EQ;
+                disasm->instruction.branchType = DISASM_BRANCH_JE;
+                disasm->operand[0].accessMode = DISASM_ACCESS_READ;
+                disasm->operand[1].accessMode = DISASM_ACCESS_READ;
+                disasm->operand[1].size = 16;
+                disasm->operand[1].shiftAmount = 2;
+                disasm->operand[1].shiftMode = DISASM_SHIFT_LSL;
+                disasm->instruction.pcRegisterValue = disasm->virtualAddr + 8;
+                break;
+            case MIPS_INS_BC1NEZ: //  Branch if Coprocessor 1 (FPU) Register Bit 0 Not Equal to Zero
+                disasm->instruction.condition = DISASM_INST_COND_NE;
+                disasm->instruction.branchType = DISASM_BRANCH_JNE;
+                disasm->operand[0].accessMode = DISASM_ACCESS_READ;
+                disasm->operand[1].accessMode = DISASM_ACCESS_READ;
+                disasm->operand[1].size = 16;
+                disasm->operand[1].shiftAmount = 2;
+                disasm->operand[1].shiftMode = DISASM_SHIFT_LSL;
+                disasm->instruction.pcRegisterValue = disasm->virtualAddr + 8;
+                break;
+            case MIPS_INS_BC1F: //  Branch on FP False
+                disasm->instruction.condition = DISASM_INST_COND_EQ;
+                disasm->instruction.branchType = DISASM_BRANCH_JE;
+                if (disasm->operand[1].type == DISASM_OPERAND_NO_OPERAND) {
+                    // one operand = offset
+                    disasm->operand[0].accessMode = DISASM_ACCESS_READ;
+                    disasm->operand[0].size = 16;
+                    disasm->operand[0].shiftAmount = 2;
+                    disasm->operand[0].shiftMode = DISASM_SHIFT_LSL;
+                } else {
+                    // two operands = cc, offset
+                    disasm->operand[0].accessMode = DISASM_ACCESS_READ;
+
+                    disasm->operand[1].accessMode = DISASM_ACCESS_READ;
+                    disasm->operand[1].size = 16;
+                    disasm->operand[1].shiftAmount = 2;
+                    disasm->operand[1].shiftMode = DISASM_SHIFT_LSL;
+                }
+                break;
+            case MIPS_INS_BC1FL: // Branch on FP False Likely
+                disasm->instruction.condition = DISASM_INST_COND_EQ;
+                disasm->instruction.branchType = DISASM_BRANCH_JE;
+                if (disasm->operand[1].type == DISASM_OPERAND_NO_OPERAND) {
+                    // one operand = offset
+                    disasm->operand[0].accessMode = DISASM_ACCESS_READ;
+                    disasm->operand[0].size = 16;
+                    disasm->operand[0].shiftAmount = 2;
+                    disasm->operand[0].shiftMode = DISASM_SHIFT_LSL;
+                } else {
+                    // two operands = cc, offset
+                    disasm->operand[0].accessMode = DISASM_ACCESS_READ;
+
+                    disasm->operand[1].accessMode = DISASM_ACCESS_READ;
+                    disasm->operand[1].size = 16;
+                    disasm->operand[1].shiftAmount = 2;
+                    disasm->operand[1].shiftMode = DISASM_SHIFT_LSL;
+                }
+                break;
+            case MIPS_INS_BC1T: //  Branch on FP True
+                disasm->instruction.condition = DISASM_INST_COND_EQ;
+                disasm->instruction.branchType = DISASM_BRANCH_JE;
+                if (disasm->operand[1].type == DISASM_OPERAND_NO_OPERAND) {
+                    // one operand = offset
+                    disasm->operand[0].accessMode = DISASM_ACCESS_READ;
+                    disasm->operand[0].size = 16;
+                    disasm->operand[0].shiftAmount = 2;
+                    disasm->operand[0].shiftMode = DISASM_SHIFT_LSL;
+                } else {
+                    // two operands = cc, offset
+                    disasm->operand[0].accessMode = DISASM_ACCESS_READ;
+
+                    disasm->operand[1].accessMode = DISASM_ACCESS_READ;
+                    disasm->operand[1].size = 16;
+                    disasm->operand[1].shiftAmount = 2;
+                    disasm->operand[1].shiftMode = DISASM_SHIFT_LSL;
+                }
+                break;
+            case MIPS_INS_BC1TL: // Branch on FP True Likely
+                disasm->instruction.condition = DISASM_INST_COND_EQ;
+                disasm->instruction.branchType = DISASM_BRANCH_JE;
+                if (disasm->operand[1].type == DISASM_OPERAND_NO_OPERAND) {
+                    // one operand = offset
+                    disasm->operand[0].accessMode = DISASM_ACCESS_READ;
+                    disasm->operand[0].size = 16;
+                    disasm->operand[0].shiftAmount = 2;
+                    disasm->operand[0].shiftMode = DISASM_SHIFT_LSL;
+                } else {
+                    // two operands = cc, offset
+                    disasm->operand[0].accessMode = DISASM_ACCESS_READ;
+
+                    disasm->operand[1].accessMode = DISASM_ACCESS_READ;
+                    disasm->operand[1].size = 16;
+                    disasm->operand[1].shiftAmount = 2;
+                    disasm->operand[1].shiftMode = DISASM_SHIFT_LSL;
+                }
+                break;
+            case MIPS_INS_BC2EQZ: //  Branch if Coprocessor 2 Condition (Register) Equal to Zero
+                disasm->instruction.condition = DISASM_INST_COND_EQ;
+                disasm->instruction.branchType = DISASM_BRANCH_JE;
+                disasm->operand[0].accessMode = DISASM_ACCESS_READ;
+
+                disasm->operand[1].accessMode = DISASM_ACCESS_READ;
+                disasm->operand[1].size = 16;
+                disasm->operand[1].shiftAmount = 2;
+                disasm->operand[1].shiftMode = DISASM_SHIFT_LSL;
+                break;
+            case MIPS_INS_BC2NEZ: //  Branch if Coprocessor 2 Condition (Register) Not Equal to Zero
+                disasm->instruction.condition = DISASM_INST_COND_NE;
+                disasm->instruction.branchType = DISASM_BRANCH_JNE;
+                disasm->operand[0].accessMode = DISASM_ACCESS_READ;
+
+                disasm->operand[1].accessMode = DISASM_ACCESS_READ;
+                disasm->operand[1].size = 16;
+                disasm->operand[1].shiftAmount = 2;
+                disasm->operand[1].shiftMode = DISASM_SHIFT_LSL;
+                break;
+            case MIPS_INS_BC2F: // Branch on COP2 False
+                disasm->instruction.condition = DISASM_INST_COND_EQ;
+                disasm->instruction.branchType = DISASM_BRANCH_JE;
+                if (disasm->operand[1].type == DISASM_OPERAND_NO_OPERAND) {
+                    // one operand = offset
+                    disasm->operand[0].accessMode = DISASM_ACCESS_READ;
+                    disasm->operand[0].size = 16;
+                    disasm->operand[0].shiftAmount = 2;
+                    disasm->operand[0].shiftMode = DISASM_SHIFT_LSL;
+                } else {
+                    // two operands = cc, offset
+                    disasm->operand[0].accessMode = DISASM_ACCESS_READ;
+
+                    disasm->operand[1].accessMode = DISASM_ACCESS_READ;
+                    disasm->operand[1].size = 16;
+                    disasm->operand[1].shiftAmount = 2;
+                    disasm->operand[1].shiftMode = DISASM_SHIFT_LSL;
+                }
+                break;
+            case MIPS_INS_BC2FL: // Branch on COP2 False Likely
+                disasm->instruction.condition = DISASM_INST_COND_EQ;
+                disasm->instruction.branchType = DISASM_BRANCH_JE;
+                if (disasm->operand[1].type == DISASM_OPERAND_NO_OPERAND) {
+                    // one operand = offset
+                    disasm->operand[0].accessMode = DISASM_ACCESS_READ;
+                    disasm->operand[0].size = 16;
+                    disasm->operand[0].shiftAmount = 2;
+                    disasm->operand[0].shiftMode = DISASM_SHIFT_LSL;
+                } else {
+                    // two operands = cc, offset
+                    disasm->operand[0].accessMode = DISASM_ACCESS_READ;
+
+                    disasm->operand[1].accessMode = DISASM_ACCESS_READ;
+                    disasm->operand[1].size = 16;
+                    disasm->operand[1].shiftAmount = 2;
+                    disasm->operand[1].shiftMode = DISASM_SHIFT_LSL;
+                }
+                break;
+            case MIPS_INS_BC2T: // Branch on COP2 True
+                disasm->instruction.condition = DISASM_INST_COND_EQ;
+                disasm->instruction.branchType = DISASM_BRANCH_JE;
+                if (disasm->operand[1].type == DISASM_OPERAND_NO_OPERAND) {
+                    // one operand = offset
+                    disasm->operand[0].accessMode = DISASM_ACCESS_READ;
+                    disasm->operand[0].size = 16;
+                    disasm->operand[0].shiftAmount = 2;
+                    disasm->operand[0].shiftMode = DISASM_SHIFT_LSL;
+                } else {
+                    // two operands = cc, offset
+                    disasm->operand[0].accessMode = DISASM_ACCESS_READ;
+
+                    disasm->operand[1].accessMode = DISASM_ACCESS_READ;
+                    disasm->operand[1].size = 16;
+                    disasm->operand[1].shiftAmount = 2;
+                    disasm->operand[1].shiftMode = DISASM_SHIFT_LSL;
+                }
+                break;
+            case MIPS_INS_BC2TL: // Branch on COP2 True Likely
+                disasm->instruction.condition = DISASM_INST_COND_EQ;
+                disasm->instruction.branchType = DISASM_BRANCH_JE;
+                if (disasm->operand[1].type == DISASM_OPERAND_NO_OPERAND) {
+                    // one operand = offset
+                    disasm->operand[0].accessMode = DISASM_ACCESS_READ;
+                    disasm->operand[0].size = 16;
+                    disasm->operand[0].shiftAmount = 2;
+                    disasm->operand[0].shiftMode = DISASM_SHIFT_LSL;
+                } else {
+                    // two operands = cc, offset
+                    disasm->operand[0].accessMode = DISASM_ACCESS_READ;
+
+                    disasm->operand[1].accessMode = DISASM_ACCESS_READ;
+                    disasm->operand[1].size = 16;
+                    disasm->operand[1].shiftAmount = 2;
+                    disasm->operand[1].shiftMode = DISASM_SHIFT_LSL;
+                }
+                break;
+            case MIPS_INS_JAL: //  Jump and Link
+                disasm->operand[0].accessMode = DISASM_ACCESS_READ;
+                disasm->operand[0].size = 26;
+                disasm->operand[0].shiftAmount = 2;
+                disasm->operand[0].shiftMode = DISASM_SHIFT_LSL;
+                disasm->operand[0].isBranchDestination = 1;
+                disasm->instruction.addressValue = (Address) disasm->operand[0].immediateValue;
+                disasm->instruction.pcRegisterValue = disasm->virtualAddr + 8;
+                disasm->implicitlyWrittenRegisters[0] |= REG_MASK(MIPS_REG_RA);
+                [_file addPotentialProcedure:(Address) disasm->operand[0].immediateValue];
+                break;
+            case MIPS_INS_BEQ: //  Branch on Equal
+                disasm->instruction.condition = DISASM_INST_COND_EQ;
+                disasm->instruction.branchType = DISASM_BRANCH_JE;
+                disasm->operand[0].accessMode = DISASM_ACCESS_READ;
+                disasm->operand[1].accessMode = DISASM_ACCESS_READ;
+
+                disasm->operand[2].accessMode = DISASM_ACCESS_READ;
+                disasm->operand[2].size = 16;
+                disasm->operand[2].shiftAmount = 2;
+                disasm->operand[2].shiftMode = DISASM_SHIFT_LSL;
+                break;
+            case MIPS_INS_BEQL: //  Branch on Equal Likely
+                disasm->instruction.condition = DISASM_INST_COND_EQ;
+                disasm->instruction.branchType = DISASM_BRANCH_JE;
+                disasm->operand[0].accessMode = DISASM_ACCESS_READ;
+                disasm->operand[1].accessMode = DISASM_ACCESS_READ;
+
+                disasm->operand[2].accessMode = DISASM_ACCESS_READ;
+                disasm->operand[2].size = 16;
+                disasm->operand[2].shiftAmount = 2;
+                disasm->operand[2].shiftMode = DISASM_SHIFT_LSL;
+                break;
+            case MIPS_INS_BEQZ: //  Branch on Equal to Zero
+                disasm->instruction.condition = DISASM_INST_COND_EQ;
+                disasm->instruction.branchType = DISASM_BRANCH_JE;
+                disasm->operand[0].accessMode = DISASM_ACCESS_READ;
+
+                disasm->operand[1].accessMode = DISASM_ACCESS_READ;
+                disasm->operand[1].size = 16;
+                disasm->operand[1].shiftAmount = 2;
+                disasm->operand[1].shiftMode = DISASM_SHIFT_LSL;
+                break;
+            case MIPS_INS_BEQC: //  Compact Compare-and-Branch Instructions Equal
+                disasm->instruction.condition = DISASM_INST_COND_EQ;
+                disasm->instruction.branchType = DISASM_BRANCH_JE;
+                disasm->operand[0].accessMode = DISASM_ACCESS_READ;
+
+                disasm->operand[1].accessMode = DISASM_ACCESS_READ;
+                disasm->operand[1].size = 16;
+                disasm->operand[1].shiftAmount = 2;
+                disasm->operand[1].shiftMode = DISASM_SHIFT_LSL;
+                break;
+            case MIPS_INS_BGEZ: //  Branch on Greater Than or Equal to Zero
+                disasm->instruction.condition = DISASM_INST_COND_EQ;
+                disasm->instruction.branchType = DISASM_BRANCH_JE;
+                disasm->operand[0].accessMode = DISASM_ACCESS_READ;
+
+                disasm->operand[1].accessMode = DISASM_ACCESS_READ;
+                disasm->operand[1].size = 16;
+                disasm->operand[1].shiftAmount = 2;
+                disasm->operand[1].shiftMode = DISASM_SHIFT_LSL;
+                break;
+            case MIPS_INS_BGEZAL: //  Branch on Greater Than or Equal to Zero and Link
+                disasm->instruction.condition = DISASM_INST_COND_EQ;
+                disasm->instruction.branchType = DISASM_BRANCH_JE;
+                disasm->operand[0].accessMode = DISASM_ACCESS_READ;
+
+                disasm->operand[1].accessMode = DISASM_ACCESS_READ;
+                disasm->operand[1].size = 16;
+                disasm->operand[1].shiftAmount = 2;
+                disasm->operand[1].shiftMode = DISASM_SHIFT_LSL;
+                break;
+            case MIPS_INS_BNEC: //  Compact Compare-and-Branch Instructions Not Equal
+                disasm->instruction.condition = DISASM_INST_COND_EQ;
+                disasm->instruction.branchType = DISASM_BRANCH_JE;
+                disasm->operand[0].accessMode = DISASM_ACCESS_READ;
+
+                disasm->operand[1].accessMode = DISASM_ACCESS_READ;
+                disasm->operand[1].size = 16;
+                disasm->operand[1].shiftAmount = 2;
+                disasm->operand[1].shiftMode = DISASM_SHIFT_LSL;
+                break;
+            case MIPS_INS_BLTC: //  Compact Compare-and-Branch Instructions Less Than
+                disasm->instruction.condition = DISASM_INST_COND_EQ;
+                disasm->instruction.branchType = DISASM_BRANCH_JE;
+                disasm->operand[0].accessMode = DISASM_ACCESS_READ;
+
+                disasm->operand[1].accessMode = DISASM_ACCESS_READ;
+                disasm->operand[1].size = 16;
+                disasm->operand[1].shiftAmount = 2;
+                disasm->operand[1].shiftMode = DISASM_SHIFT_LSL;
+                break;
+            case MIPS_INS_BGEC: //  Compact Compare-and-Branch Instructions Greater or Equal
+                disasm->instruction.condition = DISASM_INST_COND_EQ;
+                disasm->instruction.branchType = DISASM_BRANCH_JE;
+                disasm->operand[0].accessMode = DISASM_ACCESS_READ;
+
+                disasm->operand[1].accessMode = DISASM_ACCESS_READ;
+                disasm->operand[1].size = 16;
+                disasm->operand[1].shiftAmount = 2;
+                disasm->operand[1].shiftMode = DISASM_SHIFT_LSL;
+                break;
+            case MIPS_INS_BLTUC: //  Compact Compare-and-Branch Instructions Less Than Unsigned
+            case MIPS_INS_BGEUC: //  Compact Compare-and-Branch Instructions Greater or Equal Unsigned
+            case MIPS_INS_BNE: //  Branch on Not Equal
+            case MIPS_INS_BNEL: //  Branch on Not Equal Likely
+            case MIPS_INS_BOVC: //  Branch on Overflow, Compact
+            case MIPS_INS_BNVC: //  Branch on No Overflow, Compact
+                disasm->operand[0].accessMode = DISASM_ACCESS_READ;
+                disasm->operand[1].accessMode = DISASM_ACCESS_READ;
+                disasm->operand[2].accessMode = DISASM_ACCESS_READ;
+                break;
+            case MIPS_INS_JR: //  Jump Register
+                disasm->operand[0].accessMode = DISASM_ACCESS_READ;
+                disasm->instruction.branchType = DISASM_BRANCH_JMP;
+                disasm->instruction.condition = DISASM_INST_COND_AL;
+                break;
+            case MIPS_INS_LB: //  Load Byte
+                disasm->operand[0].accessMode = DISASM_ACCESS_WRITE;
+                disasm->operand[1].size = 16;
+                disasm->operand[1].accessMode = DISASM_ACCESS_READ;
+                break;
+            case MIPS_INS_LBU: //  Load Byte Unsigned
+                disasm->operand[0].accessMode = DISASM_ACCESS_WRITE;
+                disasm->operand[1].size = 16;
+                disasm->operand[1].accessMode = DISASM_ACCESS_READ;
+                break;
+            case MIPS_INS_LW: //  Load Word
+                disasm->operand[0].accessMode = DISASM_ACCESS_WRITE;
+                disasm->operand[1].size = 16;
+                disasm->operand[1].accessMode = DISASM_ACCESS_READ;
+                // is previous instruction a lui into same reg as op2 reg ?
+                break;
+            case MIPS_INS_LWU: //  Load Word Unsigned
+                disasm->operand[0].accessMode = DISASM_ACCESS_WRITE;
+                disasm->operand[1].size = 16;
+                disasm->operand[1].accessMode = DISASM_ACCESS_READ;
+                break;
+            case MIPS_INS_SB: //  Store Byte
+                disasm->operand[0].accessMode = DISASM_ACCESS_READ;
+                disasm->operand[1].size = 16;
+                disasm->operand[1].accessMode = DISASM_ACCESS_WRITE;
+                break;
+            case MIPS_INS_SC: //  Store Conditional Word
+                // writes operand 0 to memory
+                // if memory modified operand 0 is set to 1 else to 0
+                disasm->operand[0].accessMode = DISASM_ACCESS_WRITE;
+                disasm->operand[1].size = 16;
+                disasm->operand[1].accessMode = DISASM_ACCESS_WRITE;
+                break;
+            case MIPS_INS_SW: //  Store Word
+                disasm->operand[0].accessMode = DISASM_ACCESS_READ;
+                disasm->operand[1].size = 16;
+                disasm->operand[1].accessMode = DISASM_ACCESS_WRITE;
+                break;
+            case MIPS_INS_BITSWAP: //  Swaps (reverses) bits in each byte
+            case MIPS_INS_LH: //  Load
+            case MIPS_INS_LHU: //
+            case MIPS_INS_LUI: //
+            case MIPS_INS_LL: //
+            case MIPS_INS_CEIL: //  Fixed Point Ceiling Convert to Long Fixed Point
+            case MIPS_INS_CFC1: //  Move Control Word From Floating Point
+                disasm->operand[0].accessMode = DISASM_ACCESS_WRITE;
+                disasm->operand[1].accessMode = DISASM_ACCESS_READ;
+                break;
+            case MIPS_INS_BLEZALC: //  Compact Zero-Compare and Branch-and-Link Less Than or Equal to Zero
+            case MIPS_INS_BGEZALC: //  Compact Zero-Compare and Branch-and-Link Greater Than or Equal to Zero
+            case MIPS_INS_BGTZALC: //  Compact Zero-Compare and Branch-and-Link Greater Than Zero
+            case MIPS_INS_BLTZALC: //  Compact Zero-Compare and Branch-and-Link Less Than Zero
+            case MIPS_INS_BEQZALC: //  Compact Zero-Compare and Branch-and-Link Equal to Zero
+            case MIPS_INS_BNEZALC: //  Compact Zero-Compare and Branch-and-Link Not Equal to Zero
+            case MIPS_INS_BGEZALL: //  Branch on Greater Than or Equal to Zero and Link Likely
+            case MIPS_INS_BLEZC: //  Compact Compare-and-Branch Instructions Less Than or Equal to Zero
+            case MIPS_INS_BLTZC: //  Compact Compare-and-Branch Instructions Less Than Zero
+            case MIPS_INS_BGEZC: //  Compact Compare-and-Branch Instructions Greater Than or Equal to Zero
+            case MIPS_INS_BGTZC: //  Compact Compare-and-Branch Instructions Greater Than Zero
+            case MIPS_INS_BEQZC: //  Compact Compare-and-Branch Instructions Equal to Zero
+            case MIPS_INS_BNEZC: //  Compact Compare-and-Branch Instructions Not Equal to Zero
+            case MIPS_INS_BGEZL: //  Branch on Greater Than or Equal to Zero Likely
+            case MIPS_INS_BGTZ: //  Branch on Greater Than Zero
+            case MIPS_INS_BGTZL: //  Branch on Greater Than Zero Likely
+            case MIPS_INS_BLEZ: //  Branch on Less Than or Equal to Zero
+            case MIPS_INS_BLEZL: //  Branch on Less Than or Equal to Zero Likely
+            case MIPS_INS_BLTZ: //  Branch on Less Than Zero
+            case MIPS_INS_BLTZL: //  Branch on Less Than Zero Likely
+            case MIPS_INS_BLTZALL: //  Branch on Less Than Zero and Link Likely
+                disasm->operand[0].accessMode = DISASM_ACCESS_READ;
+                disasm->operand[1].accessMode = DISASM_ACCESS_READ;
+                if (disasm->operand[2].type != DISASM_OPERAND_NO_OPERAND) {
+                    disasm->operand[2].accessMode = DISASM_ACCESS_READ;
+                }
+                break;
+            case MIPS_INS_CACHE: //  Perform Cache Operation
+                disasm->operand[0].accessMode = DISASM_ACCESS_READ;
+                disasm->operand[1].accessMode = DISASM_ACCESS_READ;
+                break;
+            case MIPS_INS_SDBBP: //  Software Debug Breakpoint
+                disasm->operand[0].accessMode = DISASM_ACCESS_READ;
+                break;
+            case MIPS_INS_BREAK: //  Breakpoint
+                break;
         }
 
 
@@ -776,7 +1289,7 @@ static inline int regIndexFromType(uint64_t type) {
     } else {
         NSString *symbol = [_file nameForVirtualAddress:(Address) operand->memory.displacement];
         if (symbol) {
-            [line appendName:symbol atAddress:(Address) operand->immediateValue];
+            [line appendName:symbol atAddress:(Address) operand->memory.displacement];
         } else {
             if (format == Format_Default) format = Format_Address;
             [line append:[file formatNumber:(uint64_t) operand->memory.displacement
