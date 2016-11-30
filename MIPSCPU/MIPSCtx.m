@@ -325,7 +325,7 @@ static inline RegClass capstoneRegisterToRegClass(mips_reg reg) {
                 if (OPERAND(insn[1], 0).type == MIPS_OP_REG && OPERAND(insn[1], 1).type == MIPS_OP_REG) {
                     if (OPERAND(insn[1], 0).reg == li_reg && OPERAND(insn[1], 1).reg == li_reg) {
                         if (OPERAND(insn[1], 2).type == MIPS_OP_IMM) {
-                            uint32_t li_imm = (uint32_t) (OPERAND(insn[0], 1).imm << 16 | OPERAND(insn[1], 2).imm);
+                            uint32_t li_imm = (uint32_t) ((OPERAND(insn[0], 1).imm << 16) + OPERAND(insn[1], 2).imm);
 
                             strcpy(disasm->instruction.mnemonic, "li");
                             disasm->instruction.branchType = DISASM_BRANCH_NONE;
