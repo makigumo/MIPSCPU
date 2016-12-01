@@ -492,7 +492,7 @@ static inline RegClass capstoneRegisterToRegClass(mips_reg reg) {
             if (lastOp.type == MIPS_OP_IMM) {
                 disasm->instruction.addressValue = (Address) lastOp.imm;
                 disasm->operand[lastOperand].type = DISASM_OPERAND_CONSTANT_TYPE | DISASM_OPERAND_RELATIVE;
-                disasm->operand[lastOperand].memory.displacement = (Address) lastOp.imm;
+                disasm->operand[lastOperand].immediateValue = (Address) lastOp.imm;
             } else if (lastOp.type == MIPS_OP_REG) {
                 disasm->operand[lastOperand].type = DISASM_OPERAND_REGISTER_TYPE | DISASM_OPERAND_RELATIVE;
                 disasm->operand[lastOperand].type |= REG_MASK(lastOp.reg);
@@ -677,9 +677,10 @@ static inline int regIndexFromType(uint64_t type) {
     NSObject <HPASMLine> *line = [services blankASMLine];
 
     if (operand->type & DISASM_OPERAND_CONSTANT_TYPE) {
-        NSString *symbol = [_file nameForVirtualAddress:(Address) operand->immediateValue];
-        if (symbol) {
-            [line appendFormattedAddress:symbol withValue:(Address) operand->immediateValue];
+        if (operand->isBranchDestination) {
+            // TODO is there a better way to get the local name (?)
+            [line appendLocalName:[NSString stringWithFormat:@"loc_%x", (unsigned int) operand->immediateValue]
+                        atAddress:(Address) operand->immediateValue];
         } else {
             if (format == Format_Default) {
                 // small values in decimal
@@ -765,7 +766,7 @@ static inline int regIndexFromType(uint64_t type) {
     } else {
         NSString *symbol = [_file nameForVirtualAddress:(Address) operand->memory.displacement];
         if (symbol) {
-            [line appendFormattedAddress:symbol withValue:(Address) operand->memory.displacement];
+            [line appendName:symbol atAddress:(Address) operand->immediateValue];
         } else {
             if (format == Format_Default) format = Format_Address;
             [line append:[file formatNumber:(uint64_t) operand->memory.displacement
