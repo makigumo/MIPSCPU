@@ -61,13 +61,23 @@
 }
 
 - (NSArray *)cpuSubFamiliesForFamily:(NSString *)family {
-    if ([family isEqualToString:@"mips"]) return @[@"mips32"];
+    if ([family isEqualToString:@"mips"]) return @[
+                @"mips32",
+                @"mipsIII",
+                @"microMIPS",
+                @"micro32r6",
+                //@"mips64"
+        ];
     return nil;
 }
 
 - (int)addressSpaceWidthInBitsForCPUFamily:(NSString *)family andSubFamily:(NSString *)subFamily {
     if ([family isEqualToString:@"mips"]) {
         if ([subFamily isEqualToString:@"mips32"]) return 32;
+        if ([subFamily isEqualToString:@"mipsIII"]) return 32;
+        if ([subFamily isEqualToString:@"microMIPS"]) return 32;
+        if ([subFamily isEqualToString:@"micro32r6"]) return 32;
+        //if ([subFamily isEqualToString:@"mips64"]) return 64;
     }
     return 0;
 }
@@ -93,7 +103,7 @@
 }
 
 - (NSString *)framePointerRegisterNameForFile:(NSObject <HPDisassembledFile> *)file {
-    return @"fp";
+    return @"gp";
 }
 
 - (NSUInteger)registerClassCount {

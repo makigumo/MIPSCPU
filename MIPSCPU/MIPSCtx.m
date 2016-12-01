@@ -30,7 +30,20 @@
     if (self = [super init]) {
         _cpu = cpu;
         _file = file;
-        if (cs_open(CS_ARCH_MIPS, CS_MODE_32 + CS_MODE_LITTLE_ENDIAN, &_handle) != CS_ERR_OK) {
+        cs_mode mode = CS_MODE_MIPS32;
+        if ([file.cpuSubFamily isEqualToString:@"microMIPS"]) {
+            mode += CS_MODE_MICRO;
+        }
+        else if ([file.cpuSubFamily isEqualToString:@"mipsIII"]) {
+            mode += CS_MODE_MIPS3;
+        }
+        else if ([file.cpuSubFamily isEqualToString:@"microMIPS"]) {
+            mode += CS_MODE_MICRO;
+        }
+        else if ([file.cpuSubFamily isEqualToString:@"micro32r6"]) {
+            mode += CS_MODE_MIPS32R6;
+        }
+        if (cs_open(CS_ARCH_MIPS, mode + CS_MODE_LITTLE_ENDIAN, &_handle) != CS_ERR_OK) {
             return nil;
         }
         cs_option(_handle, CS_OPT_DETAIL, CS_OPT_ON);
@@ -448,7 +461,7 @@ static inline RegClass capstoneRegisterToRegClass(mips_reg reg) {
             switch (op->type) {
                 case MIPS_OP_IMM:
                     hop_op->type = DISASM_OPERAND_CONSTANT_TYPE | DISASM_OPERAND_RELATIVE;
-                    hop_op->immediateValue = insn[0].detail->mips.operands[op_index].imm;
+                    hop_op->immediateValue = op->imm;
                     hop_op->size = 16;
                     break;
 
