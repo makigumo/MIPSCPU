@@ -1,0 +1,13 @@
+language: objective-c
+os: osx
+osx_image: xcode8.2
+
+git:
+  depth: 3
+
+branches:
+  only:
+  - master
+
+xcode_project: MIPSCPU.xcodeproj
+xcode_scheme: MIPSCPU
