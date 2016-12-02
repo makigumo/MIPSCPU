@@ -1,0 +1,8 @@
+[submodule "HopperSDK"]
+	path = HopperSDK
+	url = https://github.com/makigumo/HopperSDK-v4.git
+	branch = include
+[submodule "capstone"]
+	path = capstone
+	url = https://github.com/aquynh/capstone.git
+	branch = next

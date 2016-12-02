@@ -8,10 +8,10 @@
 
 #import "MIPSCtx.h"
 #import "MIPSCPU.h"
+#import <capstone/capstone.h>
 #import <Hopper/CommonTypes.h>
 #import <Hopper/CPUDefinition.h>
 #import <Hopper/HPDisassembledFile.h>
-#import <capstone/capstone.h>
 #import <Hopper/DisasmStruct.h>
 
 #define OPERAND(insn, op_index) insn.detail->mips.operands[op_index]

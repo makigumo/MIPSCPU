@@ -12,8 +12,17 @@
 		07F966EB18C5BAFE00B394AF /* MIPSCtx.m in Sources */ = {isa = PBXBuildFile; fileRef = 07F966EA18C5BAFE00B394AF /* MIPSCtx.m */; };
 		371377771DEA2CEC00488C71 /* README.md in Resources */ = {isa = PBXBuildFile; fileRef = 3738176C1DE9F70E0082A38B /* README.md */; };
 		3738176F1DE9F9F00082A38B /* LICENSE in Resources */ = {isa = PBXBuildFile; fileRef = 3738176E1DE9F9F00082A38B /* LICENSE */; };
+		375301B71DF222F100D0F32F /* cs.c in Sources */ = {isa = PBXBuildFile; fileRef = 375301A81DF222F100D0F32F /* cs.c */; };
+		375301B81DF222F100D0F32F /* MCInst.c in Sources */ = {isa = PBXBuildFile; fileRef = 375301AD1DF222F100D0F32F /* MCInst.c */; };
+		375301B91DF222F100D0F32F /* MCInstrDesc.c in Sources */ = {isa = PBXBuildFile; fileRef = 375301AF1DF222F100D0F32F /* MCInstrDesc.c */; };
+		375301BA1DF222F100D0F32F /* MCRegisterInfo.c in Sources */ = {isa = PBXBuildFile; fileRef = 375301B11DF222F100D0F32F /* MCRegisterInfo.c */; };
+		375301BB1DF222F100D0F32F /* SStream.c in Sources */ = {isa = PBXBuildFile; fileRef = 375301B31DF222F100D0F32F /* SStream.c */; };
+		375301BC1DF222F100D0F32F /* utils.c in Sources */ = {isa = PBXBuildFile; fileRef = 375301B51DF222F100D0F32F /* utils.c */; };
+		375301CF1DF2236600D0F32F /* MipsDisassembler.c in Sources */ = {isa = PBXBuildFile; fileRef = 375301C21DF2236600D0F32F /* MipsDisassembler.c */; };
+		375301D51DF2236600D0F32F /* MipsInstPrinter.c in Sources */ = {isa = PBXBuildFile; fileRef = 375301C91DF2236600D0F32F /* MipsInstPrinter.c */; };
+		375301D61DF2236600D0F32F /* MipsMapping.c in Sources */ = {isa = PBXBuildFile; fileRef = 375301CB1DF2236600D0F32F /* MipsMapping.c */; };
+		375301D81DF2236600D0F32F /* MipsModule.c in Sources */ = {isa = PBXBuildFile; fileRef = 375301CE1DF2236600D0F32F /* MipsModule.c */; };
 		37AABE1A1DD9B825002E3755 /* InfoPlist.strings in Resources */ = {isa = PBXBuildFile; fileRef = 07F966DC18C5BA1200B394AF /* InfoPlist.strings */; };
-		37CE6F141DD9566F00F8B01A /* libcapstone.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 37CE6F131DD9566F00F8B01A /* libcapstone.a */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
@@ -28,8 +37,38 @@
 		07F966EA18C5BAFE00B394AF /* MIPSCtx.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = MIPSCtx.m; sourceTree = "<group>"; };
 		3738176C1DE9F70E0082A38B /* README.md */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = net.daringfireball.markdown; path = README.md; sourceTree = "<group>"; };
 		3738176E1DE9F9F00082A38B /* LICENSE */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = LICENSE; sourceTree = "<group>"; };
-		37AABE171DD9B497002E3755 /* Capstone.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = Capstone.framework; path = ../Build/Products/Debug/Capstone.framework; sourceTree = "<group>"; };
-		37CE6F131DD9566F00F8B01A /* libcapstone.a */ = {isa = PBXFileReference; lastKnownFileType = archive.ar; name = libcapstone.a; path = ../Build/Products/Debug/libcapstone.a; sourceTree = "<group>"; };
+		375301A71DF222F100D0F32F /* cs_priv.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = cs_priv.h; path = capstone/cs_priv.h; sourceTree = "<group>"; };
+		375301A81DF222F100D0F32F /* cs.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; name = cs.c; path = capstone/cs.c; sourceTree = "<group>"; };
+		375301A91DF222F100D0F32F /* LEB128.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = LEB128.h; path = capstone/LEB128.h; sourceTree = "<group>"; };
+		375301AA1DF222F100D0F32F /* MathExtras.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = MathExtras.h; path = capstone/MathExtras.h; sourceTree = "<group>"; };
+		375301AB1DF222F100D0F32F /* MCDisassembler.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = MCDisassembler.h; path = capstone/MCDisassembler.h; sourceTree = "<group>"; };
+		375301AC1DF222F100D0F32F /* MCFixedLenDisassembler.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = MCFixedLenDisassembler.h; path = capstone/MCFixedLenDisassembler.h; sourceTree = "<group>"; };
+		375301AD1DF222F100D0F32F /* MCInst.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; name = MCInst.c; path = capstone/MCInst.c; sourceTree = "<group>"; };
+		375301AE1DF222F100D0F32F /* MCInst.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = MCInst.h; path = capstone/MCInst.h; sourceTree = "<group>"; };
+		375301AF1DF222F100D0F32F /* MCInstrDesc.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; name = MCInstrDesc.c; path = capstone/MCInstrDesc.c; sourceTree = "<group>"; };
+		375301B01DF222F100D0F32F /* MCInstrDesc.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = MCInstrDesc.h; path = capstone/MCInstrDesc.h; sourceTree = "<group>"; };
+		375301B11DF222F100D0F32F /* MCRegisterInfo.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; name = MCRegisterInfo.c; path = capstone/MCRegisterInfo.c; sourceTree = "<group>"; };
+		375301B21DF222F100D0F32F /* MCRegisterInfo.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = MCRegisterInfo.h; path = capstone/MCRegisterInfo.h; sourceTree = "<group>"; };
+		375301B31DF222F100D0F32F /* SStream.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; name = SStream.c; path = capstone/SStream.c; sourceTree = "<group>"; };
+		375301B41DF222F100D0F32F /* SStream.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = SStream.h; path = capstone/SStream.h; sourceTree = "<group>"; };
+		375301B51DF222F100D0F32F /* utils.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; name = utils.c; path = capstone/utils.c; sourceTree = "<group>"; };
+		375301B61DF222F100D0F32F /* utils.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = utils.h; path = capstone/utils.h; sourceTree = "<group>"; };
+		375301C21DF2236600D0F32F /* MipsDisassembler.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; name = MipsDisassembler.c; path = capstone/arch/Mips/MipsDisassembler.c; sourceTree = "<group>"; };
+		375301C31DF2236600D0F32F /* MipsDisassembler.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = MipsDisassembler.h; path = capstone/arch/Mips/MipsDisassembler.h; sourceTree = "<group>"; };
+		375301C41DF2236600D0F32F /* MipsGenAsmWriter.inc */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.pascal; name = MipsGenAsmWriter.inc; path = capstone/arch/Mips/MipsGenAsmWriter.inc; sourceTree = "<group>"; };
+		375301C51DF2236600D0F32F /* MipsGenDisassemblerTables.inc */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.pascal; name = MipsGenDisassemblerTables.inc; path = capstone/arch/Mips/MipsGenDisassemblerTables.inc; sourceTree = "<group>"; };
+		375301C61DF2236600D0F32F /* MipsGenInstrInfo.inc */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.pascal; name = MipsGenInstrInfo.inc; path = capstone/arch/Mips/MipsGenInstrInfo.inc; sourceTree = "<group>"; };
+		375301C71DF2236600D0F32F /* MipsGenRegisterInfo.inc */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.pascal; name = MipsGenRegisterInfo.inc; path = capstone/arch/Mips/MipsGenRegisterInfo.inc; sourceTree = "<group>"; };
+		375301C81DF2236600D0F32F /* MipsGenSubtargetInfo.inc */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.pascal; name = MipsGenSubtargetInfo.inc; path = capstone/arch/Mips/MipsGenSubtargetInfo.inc; sourceTree = "<group>"; };
+		375301C91DF2236600D0F32F /* MipsInstPrinter.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; name = MipsInstPrinter.c; path = capstone/arch/Mips/MipsInstPrinter.c; sourceTree = "<group>"; };
+		375301CA1DF2236600D0F32F /* MipsInstPrinter.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = MipsInstPrinter.h; path = capstone/arch/Mips/MipsInstPrinter.h; sourceTree = "<group>"; };
+		375301CB1DF2236600D0F32F /* MipsMapping.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; name = MipsMapping.c; path = capstone/arch/Mips/MipsMapping.c; sourceTree = "<group>"; };
+		375301CC1DF2236600D0F32F /* MipsMapping.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = MipsMapping.h; path = capstone/arch/Mips/MipsMapping.h; sourceTree = "<group>"; };
+		375301CD1DF2236600D0F32F /* MipsMappingInsn.inc */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.pascal; name = MipsMappingInsn.inc; path = capstone/arch/Mips/MipsMappingInsn.inc; sourceTree = "<group>"; };
+		375301CE1DF2236600D0F32F /* MipsModule.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; name = MipsModule.c; path = capstone/arch/Mips/MipsModule.c; sourceTree = "<group>"; };
+		375301DE1DF2252B00D0F32F /* capstone.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = capstone.h; path = capstone/include/capstone/capstone.h; sourceTree = "<group>"; };
+		375301DF1DF2252B00D0F32F /* mips.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = mips.h; path = capstone/include/capstone/mips.h; sourceTree = "<group>"; };
+		375301E01DF2252B00D0F32F /* platform.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = platform.h; path = capstone/include/capstone/platform.h; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -37,7 +76,6 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				37CE6F141DD9566F00F8B01A /* libcapstone.a in Frameworks */,
 				07F966D818C5BA1200B394AF /* CoreFoundation.framework in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
@@ -51,6 +89,7 @@
 				3738176E1DE9F9F00082A38B /* LICENSE */,
 				3738176C1DE9F70E0082A38B /* README.md */,
 				07F966D918C5BA1200B394AF /* MIPSCPU */,
+				375301A61DF2229300D0F32F /* capstone */,
 				07F966DA18C5BA1200B394AF /* Supporting Files */,
 				07F966D618C5BA1200B394AF /* Frameworks */,
 				07F966D518C5BA1200B394AF /* Products */,
@@ -68,8 +107,6 @@
 		07F966D618C5BA1200B394AF /* Frameworks */ = {
 			isa = PBXGroup;
 			children = (
-				37AABE171DD9B497002E3755 /* Capstone.framework */,
-				37CE6F131DD9566F00F8B01A /* libcapstone.a */,
 				07F966D718C5BA1200B394AF /* CoreFoundation.framework */,
 			);
 			name = Frameworks;
@@ -95,6 +132,77 @@
 			);
 			name = "Supporting Files";
 			path = MIPSCPU;
+			sourceTree = "<group>";
+		};
+		375301A61DF2229300D0F32F /* capstone */ = {
+			isa = PBXGroup;
+			children = (
+				375301D91DF224A500D0F32F /* include */,
+				375301C01DF2234C00D0F32F /* arch */,
+				375301A71DF222F100D0F32F /* cs_priv.h */,
+				375301A81DF222F100D0F32F /* cs.c */,
+				375301A91DF222F100D0F32F /* LEB128.h */,
+				375301AA1DF222F100D0F32F /* MathExtras.h */,
+				375301AB1DF222F100D0F32F /* MCDisassembler.h */,
+				375301AC1DF222F100D0F32F /* MCFixedLenDisassembler.h */,
+				375301AD1DF222F100D0F32F /* MCInst.c */,
+				375301AE1DF222F100D0F32F /* MCInst.h */,
+				375301AF1DF222F100D0F32F /* MCInstrDesc.c */,
+				375301B01DF222F100D0F32F /* MCInstrDesc.h */,
+				375301B11DF222F100D0F32F /* MCRegisterInfo.c */,
+				375301B21DF222F100D0F32F /* MCRegisterInfo.h */,
+				375301B31DF222F100D0F32F /* SStream.c */,
+				375301B41DF222F100D0F32F /* SStream.h */,
+				375301B51DF222F100D0F32F /* utils.c */,
+				375301B61DF222F100D0F32F /* utils.h */,
+			);
+			name = capstone;
+			sourceTree = "<group>";
+		};
+		375301C01DF2234C00D0F32F /* arch */ = {
+			isa = PBXGroup;
+			children = (
+				375301C11DF2235100D0F32F /* Mips */,
+			);
+			name = arch;
+			sourceTree = "<group>";
+		};
+		375301C11DF2235100D0F32F /* Mips */ = {
+			isa = PBXGroup;
+			children = (
+				375301C21DF2236600D0F32F /* MipsDisassembler.c */,
+				375301C31DF2236600D0F32F /* MipsDisassembler.h */,
+				375301C41DF2236600D0F32F /* MipsGenAsmWriter.inc */,
+				375301C51DF2236600D0F32F /* MipsGenDisassemblerTables.inc */,
+				375301C61DF2236600D0F32F /* MipsGenInstrInfo.inc */,
+				375301C71DF2236600D0F32F /* MipsGenRegisterInfo.inc */,
+				375301C81DF2236600D0F32F /* MipsGenSubtargetInfo.inc */,
+				375301C91DF2236600D0F32F /* MipsInstPrinter.c */,
+				375301CA1DF2236600D0F32F /* MipsInstPrinter.h */,
+				375301CB1DF2236600D0F32F /* MipsMapping.c */,
+				375301CC1DF2236600D0F32F /* MipsMapping.h */,
+				375301CD1DF2236600D0F32F /* MipsMappingInsn.inc */,
+				375301CE1DF2236600D0F32F /* MipsModule.c */,
+			);
+			name = Mips;
+			sourceTree = "<group>";
+		};
+		375301D91DF224A500D0F32F /* include */ = {
+			isa = PBXGroup;
+			children = (
+				375301DD1DF2251400D0F32F /* capstone */,
+			);
+			name = include;
+			sourceTree = "<group>";
+		};
+		375301DD1DF2251400D0F32F /* capstone */ = {
+			isa = PBXGroup;
+			children = (
+				375301DE1DF2252B00D0F32F /* capstone.h */,
+				375301DF1DF2252B00D0F32F /* mips.h */,
+				375301E01DF2252B00D0F32F /* platform.h */,
+			);
+			name = capstone;
 			sourceTree = "<group>";
 		};
 /* End PBXGroup section */
@@ -179,8 +287,18 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				375301D51DF2236600D0F32F /* MipsInstPrinter.c in Sources */,
+				375301B91DF222F100D0F32F /* MCInstrDesc.c in Sources */,
+				375301D61DF2236600D0F32F /* MipsMapping.c in Sources */,
+				375301BC1DF222F100D0F32F /* utils.c in Sources */,
+				375301BB1DF222F100D0F32F /* SStream.c in Sources */,
+				375301D81DF2236600D0F32F /* MipsModule.c in Sources */,
+				375301B71DF222F100D0F32F /* cs.c in Sources */,
 				07F966E718C5BA6500B394AF /* MIPSCPU.m in Sources */,
 				07F966EB18C5BAFE00B394AF /* MIPSCtx.m in Sources */,
+				375301BA1DF222F100D0F32F /* MCRegisterInfo.c in Sources */,
+				375301CF1DF2236600D0F32F /* MipsDisassembler.c in Sources */,
+				375301B81DF222F100D0F32F /* MCInst.c in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -283,15 +401,21 @@
 				COMBINE_HIDPI_IMAGES = YES;
 				GCC_PRECOMPILE_PREFIX_HEADER = YES;
 				GCC_PREFIX_HEADER = "MIPSCPU/MIPSCPU-Prefix.pch";
+				GCC_PREPROCESSOR_DEFINITIONS = (
+					"DEBUG=1",
+					CAPSTONE_USE_SYS_DYN_MEM,
+					CAPSTONE_HAS_MIPS,
+				);
 				HEADER_SEARCH_PATHS = (
 					"$(inherited)",
 					/Applications/Xcode.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/include,
-					"$(SRCROOT)/../../include",
+					"$(SRCROOT)/HopperSDK/include",
 					"$(SRCROOT)/MIPSCPU",
-					/Users/Dan/Develop/capstone/include/capstone,
+					"$(SRCROOT)/capstone/include",
 				);
 				INFOPLIST_FILE = "MIPSCPU/MIPSCPU-Info.plist";
 				INSTALL_PATH = "$(USER_LIBRARY_DIR)/Application Support/Hopper/PlugIns/v4/CPUs";
+				MACOSX_DEPLOYMENT_TARGET = 10.10;
 				PRODUCT_BUNDLE_IDENTIFIER = com.makigumo.MIPSCPU;
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				WRAPPER_EXTENSION = hopperCPU;
@@ -304,15 +428,20 @@
 				COMBINE_HIDPI_IMAGES = YES;
 				GCC_PRECOMPILE_PREFIX_HEADER = YES;
 				GCC_PREFIX_HEADER = "MIPSCPU/MIPSCPU-Prefix.pch";
+				GCC_PREPROCESSOR_DEFINITIONS = (
+					CAPSTONE_USE_SYS_DYN_MEM,
+					CAPSTONE_HAS_MIPS,
+				);
 				HEADER_SEARCH_PATHS = (
 					"$(inherited)",
 					/Applications/Xcode.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/include,
-					"$(SRCROOT)/../../include",
+					"$(SRCROOT)/HopperSDK/include",
 					"$(SRCROOT)/MIPSCPU",
-					/Users/Dan/Develop/capstone/include/capstone,
+					"$(SRCROOT)/capstone/include",
 				);
 				INFOPLIST_FILE = "MIPSCPU/MIPSCPU-Info.plist";
 				INSTALL_PATH = "$(USER_LIBRARY_DIR)/Application Support/Hopper/PlugIns/v4/CPUs";
+				MACOSX_DEPLOYMENT_TARGET = 10.10;
 				PRODUCT_BUNDLE_IDENTIFIER = com.makigumo.MIPSCPU;
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				WRAPPER_EXTENSION = hopperCPU;
