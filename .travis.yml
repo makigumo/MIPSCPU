@@ -17,4 +17,4 @@ before_install:
   - gem install xcpretty-travis-formatter
 
 script:
-  - xcodebuild -project MIPSCPU.xcodeproj -scheme MIPSCPU build test | xcpretty -f `xcpretty-travis-formatter`
+  - xcodebuild -project MIPSCPU.xcodeproj -scheme MIPSCPU build | xcpretty -f `xcpretty-travis-formatter`
