@@ -1,17 +1,20 @@
 language: objective-c
 os: osx
-osx_image: xcode8.1
+osx_image: xcode8.2
 
 git:
   depth: 3
 
 branches:
   only:
-  - master
+    - master
 
 xcode_project: MIPSCPU.xcodeproj
 xcode_scheme: MIPSCPU
 
 before_install:
-  - brew update
-  - brew outdated xctool || brew upgrade xctool
+  - gem install xcpretty
+  - gem install xcpretty-travis-formatter
+
+script:
+  - xcodebuild -project MIPSCPU.xcodeproj -scheme MIPSCPU build test | xcpretty -f `xcpretty-travis-formatter`
