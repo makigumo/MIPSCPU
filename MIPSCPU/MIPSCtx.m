@@ -729,7 +729,7 @@ static inline int regIndexFromType(uint64_t type) {
 
             if (operand->memory.displacement != 0) {
                 BOOL varNameAdded = NO;
-                if (format == Format_StackVariable) {
+                if (format & Format_StackVariable) {
                     NSObject <HPProcedure> *proc = [file procedureAt:disasm->virtualAddr];
                     if (proc) {
                         NSString *varName = [proc resolvedVariableNameForDisplacement:operand->memory.displacement
@@ -776,6 +776,7 @@ static inline int regIndexFromType(uint64_t type) {
         }
     }
 
+    [file setFormat:format forArgument:operandIndex atVirtualAddress:disasm->virtualAddr];
     [line setIsOperand:operandIndex startingAtIndex:0];
 
     return line;
