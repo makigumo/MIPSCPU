@@ -114,29 +114,29 @@
     switch (reg_class) {
         case RegClass_GeneralPurposeRegister:
             return 12;
-        case RegClass_MIPS_ARG:
+        case (RegClass) RegClass_MIPS_ARG:
             return 4;
-        case RegClass_MIPS_VAR:
+        case (RegClass) RegClass_MIPS_VAR:
             return 2;
-        case RegClass_MIPS_KERNEL:
-        case RegClass_MIPS_FPU:
+        case (RegClass) RegClass_MIPS_KERNEL:
+        case (RegClass) RegClass_MIPS_FPU:
             return 32;
-        case RegClass_MIPS_ACC:
+        case (RegClass) RegClass_MIPS_ACC:
             return 4;
-        case RegClass_MIPS_FCC:
-        case RegClass_MIPS_COP:
-        case RegClass_MIPS_DSP:
+        case (RegClass) RegClass_MIPS_FCC:
+        case (RegClass) RegClass_MIPS_COP:
+        case (RegClass) RegClass_MIPS_DSP:
             return 8;
-        case RegClass_MIPS_TMP:
+        case (RegClass) RegClass_MIPS_TMP:
             return 10;
-        case RegClass_MIPS_P:
-        case RegClass_MIPS_MPL:
+        case (RegClass) RegClass_MIPS_P:
+        case (RegClass) RegClass_MIPS_MPL:
             return 3;
-        case RegClass_MIPS_PC:
-        case RegClass_MIPS_LO:
-        case RegClass_MIPS_ZERO:
-        case RegClass_MIPS_AT:
-        case RegClass_MIPS_HI:
+        case (RegClass) RegClass_MIPS_PC:
+        case (RegClass) RegClass_MIPS_LO:
+        case (RegClass) RegClass_MIPS_ZERO:
+        case (RegClass) RegClass_MIPS_AT:
+        case (RegClass) RegClass_MIPS_HI:
             return 1;
         default:
             break;
@@ -158,29 +158,29 @@
 
 - (NSString *)registerIndexToString:(NSUInteger)reg ofClass:(RegClass)reg_class withBitSize:(NSUInteger)size andPosition:(DisasmPosition)position {
     switch (reg_class) {
-        case RegClass_MIPS_PC:
+        case (RegClass) RegClass_MIPS_PC:
             return @"pc";
-        case RegClass_MIPS_HI:
+        case (RegClass) RegClass_MIPS_HI:
             return @"hi";
-        case RegClass_MIPS_LO:
+        case (RegClass) RegClass_MIPS_LO:
             return @"lo";
-        case RegClass_MIPS_ACC:
+        case (RegClass) RegClass_MIPS_ACC:
             return [NSString stringWithFormat:@"acc%d", (int) reg];
-        case RegClass_MIPS_FCC:
+        case (RegClass) RegClass_MIPS_FCC:
             return [NSString stringWithFormat:@"fcc%d", (int) reg];
-        case RegClass_MIPS_COP:
+        case (RegClass) RegClass_MIPS_COP:
             return [NSString stringWithFormat:@"cop%d", (int) reg];
-        case RegClass_MIPS_MPL:
+        case (RegClass) RegClass_MIPS_MPL:
             return [NSString stringWithFormat:@"mpl%d", (int) reg];
-        case RegClass_MIPS_P:
+        case (RegClass) RegClass_MIPS_P:
             return [NSString stringWithFormat:@"p%d", (int) reg];
-        case RegClass_MIPS_ZERO:
+        case (RegClass) RegClass_MIPS_ZERO:
             return @"zero";
-        case RegClass_MIPS_AT:
+        case (RegClass) RegClass_MIPS_AT:
             return @"at";
-        case RegClass_MIPS_KERNEL:
+        case (RegClass) RegClass_MIPS_KERNEL:
             return [NSString stringWithFormat:@"k%d", (int) reg];
-        case RegClass_MIPS_VAR:
+        case (RegClass) RegClass_MIPS_VAR:
             return [NSString stringWithFormat:@"v%d", (int) reg];
 
         case RegClass_GeneralPurposeRegister:
@@ -193,15 +193,15 @@
                 return names[reg];
             }
             return [NSString stringWithFormat:@"UNKNOWN_REG<%lld>", (long long) reg];
-        case RegClass_MIPS_FPU:
+        case (RegClass) RegClass_MIPS_FPU:
             return [NSString stringWithFormat:@"fp%d", (int) reg];
-        case RegClass_MIPS_DSP:
+        case (RegClass) RegClass_MIPS_DSP:
             return [NSString stringWithFormat:@"dsp%d", (int) reg];
-        case RegClass_MIPS_TMP:
+        case (RegClass) RegClass_MIPS_TMP:
             return [NSString stringWithFormat:@"t%d", (int) reg];
-        case RegClass_MIPS_ARG:
+        case (RegClass) RegClass_MIPS_ARG:
             return [NSString stringWithFormat:@"a%d", (int) reg];
-        case -1:
+        case (RegClass) -1:
             break;
         default:
             return [NSString stringWithFormat:@"class%d_reg%d", (int) reg_class, (int) reg];;

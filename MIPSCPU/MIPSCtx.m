@@ -494,7 +494,7 @@ static inline RegClass capstoneRegisterToRegClass(mips_reg reg) {
                 disasm->operand[lastOperand].type = DISASM_OPERAND_CONSTANT_TYPE | DISASM_OPERAND_RELATIVE;
                 disasm->operand[lastOperand].immediateValue = (Address) lastOp.imm;
             } else if (lastOp.type == MIPS_OP_REG) {
-                disasm->operand[lastOperand].type = DISASM_OPERAND_REGISTER_TYPE | DISASM_OPERAND_RELATIVE;
+                disasm->operand[lastOperand].type = DISASM_OPERAND_REGISTER_TYPE;
                 disasm->operand[lastOperand].type |= REG_MASK(lastOp.reg);
             }
             disasm->operand[lastOperand].isBranchDestination = 1;
@@ -557,7 +557,7 @@ static inline RegClass capstoneRegisterToRegClass(mips_reg reg) {
                 disasm->operand[lastOperand].type = DISASM_OPERAND_MEMORY_TYPE;
                 disasm->operand[lastOperand].memory.displacement = disasm->instruction.addressValue;
             } else if (lastOp.type == MIPS_OP_REG) {
-                disasm->operand[lastOperand].type = DISASM_OPERAND_REGISTER_TYPE | DISASM_OPERAND_RELATIVE;
+                disasm->operand[lastOperand].type = DISASM_OPERAND_REGISTER_TYPE;
                 disasm->operand[lastOperand].type |= REG_MASK(lastOp.reg);
             }
             disasm->operand[lastOperand].isBranchDestination = 1;
