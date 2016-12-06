@@ -106,13 +106,11 @@ static inline void clear_operands_from(DisasmStruct *disasm, int index) {
 }
 
 - (NSUInteger)detectedPaddingLengthAt:(Address)address {
-    NSUInteger len = 0;
-    while ([_file readUInt16AtVirtualAddress:address] == 0) {
-        address += 4;
-        len += 4;
+    Address i = address & 3;
+    if (i) {
+        return 4 - i;
     }
-
-    return len;
+    return 0;
 }
 
 - (void)analysisBeginsAt:(Address)entryPoint {
