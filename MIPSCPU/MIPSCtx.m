@@ -9,10 +9,6 @@
 #import "MIPSCtx.h"
 #import "MIPSCPU.h"
 #import <capstone/capstone.h>
-#import <Hopper/CommonTypes.h>
-#import <Hopper/CPUDefinition.h>
-#import <Hopper/HPDisassembledFile.h>
-#import <Hopper/DisasmStruct.h>
 
 #define OPERAND(insn, op_index) insn.detail->mips.operands[op_index]
 #define OPERAND_IS_REG(insn, op_index, op_reg) \
@@ -33,14 +29,11 @@
         cs_mode mode = CS_MODE_MIPS32;
         if ([file.cpuSubFamily isEqualToString:@"microMIPS"]) {
             mode += CS_MODE_MICRO;
-        }
-        else if ([file.cpuSubFamily isEqualToString:@"mipsIII"]) {
+        } else if ([file.cpuSubFamily isEqualToString:@"mipsIII"]) {
             mode += CS_MODE_MIPS3;
-        }
-        else if ([file.cpuSubFamily isEqualToString:@"microMIPS"]) {
+        } else if ([file.cpuSubFamily isEqualToString:@"microMIPS"]) {
             mode += CS_MODE_MICRO;
-        }
-        else if ([file.cpuSubFamily isEqualToString:@"micro32r6"]) {
+        } else if ([file.cpuSubFamily isEqualToString:@"micro32r6"]) {
             mode += CS_MODE_MIPS32R6;
         }
         if (cs_open(CS_ARCH_MIPS, mode + CS_MODE_LITTLE_ENDIAN, &_handle) != CS_ERR_OK) {
@@ -678,9 +671,24 @@ static inline int regIndexFromType(uint64_t type) {
 
     if (operand->type & DISASM_OPERAND_CONSTANT_TYPE) {
         if (operand->isBranchDestination) {
-            // TODO is there a better way to get the local name (?)
-            [line appendLocalName:[NSString stringWithFormat:@"loc_%x", (unsigned int) operand->immediateValue]
-                        atAddress:(Address) operand->immediateValue];
+            NSString *symbol = [_file nameForVirtualAddress:disasm->instruction.addressValue];
+            if (symbol) {
+                [line appendName:symbol atAddress:disasm->instruction.addressValue];
+            } else {
+                NSObject <HPProcedure> *proc = [file procedureAt:disasm->virtualAddr];
+                if (proc && [proc hasLocalLabelAtAddress:disasm->instruction.addressValue]) {
+                    NSString *label = [proc localLabelAtAddress:disasm->instruction.addressValue];
+                    [line appendLocalName:label
+                                atAddress:(Address) disasm->instruction.addressValue];
+                }
+                else {
+                    [line appendRawString:@"#"];
+                    [line append:[file formatNumber:(uint64_t) operand->immediateValue
+                                                 at:disasm->virtualAddr
+                                        usingFormat:format
+                                         andBitSize:32]];
+                }
+            }
         } else {
             if (format == Format_Default) {
                 // small values in decimal
