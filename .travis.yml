@@ -19,4 +19,4 @@ before_install:
   - xcodebuild -project MIPSCPU.xcodeproj -list
 
 script:
-  - xcodebuild -project MIPSCPU.xcodeproj -scheme MIPSCPU build | xcpretty -f `xcpretty-travis-formatter`
+  - xcodebuild -project MIPSCPU.xcodeproj build | xcpretty -f `xcpretty-travis-formatter`
