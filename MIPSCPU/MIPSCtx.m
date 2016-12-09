@@ -319,7 +319,7 @@ static inline RegClass capstoneRegisterToRegClass(mips_reg reg) {
     BOOL isPseudoIns = NO;
     size_t pseudoInsSize = 0;
 
-    if (disasm->syntaxIndex == 1 && count > 1) {
+    if ([_file userRequestedSyntaxIndex] == 1 && count > 1) {
         // pseudo instruction
         // load immediate
         // li $gp, 0x4a6aa0 -> lui gp, 0x4a; addiu gp, gp, 0x6aa0
