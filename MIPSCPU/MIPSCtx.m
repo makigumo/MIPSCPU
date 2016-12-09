@@ -326,7 +326,7 @@ static inline RegClass capstoneRegisterToRegClass(mips_reg reg) {
     BOOL isPseudoIns = NO;
     size_t pseudoInsSize = 0;
 
-    if (/* TODO disasm->syntaxIndex == 1 && */ count > 1) {
+    if (disasm->syntaxIndex == 1 && count > 1) {
         // pseudo instruction
         // load immediate
         // li $gp, 0x4a6aa0 -> lui gp, 0x4a; addiu gp, gp, 0x6aa0
@@ -703,7 +703,8 @@ static inline int regIndexFromType(uint64_t type) {
         NSString *reg_name = [_cpu registerIndexToString:regIdx
                                                  ofClass:regCls
                                              withBitSize:32
-                                             andPosition:DISASM_LOWPOSITION];
+                                                position:DISASM_LOWPOSITION
+                                          andSyntaxIndex:disasm->syntaxIndex];
         [line appendRegister:reg_name
                      ofClass:regCls
                     andIndex:regIdx];
@@ -717,7 +718,8 @@ static inline int regIndexFromType(uint64_t type) {
             NSString *reg_name = [_cpu registerIndexToString:regIdx
                                                      ofClass:regCls
                                                  withBitSize:32
-                                                 andPosition:DISASM_LOWPOSITION];
+                                                    position:DISASM_LOWPOSITION
+                                              andSyntaxIndex:disasm->syntaxIndex];
 
             if (format == Format_Default) {
                 if ([reg_name isEqualToString:@"sp"]) {

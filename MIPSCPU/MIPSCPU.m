@@ -61,7 +61,8 @@
 }
 
 - (NSArray *)cpuSubFamiliesForFamily:(NSString *)family {
-    if ([family isEqualToString:@"mips"]) return @[
+    if ([family isEqualToString:@"mips"])
+        return @[
                 @"mips32",
                 @"mipsIII",
                 @"microMIPS",
@@ -94,11 +95,11 @@
     return 1;
 }
 
-- (NSArray *)syntaxVariantNames {
+- (NSArray<NSString *> *)syntaxVariantNames {
     return @[@"generic", @"pseudo instructions"];
 }
 
-- (NSArray *)cpuModeNames {
+- (NSArray<NSString *> *)cpuModeNames {
     return @[@"generic"];
 }
 
@@ -156,7 +157,11 @@
     return reg == 1;
 }
 
-- (NSString *)registerIndexToString:(NSUInteger)reg ofClass:(RegClass)reg_class withBitSize:(NSUInteger)size andPosition:(DisasmPosition)position {
+- (NSString *)registerIndexToString:(NSUInteger)reg
+                            ofClass:(RegClass)reg_class
+                        withBitSize:(NSUInteger)size
+                           position:(DisasmPosition)position
+                     andSyntaxIndex:(NSUInteger)syntaxIndex {
     switch (reg_class) {
         case (RegClass) RegClass_MIPS_PC:
             return @"pc";
