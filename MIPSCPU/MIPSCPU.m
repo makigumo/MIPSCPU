@@ -52,7 +52,7 @@
     return @"©2016 - Makigumo";
 }
 
-- (NSArray *)cpuFamilies {
+- (NSArray<NSString *> *)cpuFamilies {
     return @[@"mips"];
 }
 
@@ -60,7 +60,7 @@
     return @"0.0.1";
 }
 
-- (NSArray *)cpuSubFamiliesForFamily:(NSString *)family {
+- (NSArray<NSString *> *)cpuSubFamiliesForFamily:(NSString *)family {
     if ([family isEqualToString:@"mips"])
         return @[
                 @"mips32",
