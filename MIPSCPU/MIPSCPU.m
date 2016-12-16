@@ -8,6 +8,7 @@
 
 #import "MIPSCPU.h"
 #import "MIPSCtx.h"
+#import "MIPSCSCtx.h"
 
 @implementation MIPSCPU {
     NSObject <HPHopperServices> *_services;
@@ -25,7 +26,12 @@
 }
 
 - (NSObject <CPUContext> *)buildCPUContextForFile:(NSObject <HPDisassembledFile> *)file {
-    return [[MIPSCtx alloc] initWithCPU:self andFile:file];
+    if ([file.cpuFamily isEqualToString:@"mips"]) {
+        if ([file.cpuSubFamily isEqualToString:@"mips32"]) {
+            return [[MIPSCtx alloc] initWithCPU:self andFile:file];
+        }
+    }
+    return [[MIPSCSCtx alloc] initWithCPU:self andFile:file];
 }
 
 - (HopperUUID *)pluginUUID {
@@ -53,7 +59,10 @@
 }
 
 - (NSArray<NSString *> *)cpuFamilies {
-    return @[@"mips"];
+    return @[
+            @"mips",
+            @"mips (capstone)",
+    ];
 }
 
 - (NSString *)pluginVersion {
@@ -61,7 +70,7 @@
 }
 
 - (NSArray<NSString *> *)cpuSubFamiliesForFamily:(NSString *)family {
-    if ([family isEqualToString:@"mips"])
+    if ([family isEqualToString:@"mips (capstone)"])
         return @[
                 @"mips32",
                 @"mipsIII",
@@ -69,16 +78,22 @@
                 @"micro32r6",
                 //@"mips64"
         ];
+    if ([family isEqualToString:@"mips"]) {
+        return @[@"mips32"];
+    }
     return nil;
 }
 
 - (int)addressSpaceWidthInBitsForCPUFamily:(NSString *)family andSubFamily:(NSString *)subFamily {
-    if ([family isEqualToString:@"mips"]) {
+    if ([family isEqualToString:@"mips (capstone)"]) {
         if ([subFamily isEqualToString:@"mips32"]) return 32;
         if ([subFamily isEqualToString:@"mipsIII"]) return 32;
         if ([subFamily isEqualToString:@"microMIPS"]) return 32;
         if ([subFamily isEqualToString:@"micro32r6"]) return 32;
         //if ([subFamily isEqualToString:@"mips64"]) return 64;
+    }
+    if ([family isEqualToString:@"mips"]) {
+        if ([subFamily isEqualToString:@"mips32"]) return 32;
     }
     return 0;
 }

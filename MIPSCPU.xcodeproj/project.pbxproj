@@ -9,7 +9,8 @@
 /* Begin PBXBuildFile section */
 		07F966D818C5BA1200B394AF /* CoreFoundation.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 07F966D718C5BA1200B394AF /* CoreFoundation.framework */; };
 		07F966E718C5BA6500B394AF /* MIPSCPU.m in Sources */ = {isa = PBXBuildFile; fileRef = 07F966E618C5BA6500B394AF /* MIPSCPU.m */; };
-		07F966EB18C5BAFE00B394AF /* MIPSCtx.m in Sources */ = {isa = PBXBuildFile; fileRef = 07F966EA18C5BAFE00B394AF /* MIPSCtx.m */; };
+		07F966EB18C5BAFE00B394AF /* MIPSCSCtx.m in Sources */ = {isa = PBXBuildFile; fileRef = 07F966EA18C5BAFE00B394AF /* MIPSCSCtx.m */; };
+		18391CBD36501E06EA3EDC71 /* MIPSCtx.m in Sources */ = {isa = PBXBuildFile; fileRef = 18391184BB7CD7E4AA30DB70 /* MIPSCtx.m */; };
 		371377771DEA2CEC00488C71 /* README.md in Resources */ = {isa = PBXBuildFile; fileRef = 3738176C1DE9F70E0082A38B /* README.md */; };
 		3738176F1DE9F9F00082A38B /* LICENSE in Resources */ = {isa = PBXBuildFile; fileRef = 3738176E1DE9F9F00082A38B /* LICENSE */; };
 		375301B71DF222F100D0F32F /* cs.c in Sources */ = {isa = PBXBuildFile; fileRef = 375301A81DF222F100D0F32F /* cs.c */; };
@@ -33,8 +34,10 @@
 		07F966DF18C5BA1200B394AF /* MIPSCPU-Prefix.pch */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = "MIPSCPU-Prefix.pch"; sourceTree = "<group>"; };
 		07F966E518C5BA6500B394AF /* MIPSCPU.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = MIPSCPU.h; sourceTree = "<group>"; };
 		07F966E618C5BA6500B394AF /* MIPSCPU.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = MIPSCPU.m; sourceTree = "<group>"; };
-		07F966E918C5BAFE00B394AF /* MIPSCtx.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = MIPSCtx.h; sourceTree = "<group>"; };
-		07F966EA18C5BAFE00B394AF /* MIPSCtx.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = MIPSCtx.m; sourceTree = "<group>"; };
+		07F966E918C5BAFE00B394AF /* MIPSCSCtx.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = MIPSCSCtx.h; sourceTree = "<group>"; };
+		07F966EA18C5BAFE00B394AF /* MIPSCSCtx.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = MIPSCSCtx.m; sourceTree = "<group>"; };
+		18391184BB7CD7E4AA30DB70 /* MIPSCtx.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = MIPSCtx.m; sourceTree = "<group>"; };
+		183915A74DB91A79FFC3BD96 /* MIPSCtx.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = MIPSCtx.h; sourceTree = "<group>"; };
 		3738176C1DE9F70E0082A38B /* README.md */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = net.daringfireball.markdown; path = README.md; sourceTree = "<group>"; };
 		3738176E1DE9F9F00082A38B /* LICENSE */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = LICENSE; sourceTree = "<group>"; };
 		375301A71DF222F100D0F32F /* cs_priv.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = cs_priv.h; path = capstone/cs_priv.h; sourceTree = "<group>"; };
@@ -117,8 +120,10 @@
 			children = (
 				07F966E518C5BA6500B394AF /* MIPSCPU.h */,
 				07F966E618C5BA6500B394AF /* MIPSCPU.m */,
-				07F966E918C5BAFE00B394AF /* MIPSCtx.h */,
-				07F966EA18C5BAFE00B394AF /* MIPSCtx.m */,
+				07F966E918C5BAFE00B394AF /* MIPSCSCtx.h */,
+				07F966EA18C5BAFE00B394AF /* MIPSCSCtx.m */,
+				18391184BB7CD7E4AA30DB70 /* MIPSCtx.m */,
+				183915A74DB91A79FFC3BD96 /* MIPSCtx.h */,
 			);
 			path = MIPSCPU;
 			sourceTree = "<group>";
@@ -295,10 +300,11 @@
 				375301D81DF2236600D0F32F /* MipsModule.c in Sources */,
 				375301B71DF222F100D0F32F /* cs.c in Sources */,
 				07F966E718C5BA6500B394AF /* MIPSCPU.m in Sources */,
-				07F966EB18C5BAFE00B394AF /* MIPSCtx.m in Sources */,
+				07F966EB18C5BAFE00B394AF /* MIPSCSCtx.m in Sources */,
 				375301BA1DF222F100D0F32F /* MCRegisterInfo.c in Sources */,
 				375301CF1DF2236600D0F32F /* MipsDisassembler.c in Sources */,
 				375301B81DF222F100D0F32F /* MCInst.c in Sources */,
+				18391CBD36501E06EA3EDC71 /* MIPSCtx.m in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
