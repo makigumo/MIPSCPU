@@ -9,6 +9,7 @@
 #import "MIPSCtx.h"
 #import "MIPSCPU.h"
 #import <capstone/capstone.h>
+#import <Hopper/Hopper.h>
 
 #define OPERAND(insn, op_index) insn.detail->mips.operands[op_index]
 #define OPERAND_IS_REG(insn, op_index, op_reg) \
@@ -489,7 +490,7 @@ static inline RegClass capstoneRegisterToRegClass(mips_reg reg) {
             int lastOperand = insn->detail->mips.op_count - 1;
             cs_mips_op lastOp = insn->detail->mips.operands[lastOperand];
             if (lastOp.type == MIPS_OP_IMM) {
-                disasm->instruction.addressValue = (Address) lastOp.imm;
+                disasm->instruction.addressValue = (Address) (disasm->virtualAddr & 0xff000000) + lastOp.imm;
                 disasm->operand[lastOperand].type = DISASM_OPERAND_CONSTANT_TYPE | DISASM_OPERAND_RELATIVE;
                 disasm->operand[lastOperand].immediateValue = (Address) lastOp.imm;
             } else if (lastOp.type == MIPS_OP_REG) {
