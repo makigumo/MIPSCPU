@@ -25,6 +25,10 @@
     return _services;
 }
 
+- (Class)cpuContextClass {
+    return [MIPSCtx class];
+}
+
 - (NSObject <CPUContext> *)buildCPUContextForFile:(NSObject <HPDisassembledFile> *)file {
     if ([file.cpuFamily isEqualToString:@"mips"]) {
         if ([file.cpuSubFamily isEqualToString:@"mips32"]) {
