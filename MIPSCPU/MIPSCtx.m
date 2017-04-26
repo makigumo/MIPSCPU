@@ -718,6 +718,11 @@ static inline int regIndexFromType(const uint64_t type) {
     return YES;
 }
 
+- (BOOL)instructionOnlyLoadsAddress:(DisasmStruct *)disasmStruct {
+    // TODO
+    return NO;
+}
+
 - (BOOL)instructionMayBeASwitchStatement:(DisasmStruct *)disasmStruct {
     return NO;
 }

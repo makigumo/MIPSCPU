@@ -1382,6 +1382,11 @@ static inline int regIndexFromType(uint64_t type) {
     return YES;
 }
 
+- (BOOL)instructionOnlyLoadsAddress:(DisasmStruct *)disasmStruct {
+    // TODO
+    return NO;
+}
+
 - (BOOL)instructionMayBeASwitchStatement:(DisasmStruct *)disasmStruct {
     if (strncmp(disasmStruct->instruction.mnemonic, "jr", 2) == 0) {
         return YES;
