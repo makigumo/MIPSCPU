@@ -14,6 +14,7 @@ This is an experimental, highly unsophisticated plugin prototype using the [caps
 * Disassembly should mostly work (with mnemonic and operand formatting) 
 * Branch typing is incomplete (still need to figure out the different `DISASM_BRANCH_*` types)
 * NOPping should work
+* (macOS) Building the `Release` target results in a not working plugin (https://github.com/makigumo/MIPSCPU/issues/1).
 
 ## TODO
 
