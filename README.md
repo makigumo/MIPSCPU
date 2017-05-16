@@ -9,6 +9,18 @@ This is an experimental, highly unsophisticated plugin prototype using the [caps
 * Hopper Disassembler v4+ (https://www.hopperapp.com/)
 * capstone (git `next` branch)
 
+## Building
+
+* build with Xcode
+* or, via `xcodebuild`
+* or, using *cmake*
+    ```
+    mkdir build
+    cmake ..
+    make
+    make install
+    ```
+
 ## Status
 
 * Disassembly should mostly work (with mnemonic and operand formatting) 

@@ -10,6 +10,8 @@
 		07F966D818C5BA1200B394AF /* CoreFoundation.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 07F966D718C5BA1200B394AF /* CoreFoundation.framework */; };
 		07F966E718C5BA6500B394AF /* MIPSCPU.m in Sources */ = {isa = PBXBuildFile; fileRef = 07F966E618C5BA6500B394AF /* MIPSCPU.m */; };
 		07F966EB18C5BAFE00B394AF /* MIPSCSCtx.m in Sources */ = {isa = PBXBuildFile; fileRef = 07F966EA18C5BAFE00B394AF /* MIPSCSCtx.m */; };
+		1839161DB9E2C3A7F18E68BC /* Info.plist.in in Resources */ = {isa = PBXBuildFile; fileRef = 1839136F6C6DE333A67B5B0E /* Info.plist.in */; };
+		18391B822ED37D3BBED7A8A7 /* CMakeLists.txt in Resources */ = {isa = PBXBuildFile; fileRef = 183911F5C1E82F75CCFBDF73 /* CMakeLists.txt */; };
 		18391CBD36501E06EA3EDC71 /* MIPSCtx.m in Sources */ = {isa = PBXBuildFile; fileRef = 18391184BB7CD7E4AA30DB70 /* MIPSCtx.m */; };
 		371377771DEA2CEC00488C71 /* README.md in Resources */ = {isa = PBXBuildFile; fileRef = 3738176C1DE9F70E0082A38B /* README.md */; };
 		3738176F1DE9F9F00082A38B /* LICENSE in Resources */ = {isa = PBXBuildFile; fileRef = 3738176E1DE9F9F00082A38B /* LICENSE */; };
@@ -37,6 +39,8 @@
 		07F966E918C5BAFE00B394AF /* MIPSCSCtx.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = MIPSCSCtx.h; sourceTree = "<group>"; };
 		07F966EA18C5BAFE00B394AF /* MIPSCSCtx.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = MIPSCSCtx.m; sourceTree = "<group>"; };
 		18391184BB7CD7E4AA30DB70 /* MIPSCtx.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = MIPSCtx.m; sourceTree = "<group>"; };
+		183911F5C1E82F75CCFBDF73 /* CMakeLists.txt */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; name = CMakeLists.txt; path = ../CMakeLists.txt; sourceTree = "<group>"; };
+		1839136F6C6DE333A67B5B0E /* Info.plist.in */ = {isa = PBXFileReference; lastKnownFileType = text.xml; name = Info.plist.in; path = ../Info.plist.in; sourceTree = "<group>"; };
 		183915A74DB91A79FFC3BD96 /* MIPSCtx.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = MIPSCtx.h; sourceTree = "<group>"; };
 		3738176C1DE9F70E0082A38B /* README.md */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = net.daringfireball.markdown; path = README.md; sourceTree = "<group>"; };
 		3738176E1DE9F9F00082A38B /* LICENSE */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = LICENSE; sourceTree = "<group>"; };
@@ -131,6 +135,8 @@
 		07F966DA18C5BA1200B394AF /* Supporting Files */ = {
 			isa = PBXGroup;
 			children = (
+				183911F5C1E82F75CCFBDF73 /* CMakeLists.txt */,
+				1839136F6C6DE333A67B5B0E /* Info.plist.in */,
 				07F966DB18C5BA1200B394AF /* MIPSCPU-Info.plist */,
 				07F966DC18C5BA1200B394AF /* InfoPlist.strings */,
 				07F966DF18C5BA1200B394AF /* MIPSCPU-Prefix.pch */,
@@ -265,6 +271,8 @@
 				371377771DEA2CEC00488C71 /* README.md in Resources */,
 				3738176F1DE9F9F00082A38B /* LICENSE in Resources */,
 				37AABE1A1DD9B825002E3755 /* InfoPlist.strings in Resources */,
+				18391B822ED37D3BBED7A8A7 /* CMakeLists.txt in Resources */,
+				1839161DB9E2C3A7F18E68BC /* Info.plist.in in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
