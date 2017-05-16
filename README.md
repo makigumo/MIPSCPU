@@ -16,6 +16,7 @@ This is an experimental, highly unsophisticated plugin prototype using the [caps
 * or, using *cmake*
     ```
     mkdir build
+    cd build
     cmake ..
     make
     make install
