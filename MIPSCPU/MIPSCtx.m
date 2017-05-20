@@ -52,7 +52,7 @@ enum OpType getInsnType(enum Opcode opcode) {
         case SPECIAL3:
             break;
     }
-    return NULL;
+    return INVALID;
 }
 
 void getInsn(uint32_t bytes, struct insn *ret) {

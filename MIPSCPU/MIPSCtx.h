@@ -19,20 +19,21 @@ typedef enum Reg {
     T0, T1, T2, T3, T4, T5, T6, T7,
     S0, S1, S2, S3, S4, S5, S6, S7,
     T9, T10, K0, K1, GP, SP, FP, RA
-};
+} RegEnum;
 
 typedef enum FpuReg {
     F0 = 0, F1, F2, F3, F4, F5, F6, F7,
     F8, F9, F10, F11, F12, F13, F14, F15,
     F16, F17, F18, F19, F20, F21, F22, F23,
     F24, F25, F26, F27, F28, F29, F30, F31,
-};
+} FpuRegEnum;
 
 typedef enum OpType {
     RTYPE,
     ITYPE,
     JTYPE,
-};
+    INVALID,
+} OpTypeEnum;
 
 typedef enum Opcode {
     SPECIAL = 0b000000,
@@ -80,7 +81,7 @@ typedef enum Opcode {
 
     SPECIAL2 = 0b011100,
     SPECIAL3 = 0b011111,
-};
+} OpcodeEnum;
 
 typedef enum SpecialFunct {
     NOP = 0b000000,
@@ -117,36 +118,36 @@ typedef enum SpecialFunct {
     SUBU = 0b100011,
     XOR = 0b100110,
     NOR = 0b100111,
-};
+} SpecialFunctEnum;
 
 typedef enum RegImmFunct {
     BLTZ = 0b00000,
     BGEZ = 0b00001,
     BGEZAL = 0b10001,
     BLTZALL = 0b10010,
-};
+} RegImmFunctEnum;
 
 typedef enum CopFunct {
     MT = 0b00100,
     MTH = 0b00111,
-};
+} CopFunctEnum;
 
 typedef enum DelaySlotType {
     NONE,
     BRANCH,
     LOAD,
-};
+} DelaySlotTypeEnum;
 
 typedef enum DelaySlotCondition {
     ALWAYS,
     BRANCH_TAKEN,
     BRANCH_NOT_TAKEN,
-};
+} DelaySlotConditionEnum;
 
 typedef struct DelaySlot {
     enum DelaySlotType type;
     enum DelaySlotCondition condition;
-};
+} DelaySlot;
 
 typedef struct rtype {
     union {
@@ -164,7 +165,7 @@ typedef struct rtype {
             uint8_t sel; // bits 2..0 sel
         };
     };
-};
+} rtype;
 
 typedef struct itype {
     enum Reg rs; // bits 25..21 source register 1
@@ -173,12 +174,12 @@ typedef struct itype {
         enum RegImmFunct regImmFunct; // bits 20..16
     };
     uint16_t imm; // bits 15..0 immediate
-};
+} itype;
 
 typedef struct jtype {
     enum Reg rs; // bits 25..21 source register 1
     uint32_t imm; // bits 20..0 immediate
-};
+} jtype;
 
 typedef struct insn {
     enum Opcode opcode; // bits 31..26
@@ -189,7 +190,7 @@ typedef struct insn {
         struct itype itype;
         struct jtype jtype;
     };
-};
+} insn;
 
 #define REG_MASK(cls, reg) \
     (DISASM_BUILD_REGISTER_CLS_MASK(cls) | DISASM_BUILD_REGISTER_INDEX_MASK(reg))
@@ -231,10 +232,7 @@ static DisasmOperandType reg_masks_32[] = {
 
 
 static inline DisasmOperandType getRegMask(enum Reg reg) {
-    if (reg < sizeof(reg_masks_32) / sizeof(reg_masks_32[0])) {
-        return reg_masks_32[reg];
-    }
-    return 0;
+    return reg_masks_32[reg];
 }
 
 static inline DisasmOperandType getFpuRegMask(enum FpuReg reg) {
@@ -712,7 +710,7 @@ static inline void populateFPUITypeMemWrite(DisasmStruct *disasm, struct insn *p
 typedef enum BuildOp {
     BUILDOP_ADD,
     BUILDOP_OR,
-};
+} BuildOpEnum;
 
 - (instancetype)initWithCPU:(MIPSCPU *)cpu andFile:(NSObject <HPDisassembledFile> *)file;
 
