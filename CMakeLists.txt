@@ -38,10 +38,10 @@ if(NOT APPLE)
 
     separate_arguments(GNUSTEP_FLAGS UNIX_COMMAND ${GNUSTEP_FLAGS})
 
-    execute_process(COMMAND ${GNUSTEP} --objc-libs
+    execute_process(COMMAND ${GNUSTEP} --base-libs
         OUTPUT_VARIABLE GNUSTEP_LIBS
         OUTPUT_STRIP_TRAILING_WHITESPACE)
-    set(GNUSTEP_LIBS "${GNUSTEP_LIBS} -lgnustep-base")
+    set(GNUSTEP_LIBS "${GNUSTEP_LIBS}")
 endif(NOT APPLE)
 
 add_library(
