@@ -219,7 +219,7 @@ static inline void clear_operands_from(DisasmStruct *disasm, int index) {
     disasm->instruction.branchType = DISASM_BRANCH_NONE;
     disasm->instruction.pcRegisterValue = disasm->virtualAddr + 4;
 
-    uint32_t bytes = OSReadLittleInt32(disasm->bytes, 0);
+    uint32_t bytes = _MyOSReadInt32(disasm->bytes, 0);
     struct insn *in = calloc(1, sizeof(struct insn));
     if (in == NULL) {
         return DISASM_UNKNOWN_OPCODE;

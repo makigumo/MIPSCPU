@@ -665,7 +665,7 @@ static inline void populateITypeMem(DisasmStruct *disasm, struct insn *pInsn, co
     disasm->operand[1].type |= getRegMask(pInsn->itype.rs);
     disasm->operand[1].memory.baseRegistersMask = getRegMask(pInsn->itype.rs);
     disasm->operand[1].memory.displacement = (int16_t) pInsn->itype.imm;
-    disasm->operand[1].size= 16;
+    disasm->operand[1].size = 16;
 }
 
 static inline void populateITypeMemRead(DisasmStruct *disasm, struct insn *pInsn, const char *const name) {
@@ -689,7 +689,7 @@ static inline void populateFPUITypeMem(DisasmStruct *disasm, struct insn *pInsn,
     disasm->operand[1].type |= getRegMask(pInsn->itype.rs);
     disasm->operand[1].memory.baseRegistersMask = getRegMask(pInsn->itype.rs);
     disasm->operand[1].memory.displacement = (int16_t) pInsn->itype.imm;
-    disasm->operand[1].size= 16;
+    disasm->operand[1].size = 16;
 }
 
 static inline void populateFPUITypeMemRead(DisasmStruct *disasm, struct insn *pInsn, const char *const name) {
@@ -704,6 +704,9 @@ static inline void populateFPUITypeMemWrite(DisasmStruct *disasm, struct insn *p
     disasm->operand[1].accessMode = DISASM_ACCESS_WRITE;
 }
 
+static inline uint32_t _MyOSReadInt32(const volatile void *base, uintptr_t byteOffset) {
+    return *(volatile uint32_t *) ((uintptr_t) base + byteOffset);
+}
 
 @interface MIPSCtx : NSObject <CPUContext>
 
