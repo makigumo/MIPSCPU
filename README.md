@@ -23,8 +23,8 @@ This is an experimental, highly unsophisticated plugin prototype using the [caps
     ```
 ### Linux
 
-Install GNUstep, libobjc2 and libdispatch, e.g. by using the script in https://github.com/ckuethe/HopperSDK-Linux.
-Then adjust your `$PATH` to include `~/GNUstep/Library/ApplicationSupport/Hopper/gnustep-x86_64/bin/`.
+Install [GNUstep](https://github.com/gnustep/base), [libobjc2](https://github.com/gnustep/libobjc2) and [libdispatch](https://github.com/nickhutchinson/libdispatch), e.g. by using the script in https://github.com/ckuethe/HopperSDK-Linux.
+Then adjust your `PATH` to include `~/GNUstep/Library/ApplicationSupport/Hopper/gnustep-x86_64/bin/`.
 
 ## Status
 

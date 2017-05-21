@@ -85,13 +85,6 @@ target_compile_options(
     ${GNUSTEP_FLAGS}
 )
 
-set_target_properties(
-    ${PRODUCT_NAME} PROPERTIES
-    BUNDLE TRUE
-    MACOSX_BUNDLE TRUE
-    BUNDLE_EXTENSION ${HOPPER_PLUGIN_CPU_EXTENSION}
-    MACOSX_BUNDLE_INFO_PLIST ${CMAKE_CURRENT_SOURCE_DIR}/Info.plist.in)
-
 if(APPLE)
     set_target_properties(
         ${PRODUCT_NAME} PROPERTIES
