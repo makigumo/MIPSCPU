@@ -1,10 +1,5 @@
 cmake_minimum_required(VERSION 3.0)
 
-if(UNIX)
-    set(CMAKE_C_COMPILER "clang")
-    set(CMAKE_CXX_COMPILER "clang++")
-endif(UNIX)
-
 set(PRODUCT_NAME MIPSCPU)
 project(${PRODUCT_NAME})
 

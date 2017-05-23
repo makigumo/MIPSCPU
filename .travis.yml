@@ -48,22 +48,20 @@ matrix:
   include:
     - os: osx
       osx_image: xcode8.3
-      env: BUILD=xcode
+      env: BUILD_TYPE=xcode
     - os: osx
       osx_image: xcode8.3
-      env: BUILD=cmake
+      compiler: clang
+      env: BUILD_TYPE=cmake COMPILER=clang++ C_COMPILER=clang
     - os: linux
       compiler: clang-4.0
-      env: BUILD=cmake
+      env: BUILD_TYPE=cmake COMPILER=clang++-4.0 C_COMPILER=clang-4.0
 
 before_script:
   - cd "${TRAVIS_BUILD_DIR}"
-  - if [[ "$BUILD" == "cmake" ]]; then export PATH=$HOME/GNUstep/Library/ApplicationSupport/Hopper/gnustep-x86_64/bin/:$PATH ; fi
+  - if [[ "$BUILD_TYPE" == "cmake" ]]; then export PATH=$HOME/GNUstep/Library/ApplicationSupport/Hopper/gnustep-x86_64/bin/:$PATH ; fi
 
 script:
-  - if [[ "$BUILD" == "xcode" ]]; then xcodebuild -project MIPSCPU.xcodeproj build | xcpretty -f `xcpretty-travis-formatter`; fi
-  - if [[ "$BUILD" == "cmake" ]]; then
-      if [[ $TRAVIS_OS_NAME == 'linux' ]]; then export CC=clang-4.0 CXX=clang++-4.0; fi;
-      CC=clang-4.0 CXX=clang++-4.0 cmake . -Bbuild;
-    fi
-  - if [[ "$BUILD" == "cmake" ]]; then cmake --build build -- ; fi
+  - if [[ "$BUILD_TYPE" == "xcode" ]]; then xcodebuild -project MIPSCPU.xcodeproj build | xcpretty -f `xcpretty-travis-formatter`; fi
+  - if [[ "$BUILD_TYPE" == "cmake" ]]; then cmake . -Bbuild -DCMAKE_C_COMPILER=${C_COMPILER} -DCMAKE_CXX_COMPILER=${COMPILER}; fi
+  - if [[ "$BUILD_TYPE" == "cmake" ]]; then cmake --build build -- ; fi
