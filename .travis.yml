@@ -64,6 +64,6 @@ script:
   - if [[ "$BUILD" == "xcode" ]]; then xcodebuild -project MIPSCPU.xcodeproj build | xcpretty -f `xcpretty-travis-formatter`; fi
   - if [[ "$BUILD" == "cmake" ]]; then
       if [[ $TRAVIS_OS_NAME == 'linux' ]]; then export CC=clang-4.0 CXX=clang++-4.0; fi;
-      cmake . -Bbuild;
+      CC=clang-4.0 CXX=clang++-4.0 cmake . -Bbuild;
     fi
   - if [[ "$BUILD" == "cmake" ]]; then cmake --build build -- ; fi
