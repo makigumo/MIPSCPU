@@ -1,10 +1,5 @@
 cmake_minimum_required(VERSION 3.0)
 
-if(UNIX)
-    set(CMAKE_C_COMPILER "clang")
-    set(CMAKE_CXX_COMPILER "clang++")
-endif(UNIX)
-
 set(PRODUCT_NAME MIPSCPU)
 project(${PRODUCT_NAME})
 
@@ -27,10 +22,13 @@ add_definitions(
 include_directories("${HOPPER_SDK_PATH}" "${CMAKE_SOURCE_DIR}" capstone/include)
 
 if(NOT APPLE)
+    if (NOT CMAKE_CXX_COMPILER_ID MATCHES "Clang")
+       message(FATAL_ERROR "Clang required!")
+    endif(NOT CMAKE_CXX_COMPILER_ID MATCHES "Clang")
     find_program(GNUSTEP gnustep-config)
     if(NOT GNUSTEP)
         message(FATAL_ERROR "gnustep-config not found!")
-     endif(NOT GNUSTEP)
+    endif(NOT GNUSTEP)
 
     execute_process(COMMAND ${GNUSTEP} --objc-flags
         OUTPUT_VARIABLE GNUSTEP_FLAGS

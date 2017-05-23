@@ -1,6 +1,6 @@
-language: objective-c
-os: osx
-osx_image: xcode8.2
+language: c
+dist: trusty
+sudo: false
 
 git:
   depth: 3
@@ -9,13 +9,59 @@ branches:
   only:
     - master
 
-xcode_project: MIPSCPU.xcodeproj
-xcode_scheme: MIPSCPU
+cache:
+  apt: true
+  directories:
+    - $HOME/GNUstep/Library/ApplicationSupport/Hopper/gnustep-x86_64/
+
+addons:
+  apt:
+    packages:
+      - libpthread-workqueue-dev
+      - libkqueue-dev
+      - libblocksruntime-dev
+      - libxml2-dev
+      - libxslt1-dev
+      - clang-4.0
+    sources:
+      - llvm-toolchain-trusty-4.0
 
 before_install:
-  - gem install xcpretty
-  - gem install xcpretty-travis-formatter
-  - xcodebuild -project MIPSCPU.xcodeproj -list
+  - if [[ $TRAVIS_OS_NAME == 'osx' ]]; then brew update; fi
+  - if [[ $TRAVIS_OS_NAME == 'osx' ]]; then brew upgrade; fi
+  - if [[ $TRAVIS_OS_NAME == 'osx' ]]; then
+      gem install xcpretty;
+      gem install xcpretty-travis-formatter;
+      xcodebuild -project MIPSCPU.xcodeproj -list;
+    fi
+  - if [[ $TRAVIS_OS_NAME == 'linux' && ! -e $HOME/GNUstep/Library/ApplicationSupport/Hopper/gnustep-x86_64/bin/gnustep-config ]]; then
+      echo "Building GNUstep.";
+      git clone https://github.com/ckuethe/HopperSDK-Linux.git;
+      cd HopperSDK-Linux;
+      sed -i -e '27,34d' install.sh;
+      ./install.sh;
+    else
+      echo "Skipping GNUstep build.";
+    fi
+
+matrix:
+  include:
+    - os: osx
+      osx_image: xcode8.3
+      env: BUILD_TYPE=xcode
+    - os: osx
+      osx_image: xcode8.3
+      compiler: clang
+      env: BUILD_TYPE=cmake COMPILER=clang++ C_COMPILER=clang
+    - os: linux
+      compiler: clang-4.0
+      env: BUILD_TYPE=cmake COMPILER=clang++-4.0 C_COMPILER=clang-4.0
+
+before_script:
+  - cd "${TRAVIS_BUILD_DIR}"
+  - if [[ "$BUILD_TYPE" == "cmake" ]]; then export PATH=$HOME/GNUstep/Library/ApplicationSupport/Hopper/gnustep-x86_64/bin/:$PATH ; fi
 
 script:
-  - xcodebuild -project MIPSCPU.xcodeproj build | xcpretty -f `xcpretty-travis-formatter`
+  - if [[ "$BUILD_TYPE" == "xcode" ]]; then xcodebuild -project MIPSCPU.xcodeproj build | xcpretty -f `xcpretty-travis-formatter`; fi
+  - if [[ "$BUILD_TYPE" == "cmake" ]]; then cmake . -Bbuild -DCMAKE_C_COMPILER=${C_COMPILER} -DCMAKE_CXX_COMPILER=${COMPILER}; fi
+  - if [[ "$BUILD_TYPE" == "cmake" ]]; then cmake --build build -- ; fi
