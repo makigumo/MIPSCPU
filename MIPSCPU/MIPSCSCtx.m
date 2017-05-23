@@ -9,6 +9,7 @@
 #import "MIPSCSCtx.h"
 #import "MIPSCPU.h"
 #import <capstone/capstone.h>
+#import <Hopper/Hopper.h>
 
 #define OPERAND(insn, op_index) insn.detail->mips.operands[op_index]
 #define OPERAND_IS_REG(insn, op_index, op_reg) \
@@ -334,8 +335,7 @@ static inline RegClass capstoneRegisterToRegClass(mips_reg reg) {
                 isPseudoIns = YES;
                 pseudoInsSize = 4;
             }
-        }
-        else if (count > 1) {
+        } else if (count > 1) {
             // pseudo instruction
             // load immediate
             // li $gp, 0x4a6aa0 -> lui gp, 0x4a; addiu gp, gp, 0x6aa0
@@ -507,9 +507,10 @@ static inline RegClass capstoneRegisterToRegClass(mips_reg reg) {
             int lastOperand = insn->detail->mips.op_count - 1;
             cs_mips_op lastOp = insn->detail->mips.operands[lastOperand];
             if (lastOp.type == MIPS_OP_IMM) {
-                disasm->instruction.addressValue = (Address) (disasm->virtualAddr & 0xff000000) + lastOp.imm;
-                disasm->operand[lastOperand].type = DISASM_OPERAND_CONSTANT_TYPE | DISASM_OPERAND_RELATIVE;
+                disasm->instruction.addressValue = (Address) lastOp.imm;
+                disasm->operand[lastOperand].type = DISASM_OPERAND_CONSTANT_TYPE;
                 disasm->operand[lastOperand].immediateValue = (Address) lastOp.imm;
+                disasm->operand[lastOperand].size = 32;
             } else if (lastOp.type == MIPS_OP_REG) {
                 disasm->operand[lastOperand].type = DISASM_OPERAND_REGISTER_TYPE;
                 disasm->operand[lastOperand].type |= REG_MASK(lastOp.reg);
@@ -572,7 +573,7 @@ static inline RegClass capstoneRegisterToRegClass(mips_reg reg) {
             cs_mips_op lastOp = insn[0].detail->mips.operands[lastOperand];
             if (lastOp.type == MIPS_OP_IMM) {
                 disasm->instruction.addressValue = (Address) lastOp.imm;
-                disasm->operand[lastOperand].type = DISASM_OPERAND_CONSTANT_TYPE | DISASM_OPERAND_RELATIVE;
+                disasm->operand[lastOperand].type = DISASM_OPERAND_CONSTANT_TYPE;
                 disasm->operand[lastOperand].immediateValue = disasm->instruction.addressValue;
             } else if (lastOp.type == MIPS_OP_REG) {
                 disasm->operand[lastOperand].type = DISASM_OPERAND_REGISTER_TYPE;
@@ -663,11 +664,13 @@ static inline RegClass capstoneRegisterToRegClass(mips_reg reg) {
                 disasm->instruction.pcRegisterValue = disasm->virtualAddr + 8;
                 break;
             case MIPS_INS_BAL: //  Branch and Link
+                disasm->operand[0].type = DISASM_OPERAND_CONSTANT_TYPE;
+                disasm->operand[0].immediateValue = (Address) insn->detail->mips.operands[0].imm;
+                disasm->operand[0].size = 32;
                 disasm->operand[0].accessMode = DISASM_ACCESS_READ;
-                disasm->operand[0].size = 16;
-                disasm->operand[0].shiftAmount = 2;
-                disasm->operand[0].shiftMode = DISASM_SHIFT_LSL;
+                disasm->operand[0].isBranchDestination = 1;
                 disasm->instruction.pcRegisterValue = disasm->virtualAddr + 8;
+                disasm->instruction.addressValue = (Address) insn->detail->mips.operands[0].imm;
                 disasm->instruction.condition = DISASM_INST_COND_AL;
                 disasm->instruction.branchType = DISASM_BRANCH_CALL;
                 disasm->implicitlyWrittenRegisters[0] |= REG_MASK(MIPS_REG_RA);
@@ -1200,23 +1203,13 @@ static inline int regIndexFromType(uint64_t type) {
 
     if (operand->type & DISASM_OPERAND_CONSTANT_TYPE) {
         if (operand->isBranchDestination) {
-            NSString *symbol = [_file nameForVirtualAddress:disasm->instruction.addressValue];
-            if (symbol) {
-                [line appendName:symbol atAddress:disasm->instruction.addressValue];
-            } else {
-                NSObject <HPProcedure> *proc = [file procedureAt:disasm->virtualAddr];
-                if (proc && [proc hasLocalLabelAtAddress:disasm->instruction.addressValue]) {
-                    NSString *label = [proc localLabelAtAddress:disasm->instruction.addressValue];
-                    [line appendLocalName:label
-                                atAddress:(Address) disasm->instruction.addressValue];
-                } else {
-                    [line appendRawString:@"#"];
-                    [line append:[file formatNumber:(uint64_t) operand->immediateValue
-                                                 at:disasm->virtualAddr
-                                        usingFormat:format
-                                         andBitSize:32]];
-                }
+            if (format == Format_Default) {
+                format = Format_Address;
             }
+            [line append:[file formatNumber:disasm->instruction.addressValue
+                                         at:disasm->virtualAddr
+                                usingFormat:format
+                                 andBitSize:32]];
         } else {
             if (format == Format_Default) {
                 // small values in decimal
