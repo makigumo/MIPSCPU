@@ -634,6 +634,17 @@ static inline void populateITypeLabelZero(DisasmStruct *disasm, struct insn *pIn
     disasm->instruction.addressValue = disasm->virtualAddr + 4 + (disasm->operand[1].immediateValue << 2);
 }
 
+static inline void populateITypeLabelZeroZero(DisasmStruct *disasm, struct insn *pInsn, const char *const name) {
+    strcpy(disasm->instruction.mnemonic, name);
+
+    disasm->operand[0].type = DISASM_OPERAND_CONSTANT_TYPE | DISASM_OPERAND_RELATIVE;
+    disasm->operand[0].immediateValue = (int16_t) pInsn->itype.imm;
+    disasm->operand[0].size = 16;
+    disasm->operand[0].accessMode = DISASM_ACCESS_READ;
+    disasm->operand[0].isBranchDestination = 1;
+    disasm->instruction.addressValue = disasm->virtualAddr + 4 + (disasm->operand[0].immediateValue << 2);
+}
+
 static inline void populateITypeRegLabel(DisasmStruct *disasm, struct insn *pInsn, const char *const name) {
     strcpy(disasm->instruction.mnemonic, name);
     populateRegOperand(&disasm->operand[0], pInsn->itype.rs, DISASM_ACCESS_READ);

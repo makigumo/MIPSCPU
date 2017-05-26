@@ -314,7 +314,11 @@ static inline void clear_operands_from(DisasmStruct *disasm, int index) {
                         break;
                     case BEQ:
                         if (in->itype.rt == ZERO) {
-                            populateITypeLabelZero(disasm, in, "beqz");
+                            if (in->itype.rs == ZERO) {
+                                populateITypeLabelZeroZero(disasm, in, "b");
+                            } else {
+                                populateITypeLabelZero(disasm, in, "beqz");
+                            }
                         } else {
                             populateITypeLabel(disasm, in, "beq");
                         }
