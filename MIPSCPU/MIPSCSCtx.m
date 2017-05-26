@@ -676,11 +676,12 @@ static inline RegClass capstoneRegisterToRegClass(mips_reg reg) {
                 disasm->implicitlyWrittenRegisters[0] |= REG_MASK(MIPS_REG_RA);
                 break;
             case MIPS_INS_BALC: //  Branch and Link, Compact
-                disasm->operand[0].accessMode = DISASM_ACCESS_READ;
-                disasm->operand[0].size = 26;
-                disasm->operand[0].shiftAmount = 2;
-                disasm->operand[0].shiftMode = DISASM_SHIFT_LSL;
-                disasm->instruction.pcRegisterValue = disasm->virtualAddr + 4;
+                disasm->operand[0].type = DISASM_OPERAND_CONSTANT_TYPE;
+                disasm->operand[0].immediateValue = (Address) insn->detail->mips.operands[0].imm;
+                disasm->operand[0].size = 32;
+                disasm->operand[0].isBranchDestination = 1;
+                disasm->instruction.pcRegisterValue = disasm->virtualAddr + 8;
+                disasm->instruction.addressValue = (Address) insn->detail->mips.operands[0].imm;
                 disasm->instruction.condition = DISASM_INST_COND_AL;
                 disasm->instruction.branchType = DISASM_BRANCH_CALL;
                 disasm->implicitlyWrittenRegisters[0] |= REG_MASK(MIPS_REG_RA);
