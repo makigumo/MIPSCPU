@@ -459,16 +459,17 @@ static inline void clear_operands_from(DisasmStruct *disasm, int index) {
     // fetch previous instruction
     uint32_t prev = [_file readUInt32AtVirtualAddress:disasm->virtualAddr - 4];
     struct insn *prevIn = calloc(1, sizeof(struct insn));
-    getInsn(prev, prevIn);
-    if (prevIn && prevIn->opcode == LUI &&
-            prevIn->itype.rt == in->itype.rs) {
+    if (prevIn) {
+        getInsn(prev, prevIn);
+        if (prevIn->opcode == LUI && prevIn->itype.rt == in->itype.rs) {
 
-        disasm->instruction.addressValue = (op == BUILDOP_ADD) ?
-                (uint32_t) ((prevIn->itype.imm << 16) + ((int16_t) in->itype.imm)) :
-                (uint32_t) ((prevIn->itype.imm << 16) | in->itype.imm);
-        NSObject <HPSegment> *segment = [_file segmentForVirtualAddress:disasm->virtualAddr];
-        [segment addReferencesToAddress:(uint32_t) disasm->instruction.addressValue
-                            fromAddress:disasm->virtualAddr];
+            disasm->instruction.addressValue = (op == BUILDOP_ADD) ?
+                    (uint32_t) ((prevIn->itype.imm << 16) + ((int16_t) in->itype.imm)) :
+                    (uint32_t) ((prevIn->itype.imm << 16) | in->itype.imm);
+            NSObject <HPSegment> *segment = [_file segmentForVirtualAddress:disasm->virtualAddr];
+            [segment addReferencesToAddress:(uint32_t) disasm->instruction.addressValue
+                                fromAddress:disasm->virtualAddr];
+        }
         free(prevIn);
     }
 }
