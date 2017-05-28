@@ -459,7 +459,7 @@ static inline void populateRType(DisasmStruct *disasm, struct insn *pInsn) {
         case JALR:
             strcpy(disasm->instruction.mnemonic, "jalr");
             if (pInsn->rtype.rd == RA) {
-                populateRegOperand(&disasm->operand[1], pInsn->rtype.rs, DISASM_ACCESS_WRITE);
+                populateRegOperand(&disasm->operand[0], pInsn->rtype.rs, DISASM_ACCESS_WRITE);
             } else {
                 populateRegOperand(&disasm->operand[0], pInsn->rtype.rd, DISASM_ACCESS_WRITE);
                 populateRegOperand(&disasm->operand[1], pInsn->rtype.rs, DISASM_ACCESS_READ);
