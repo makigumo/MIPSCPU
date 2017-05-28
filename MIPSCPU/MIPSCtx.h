@@ -456,11 +456,18 @@ static inline void populateRType(DisasmStruct *disasm, struct insn *pInsn) {
             strcpy(disasm->instruction.mnemonic, "sub");
             break;
         case SUBU:
-            strcpy(disasm->instruction.mnemonic, "subu");
-            if (pInsn->rtype.rd == pInsn->rtype.rs) {
+            if (pInsn->rtype.rs == ZERO) {
+                strcpy(disasm->instruction.mnemonic, "negu");
                 populateRegOperand(&disasm->operand[0], pInsn->rtype.rd, DISASM_ACCESS_WRITE);
                 populateRegOperand(&disasm->operand[1], pInsn->rtype.rt, DISASM_ACCESS_READ);
                 return;
+            } else {
+                strcpy(disasm->instruction.mnemonic, "subu");
+                if (pInsn->rtype.rd == pInsn->rtype.rs) {
+                    populateRegOperand(&disasm->operand[0], pInsn->rtype.rd, DISASM_ACCESS_WRITE);
+                    populateRegOperand(&disasm->operand[1], pInsn->rtype.rt, DISASM_ACCESS_READ);
+                    return;
+                }
             }
             break;
         case XOR:
