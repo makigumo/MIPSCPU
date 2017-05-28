@@ -578,7 +578,7 @@ static inline void populateITypeS(DisasmStruct *disasm, struct insn *pInsn, cons
     populateRegOperand(&disasm->operand[0], pInsn->itype.rt, DISASM_ACCESS_WRITE);
 
     if (pInsn->itype.rt != pInsn->itype.rs) {
-        populateRegOperand(&disasm->operand[0], pInsn->itype.rs, DISASM_ACCESS_READ);
+        populateRegOperand(&disasm->operand[1], pInsn->itype.rs, DISASM_ACCESS_READ);
 
         disasm->operand[2].type = DISASM_OPERAND_CONSTANT_TYPE | DISASM_OPERAND_RELATIVE;
         disasm->operand[2].immediateValue = pInsn->itype.imm;
