@@ -384,13 +384,34 @@ static inline void populateRType(DisasmStruct *disasm, struct insn *pInsn) {
             return;
         case SLLV:
             strcpy(disasm->instruction.mnemonic, "sllv");
-            break;
+            populateRegOperand(&disasm->operand[0], pInsn->rtype.rd, DISASM_ACCESS_WRITE);
+            if (pInsn->rtype.rd == pInsn->rtype.rt) {
+                populateRegOperand(&disasm->operand[1], pInsn->rtype.rs, DISASM_ACCESS_READ);
+            } else {
+                populateRegOperand(&disasm->operand[1], pInsn->rtype.rt, DISASM_ACCESS_READ);
+                populateRegOperand(&disasm->operand[2], pInsn->rtype.rs, DISASM_ACCESS_READ);
+            }
+            return;
         case SRLV:
             strcpy(disasm->instruction.mnemonic, "srlv");
-            break;
+            populateRegOperand(&disasm->operand[0], pInsn->rtype.rd, DISASM_ACCESS_WRITE);
+            if (pInsn->rtype.rd == pInsn->rtype.rt) {
+                populateRegOperand(&disasm->operand[1], pInsn->rtype.rs, DISASM_ACCESS_READ);
+            } else {
+                populateRegOperand(&disasm->operand[1], pInsn->rtype.rt, DISASM_ACCESS_READ);
+                populateRegOperand(&disasm->operand[2], pInsn->rtype.rs, DISASM_ACCESS_READ);
+            }
+            return;
         case SRAV:
             strcpy(disasm->instruction.mnemonic, "srav");
-            break;
+            populateRegOperand(&disasm->operand[0], pInsn->rtype.rd, DISASM_ACCESS_WRITE);
+            if (pInsn->rtype.rd == pInsn->rtype.rt) {
+                populateRegOperand(&disasm->operand[1], pInsn->rtype.rs, DISASM_ACCESS_READ);
+            } else {
+                populateRegOperand(&disasm->operand[1], pInsn->rtype.rt, DISASM_ACCESS_READ);
+                populateRegOperand(&disasm->operand[2], pInsn->rtype.rs, DISASM_ACCESS_READ);
+            }
+            return;
         case MOVN:
             strcpy(disasm->instruction.mnemonic, "movn");
             break;
