@@ -482,6 +482,9 @@ static inline void populateRType(DisasmStruct *disasm, struct insn *pInsn) {
         case JR:
             strcpy(disasm->instruction.mnemonic, "jr");
             populateRegOperand(&disasm->operand[0], pInsn->rtype.rs, DISASM_ACCESS_WRITE);
+            if (pInsn->rtype.rs == RA) {
+                disasm->instruction.branchType = DISASM_BRANCH_RET;
+            }
             disasm->instruction.branchType = DISASM_BRANCH_JMP;
             return;
         case JALR:
