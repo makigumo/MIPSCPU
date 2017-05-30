@@ -76,6 +76,7 @@ target_compile_options(
     -pedantic
     -Wall
     -Wextra
+    -Wno-gnu-binary-literal
     -fPIC
     -fobjc-arc
     -fobjc-nonfragile-abi
