@@ -1,0 +1,5 @@
+{
+  NSExecutable = "${PRODUCT_NAME}";
+  NSMainNibFile = "";
+  NSPrincipalClass = "";
+}

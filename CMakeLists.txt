@@ -110,8 +110,9 @@ else(UNIX)
         TARGETS ${PRODUCT_NAME}
         LIBRARY DESTINATION "${HOPPER_PLUGIN_CPU_DIRNAME}/${PRODUCT_NAME}.${HOPPER_PLUGIN_CPU_EXTENSION}"
     )
+    configure_file(Info-gnustep.plist.in Resources/Info-gnustep.plist)
     install(
-        DIRECTORY Resources
+        DIRECTORY ${CMAKE_CURRENT_BINARY_DIR}/Resources
         DESTINATION "${HOPPER_PLUGIN_CPU_DIRNAME}/${PRODUCT_NAME}.${HOPPER_PLUGIN_CPU_EXTENSION}"
     )
 
