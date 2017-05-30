@@ -37,7 +37,8 @@
         } else if ([file.cpuSubFamily isEqualToString:@"micro32r6"]) {
             mode += CS_MODE_MIPS32R6;
         }
-        if (cs_open(CS_ARCH_MIPS, mode + CS_MODE_LITTLE_ENDIAN, &_handle) != CS_ERR_OK) {
+        cs_mode endianess = (_cpu.endianess == CPUEndianess_Little) ? CS_MODE_LITTLE_ENDIAN : CS_MODE_BIG_ENDIAN;
+        if (cs_open(CS_ARCH_MIPS, mode + endianess, &_handle) != CS_ERR_OK) {
             return nil;
         }
         cs_option(_handle, CS_OPT_DETAIL, CS_OPT_ON);
@@ -558,7 +559,11 @@ static inline RegClass capstoneRegisterToRegClass(mips_reg reg) {
                     break;
                 case MIPS_INS_JR:
                     disasm->instruction.condition = DISASM_INST_COND_AL;
-                    disasm->instruction.branchType = DISASM_BRANCH_RET;
+                    if (insn->detail->mips.operands[0].reg == MIPS_REG_RA) {
+                        disasm->instruction.branchType = DISASM_BRANCH_RET;
+                    } else {
+                        disasm->instruction.branchType = DISASM_BRANCH_JMP;
+                    }
                     break;
                 case MIPS_INS_BC1F:
                     // TODO
