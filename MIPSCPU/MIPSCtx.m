@@ -469,6 +469,12 @@ static inline void clear_operands_from(DisasmStruct *disasm, int index) {
             NSObject <HPSegment> *segment = [_file segmentForVirtualAddress:disasm->virtualAddr];
             [segment addReferencesToAddress:(uint32_t) disasm->instruction.addressValue
                                 fromAddress:disasm->virtualAddr];
+            [_file setInlineComment:[NSString stringWithFormat:@"%@ = %08x",
+                                                               [self getRegNameFromOperand:disasm->operand
+                                                                            andSyntaxIndex:disasm->syntaxIndex],
+                                                               (uint32_t) disasm->instruction.addressValue]
+                   atVirtualAddress:disasm->virtualAddr
+                             reason:CCReason_Automatic];
         }
         free(prevIn);
     }
@@ -522,6 +528,20 @@ static inline RegClass regClassFromType(const uint64_t type) {
 
 static inline int regIndexFromType(const uint64_t type) {
     return firstBitIndex(DISASM_GET_REGISTER_INDEX_MASK(type));
+}
+
+- (NSString *)getRegNameFromOperand:(DisasmOperand *)operand
+                     andSyntaxIndex:(NSUInteger)syntaxIndex {
+    RegClass regCls = regClassFromType(operand->type);
+    int regIdx = regIndexFromType(operand->type);
+    if (regIdx < 0) {
+        return @"invalid_reg";
+    }
+    return [_cpu registerIndexToString:regIdx
+                               ofClass:regCls
+                           withBitSize:32
+                              position:operand->position
+                        andSyntaxIndex:syntaxIndex];
 }
 
 - (NSObject <HPASMLine> *)buildMnemonicString:(DisasmStruct *)disasm
