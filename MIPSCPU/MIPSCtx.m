@@ -640,6 +640,9 @@ static inline int regIndexFromType(const uint64_t type) {
                         }
                     }
                 }
+                if (operand->type & DISASM_OPERAND_RELATIVE) {
+                    format |= Format_Signed;
+                }
                 if (!varNameAdded) {
                     [line append:[file formatNumber:(uint64_t) operand->memory.displacement
                                                  at:disasm->virtualAddr

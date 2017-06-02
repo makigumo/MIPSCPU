@@ -703,7 +703,7 @@ static inline void populateITypeMem(DisasmStruct *disasm, struct insn *pInsn, co
     disasm->operand[0].type = DISASM_OPERAND_REGISTER_TYPE;
     disasm->operand[0].type |= getRegMask(pInsn->itype.rt);
 
-    disasm->operand[1].type = DISASM_OPERAND_MEMORY_TYPE;
+    disasm->operand[1].type = DISASM_OPERAND_MEMORY_TYPE | DISASM_OPERAND_RELATIVE;
     disasm->operand[1].type |= getRegMask(pInsn->itype.rs);
     disasm->operand[1].memory.baseRegistersMask = getRegMask(pInsn->itype.rs);
     disasm->operand[1].memory.displacement = (int16_t) pInsn->itype.imm;
