@@ -55,7 +55,10 @@ enum OpType getInsnType(enum Opcode opcode) {
     return INVALID;
 }
 
-void getInsn(uint32_t bytes, struct insn *ret) {
+struct insn *getInsn(uint32_t bytes) {
+    struct insn *ret = calloc(1, sizeof(struct insn));
+    if (!ret) return nil;
+
     ret->opcode = (enum Opcode) (bytes >> 26);
     ret->type = getInsnType(ret->opcode);
     switch (ret->type) {
@@ -93,9 +96,10 @@ void getInsn(uint32_t bytes, struct insn *ret) {
             ret->jtype.imm = (uint32_t) (bytes & 0x07ffffff);
             break;
         default:
-            return;
+            return ret;
     }
     setDelaySlot(ret);
+    return ret;
 }
 
 @implementation MIPSCtx {
@@ -220,11 +224,10 @@ static inline void clear_operands_from(DisasmStruct *disasm, int index) {
     disasm->instruction.pcRegisterValue = disasm->virtualAddr + 4;
 
     uint32_t bytes = _MyOSReadInt32(disasm->bytes, 0);
-    struct insn *in = calloc(1, sizeof(struct insn));
+    struct insn *in = getInsn(bytes);
     if (in == NULL) {
         return DISASM_UNKNOWN_OPCODE;
     }
-    getInsn(bytes, in);
 
     if ([_file userRequestedSyntaxIndex] == 1 /* pseudo instructions */) {
 
@@ -299,7 +302,7 @@ static inline void clear_operands_from(DisasmStruct *disasm, int index) {
                             populateITypeSZero(disasm, in, "li");
                         } else {
                             populateITypeS(disasm, in, "addiu");
-                            [self buildAddress:disasm withInsn:in andOp:BUILDOP_ADD];
+                            [self calculateAddress:disasm withInsn:in andOp:BUILDOP_ADD];
                         }
                         break;
                     case ANDI:
@@ -307,7 +310,7 @@ static inline void clear_operands_from(DisasmStruct *disasm, int index) {
                         break;
                     case ORI:
                         populateITypeU(disasm, in, "ori");
-                        [self buildAddress:disasm withInsn:in andOp:BUILDOP_OR];
+                        [self calculateAddress:disasm withInsn:in andOp:BUILDOP_OR];
                         break;
                     case XORI:
                         populateITypeU(disasm, in, "xori");
@@ -386,7 +389,7 @@ static inline void clear_operands_from(DisasmStruct *disasm, int index) {
                         break;
                     case LW:
                         populateITypeMemRead(disasm, in, "lw");
-                        [self buildAddress:disasm withInsn:in andOp:BUILDOP_ADD];
+                        [self calculateAddress:disasm withInsn:in andOp:BUILDOP_ADD];
                         break;
                     case LBU:
                         populateITypeMemRead(disasm, in, "lbu");
@@ -448,36 +451,57 @@ static inline void clear_operands_from(DisasmStruct *disasm, int index) {
 }
 
 /**
- * Build an address from lui, addiu or lui, ori instructions
+ * Calculate an address from lui, addiu or lui, ori instructions
  *
  * @param disasm current DisasmStruct
  * @param in current instruction
+ * @param op how to calculate the address
  */
-- (void)buildAddress:(DisasmStruct *)disasm
-            withInsn:(const struct insn *)in
-               andOp:(const enum BuildOp)op {
-    // fetch previous instruction
-    uint32_t prev = [_file readUInt32AtVirtualAddress:disasm->virtualAddr - 4];
-    struct insn *prevIn = calloc(1, sizeof(struct insn));
-    if (prevIn) {
-        getInsn(prev, prevIn);
-        if (prevIn->opcode == LUI && prevIn->itype.rt == in->itype.rs) {
-
-            disasm->instruction.addressValue = (op == BUILDOP_ADD) ?
-                    (uint32_t) ((prevIn->itype.imm << 16) + ((int16_t) in->itype.imm)) :
-                    (uint32_t) ((prevIn->itype.imm << 16) | in->itype.imm);
-            NSObject <HPSegment> *segment = [_file segmentForVirtualAddress:disasm->virtualAddr];
-            [segment addReferencesToAddress:(uint32_t) disasm->instruction.addressValue
-                                fromAddress:disasm->virtualAddr];
-            [_file setInlineComment:[NSString stringWithFormat:@"%@ = %08x",
-                                                               [self getRegNameFromOperand:disasm->operand
-                                                                            andSyntaxIndex:disasm->syntaxIndex],
-                                                               (uint32_t) disasm->instruction.addressValue]
-                   atVirtualAddress:disasm->virtualAddr
-                             reason:CCReason_Automatic];
+- (void)calculateAddress:(DisasmStruct *)disasm
+                withInsn:(const struct insn *)in
+                   andOp:(const enum BuildOp)op {
+    const uint8_t STEPS_BACK = 2;
+    for (int stepBack = 1; stepBack <= STEPS_BACK; stepBack++) {
+        // fetch previous instruction
+        uint32_t prev = [_file readUInt32AtVirtualAddress:disasm->virtualAddr - (4 * stepBack)];
+        struct insn *prevIn = getInsn(prev);
+        if (prevIn) {
+            if ([self calculateAddress:disasm withPrev:prevIn andInsn:in andOp:op]) {
+                break;
+            }
+            free(prevIn);
         }
-        free(prevIn);
     }
+}
+
+/**
+ * Calculate an address from lui, addiu or lui, ori instructions
+ *
+ * @param disasm current DisasmStruct
+ * @param prev a previous instruction
+ * @param in current instruction
+ * @param op how to calculate the address
+ */
+- (BOOL)calculateAddress:(DisasmStruct *)disasm
+                withPrev:(const struct insn *)prev
+                 andInsn:(const struct insn *)in
+                   andOp:(const enum BuildOp)op {
+    if (prev->opcode == LUI && prev->itype.rt == in->itype.rs) {
+        disasm->instruction.addressValue = (op == BUILDOP_ADD) ?
+                (uint32_t) ((prev->itype.imm << 16) + ((int16_t) in->itype.imm)) :
+                (uint32_t) ((prev->itype.imm << 16) | in->itype.imm);
+        NSObject <HPSegment> *segment = [_file segmentForVirtualAddress:disasm->virtualAddr];
+        [segment addReferencesToAddress:(uint32_t) disasm->instruction.addressValue
+                            fromAddress:disasm->virtualAddr];
+        [_file setInlineComment:[NSString stringWithFormat:@"%@ = %08x",
+                                                           [self getRegNameFromOperand:disasm->operand
+                                                                        andSyntaxIndex:disasm->syntaxIndex],
+                                                           (uint32_t) disasm->instruction.addressValue]
+               atVirtualAddress:disasm->virtualAddr
+                         reason:CCReason_Automatic];
+        return YES;
+    }
+    return NO;
 }
 
 - (BOOL)instructionHaltsExecutionFlow:(DisasmStruct *)disasm {
