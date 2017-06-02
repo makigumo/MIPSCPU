@@ -621,8 +621,6 @@ static inline int regIndexFromType(const uint64_t type) {
             if (format == Format_Default) {
                 if ([reg_name isEqualToString:@"sp"]) {
                     format = Format_StackVariable;
-                } else {
-                    format = Format_Offset;
                 }
             }
 
