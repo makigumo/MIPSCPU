@@ -642,15 +642,10 @@ static inline int regIndexFromType(const uint64_t type) {
                                                     position:operand->position
                                               andSyntaxIndex:disasm->syntaxIndex];
 
-            if (format == Format_Default) {
-                if ([reg_name isEqualToString:@"sp"]) {
-                    format = Format_StackVariable;
-                }
-            }
-
-            if (operand->memory.displacement != 0) {
-                BOOL varNameAdded = NO;
-                if (format & Format_StackVariable) {
+            BOOL varNameAdded = NO;
+            if ([reg_name isEqualToString:@"sp"]) {
+                NSLog(@"%lx", (unsigned long) format);
+                if (((format & Format_Default) == Format_Default) || (format & Format_StackVariable)) {
                     NSObject <HPProcedure> *proc = [file procedureAt:disasm->virtualAddr];
                     if (proc) {
                         NSString *varName = [proc resolvedVariableNameForDisplacement:operand->memory.displacement
@@ -662,15 +657,16 @@ static inline int regIndexFromType(const uint64_t type) {
                         }
                     }
                 }
-                if (operand->type & DISASM_OPERAND_RELATIVE) {
-                    format |= Format_Signed;
-                }
-                if (!varNameAdded) {
-                    [line append:[file formatNumber:(uint64_t) operand->memory.displacement
-                                                 at:disasm->virtualAddr
-                                        usingFormat:format
-                                         andBitSize:operand->size]];
-                }
+            }
+
+            if (operand->type & DISASM_OPERAND_RELATIVE) {
+                format |= Format_Signed;
+            }
+            if (!varNameAdded) {
+                [line append:[file formatNumber:(uint64_t) operand->memory.displacement
+                                             at:disasm->virtualAddr
+                                    usingFormat:format
+                                     andBitSize:operand->size]];
             }
 
             [line appendRawString:@"("];
