@@ -580,7 +580,7 @@ static inline void populateJType(DisasmStruct *disasm, struct insn *pInsn) {
  * @param name
  */
 static inline void populateITypeU(DisasmStruct *disasm, struct insn *pInsn, const char *const name) {
-    strcpy(disasm->instruction.mnemonic, name);
+    strncpy(disasm->instruction.mnemonic, name, sizeof(disasm->instruction.mnemonic));
     populateRegOperand(&disasm->operand[0], pInsn->rtype.rt, DISASM_ACCESS_WRITE);
 
     if (pInsn->itype.rt != pInsn->itype.rs) {
@@ -605,7 +605,7 @@ static inline void populateITypeU(DisasmStruct *disasm, struct insn *pInsn, cons
  * @param name
  */
 static inline void populateITypeS(DisasmStruct *disasm, struct insn *pInsn, const char *const name) {
-    strcpy(disasm->instruction.mnemonic, name);
+    strncpy(disasm->instruction.mnemonic, name, sizeof(disasm->instruction.mnemonic));
     populateRegOperand(&disasm->operand[0], pInsn->itype.rt, DISASM_ACCESS_WRITE);
 
     if (pInsn->itype.rt != pInsn->itype.rs) {
@@ -630,7 +630,7 @@ static inline void populateITypeS(DisasmStruct *disasm, struct insn *pInsn, cons
  * @param name
  */
 static inline void populateITypeSZero(DisasmStruct *disasm, struct insn *pInsn, const char *const name) {
-    strcpy(disasm->instruction.mnemonic, name);
+    strncpy(disasm->instruction.mnemonic, name, sizeof(disasm->instruction.mnemonic));
     populateRegOperand(&disasm->operand[0], pInsn->itype.rt, DISASM_ACCESS_WRITE);
 
     disasm->operand[1].type = DISASM_OPERAND_CONSTANT_TYPE | DISASM_OPERAND_RELATIVE;
@@ -640,7 +640,7 @@ static inline void populateITypeSZero(DisasmStruct *disasm, struct insn *pInsn, 
 }
 
 static inline void populateITypeLabel(DisasmStruct *disasm, struct insn *pInsn, const char *const name) {
-    strcpy(disasm->instruction.mnemonic, name);
+    strncpy(disasm->instruction.mnemonic, name, sizeof(disasm->instruction.mnemonic));
     populateRegOperand(&disasm->operand[0], pInsn->itype.rt, DISASM_ACCESS_READ);
 
     populateRegOperand(&disasm->operand[1], pInsn->itype.rs, DISASM_ACCESS_READ);
@@ -654,7 +654,7 @@ static inline void populateITypeLabel(DisasmStruct *disasm, struct insn *pInsn, 
 }
 
 static inline void populateITypeLabelZero(DisasmStruct *disasm, struct insn *pInsn, const char *const name) {
-    strcpy(disasm->instruction.mnemonic, name);
+    strncpy(disasm->instruction.mnemonic, name, sizeof(disasm->instruction.mnemonic));
     populateRegOperand(&disasm->operand[0], pInsn->itype.rs, DISASM_ACCESS_READ);
 
     disasm->operand[1].type = DISASM_OPERAND_CONSTANT_TYPE | DISASM_OPERAND_RELATIVE;
@@ -666,7 +666,7 @@ static inline void populateITypeLabelZero(DisasmStruct *disasm, struct insn *pIn
 }
 
 static inline void populateITypeLabelZeroZero(DisasmStruct *disasm, struct insn *pInsn, const char *const name) {
-    strcpy(disasm->instruction.mnemonic, name);
+    strncpy(disasm->instruction.mnemonic, name, sizeof(disasm->instruction.mnemonic));
 
     disasm->operand[0].type = DISASM_OPERAND_CONSTANT_TYPE | DISASM_OPERAND_RELATIVE;
     disasm->operand[0].immediateValue = (int16_t) pInsn->itype.imm;
@@ -677,7 +677,7 @@ static inline void populateITypeLabelZeroZero(DisasmStruct *disasm, struct insn 
 }
 
 static inline void populateITypeRegLabel(DisasmStruct *disasm, struct insn *pInsn, const char *const name) {
-    strcpy(disasm->instruction.mnemonic, name);
+    strncpy(disasm->instruction.mnemonic, name, sizeof(disasm->instruction.mnemonic));
     populateRegOperand(&disasm->operand[0], pInsn->itype.rs, DISASM_ACCESS_READ);
 
     disasm->operand[1].type = DISASM_OPERAND_CONSTANT_TYPE | DISASM_OPERAND_RELATIVE;
@@ -689,7 +689,7 @@ static inline void populateITypeRegLabel(DisasmStruct *disasm, struct insn *pIns
 }
 
 static inline void populateITypeImm(DisasmStruct *disasm, struct insn *pInsn, const char *const name) {
-    strcpy(disasm->instruction.mnemonic, name);
+    strncpy(disasm->instruction.mnemonic, name, sizeof(disasm->instruction.mnemonic));
     populateRegOperand(&disasm->operand[0], pInsn->itype.rt, DISASM_ACCESS_WRITE);
 
     disasm->operand[1].type = DISASM_OPERAND_CONSTANT_TYPE;
@@ -699,7 +699,7 @@ static inline void populateITypeImm(DisasmStruct *disasm, struct insn *pInsn, co
 }
 
 static inline void populateITypeMem(DisasmStruct *disasm, struct insn *pInsn, const char *const name) {
-    strcpy(disasm->instruction.mnemonic, name);
+    strncpy(disasm->instruction.mnemonic, name, sizeof(disasm->instruction.mnemonic));
     disasm->operand[0].type = DISASM_OPERAND_REGISTER_TYPE;
     disasm->operand[0].type |= getRegMask(pInsn->itype.rt);
 
@@ -723,7 +723,7 @@ static inline void populateITypeMemWrite(DisasmStruct *disasm, struct insn *pIns
 }
 
 static inline void populateFPUITypeMem(DisasmStruct *disasm, struct insn *pInsn, const char *const name) {
-    strcpy(disasm->instruction.mnemonic, name);
+    strncpy(disasm->instruction.mnemonic, name, sizeof(disasm->instruction.mnemonic));
     disasm->operand[0].type = DISASM_OPERAND_REGISTER_TYPE;
     disasm->operand[0].type |= getFpuRegMask((enum FpuReg) pInsn->itype.rt);
 
