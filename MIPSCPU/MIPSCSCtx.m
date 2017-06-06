@@ -180,6 +180,7 @@ static inline uint32_t capstoneRegisterToRegIndex(mips_reg reg) {
             // DSP
             0, 1, 2, 3,
             4, 5, 6, 7,
+            8, 9, 10,
 
             // ACC = HI, LO
             0, 1, 2, 3,
@@ -259,6 +260,7 @@ static inline RegClass capstoneRegisterToRegClass(mips_reg reg) {
             // DSP
             (RegClass) RegClass_MIPS_DSP, (RegClass) RegClass_MIPS_DSP, (RegClass) RegClass_MIPS_DSP, (RegClass) RegClass_MIPS_DSP,
             (RegClass) RegClass_MIPS_DSP, (RegClass) RegClass_MIPS_DSP, (RegClass) RegClass_MIPS_DSP, (RegClass) RegClass_MIPS_DSP,
+            (RegClass) RegClass_MIPS_DSP, (RegClass) RegClass_MIPS_DSP, (RegClass) RegClass_MIPS_DSP,
 
             // ACC = HI, LO
             (RegClass) RegClass_MIPS_ACC, (RegClass) RegClass_MIPS_ACC, (RegClass) RegClass_MIPS_ACC, (RegClass) RegClass_MIPS_ACC,
