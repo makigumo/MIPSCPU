@@ -325,19 +325,17 @@ static inline RegClass capstoneRegisterToRegClass(mips_reg reg) {
     disasm->instruction.branchType = DISASM_BRANCH_NONE;
 
     if (mode == 1 /* pseudo instructions */) {
-        if (count > 0) {
-            // addiu xx, zero, yy -> li xx, yy
-            if (insn[0].id == MIPS_INS_ADDIU && OPERAND(insn[0], 1).type == MIPS_OP_REG && OPERAND(insn[0], 1).reg == MIPS_REG_ZERO) {
-                strcpy(disasm->instruction.mnemonic, "li");
-                disasm->operand[0].type = DISASM_OPERAND_REGISTER_TYPE;
-                disasm->operand[0].type |= REG_MASK(OPERAND(insn[0], 0).reg);
-                disasm->operand[0].accessMode = DISASM_ACCESS_WRITE;
-                disasm->operand[1].type = DISASM_OPERAND_CONSTANT_TYPE;
-                disasm->operand[1].immediateValue = OPERAND(insn[0], 2).imm;
-                disasm->operand[1].accessMode = DISASM_ACCESS_READ;
-                isPseudoIns = YES;
-                pseudoInsSize = 4;
-            }
+        // addiu xx, zero, yy -> li xx, yy
+        if (insn[0].id == MIPS_INS_ADDIU && OPERAND(insn[0], 1).type == MIPS_OP_REG && OPERAND(insn[0], 1).reg == MIPS_REG_ZERO) {
+            strcpy(disasm->instruction.mnemonic, "li");
+            disasm->operand[0].type = DISASM_OPERAND_REGISTER_TYPE;
+            disasm->operand[0].type |= REG_MASK(OPERAND(insn[0], 0).reg);
+            disasm->operand[0].accessMode = DISASM_ACCESS_WRITE;
+            disasm->operand[1].type = DISASM_OPERAND_CONSTANT_TYPE;
+            disasm->operand[1].immediateValue = OPERAND(insn[0], 2).imm;
+            disasm->operand[1].accessMode = DISASM_ACCESS_READ;
+            isPseudoIns = YES;
+            pseudoInsSize = 4;
         } else if (count > 1) {
             // pseudo instruction
             // load immediate
