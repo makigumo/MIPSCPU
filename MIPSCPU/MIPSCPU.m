@@ -31,7 +31,9 @@
 
 - (NSObject <CPUContext> *)buildCPUContextForFile:(NSObject <HPDisassembledFile> *)file {
     if ([file.cpuFamily isEqualToString:@"mips"]) {
-        if ([file.cpuSubFamily isEqualToString:@"mips32"]) {
+        if ([file.cpuSubFamily isEqualToString:@"mips32"] ||
+                [file.cpuSubFamily isEqualToString:@"mips32r2"] ||
+                [file.cpuSubFamily isEqualToString:@"mips32r6"]) {
             return [[MIPSCtx alloc] initWithCPU:self andFile:file];
         }
     }
@@ -83,7 +85,11 @@
                 //@"mips64"
         ];
     if ([family isEqualToString:@"mips"]) {
-        return @[@"mips32"];
+        return @[
+                @"mips32",
+                @"mips32r2",
+                @"mips32r6",
+        ];
     }
     return nil;
 }
@@ -98,6 +104,8 @@
     }
     if ([family isEqualToString:@"mips"]) {
         if ([subFamily isEqualToString:@"mips32"]) return 32;
+        if ([subFamily isEqualToString:@"mips32r2"]) return 32;
+        if ([subFamily isEqualToString:@"mips32r6"]) return 32;
     }
     return 0;
 }
