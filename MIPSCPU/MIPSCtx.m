@@ -218,7 +218,7 @@ static inline void clear_operands_from(DisasmStruct *disasm, int index) {
 
     int len = DISASM_UNKNOWN_OPCODE;
     BOOL isPseudoIns = NO;
-    size_t pseudoInsSize = 0;
+    int pseudoInsSize = 0;
     disasm->instruction.addressValue = 0;
     disasm->instruction.branchType = DISASM_BRANCH_NONE;
     disasm->instruction.pcRegisterValue = disasm->virtualAddr + 4;
@@ -230,8 +230,29 @@ static inline void clear_operands_from(DisasmStruct *disasm, int index) {
     }
 
     if ([_file userRequestedSyntaxIndex] == 1 /* pseudo instructions */) {
-
-    } else {
+        // lui x, y; addiu x, z = la x, y << 16 + z
+        if (in->opcode == LUI) {
+            uint32_t nextbytes = _MyOSReadInt32(disasm->bytes, 4);
+            struct insn *nextin = getInsn(nextbytes);
+            if (nextin) {
+                if (nextin->opcode == ADDIU && in->itype.rt == nextin->itype.rt) {
+                    strcpy(disasm->instruction.mnemonic, "la");
+                    populateRegOperand(&disasm->operand[0], in->rtype.rt, DISASM_ACCESS_WRITE);
+                    disasm->operand[1].type = DISASM_OPERAND_ABSOLUTE;
+                    disasm->operand[1].immediateValue = (uint32_t) ((in->itype.imm
+                            << 16) + ((int16_t) nextin->itype.imm));
+                    disasm->operand[1].size = 32;
+                    disasm->operand[1].accessMode = DISASM_ACCESS_READ;
+                    disasm->instruction.addressValue = (uint32_t) ((in->itype.imm
+                            << 16) + ((int16_t) nextin->itype.imm));
+                    isPseudoIns = YES;
+                    pseudoInsSize = 8;
+                }
+                free(nextin);
+            }
+        }
+    }
+    if (!isPseudoIns) {
         switch (in->type) {
 
             case RTYPE:
@@ -446,6 +467,9 @@ static inline void clear_operands_from(DisasmStruct *disasm, int index) {
     free(in);
     if (disasm->instruction.mnemonic[0] == 0) {
         return DISASM_UNKNOWN_OPCODE;
+    }
+    if (isPseudoIns) {
+        return pseudoInsSize;
     }
     return 4;
 }
@@ -684,12 +708,12 @@ static inline int regIndexFromType(const uint64_t type) {
             }
         }
     } else {
-        NSString *symbol = [_file nameForVirtualAddress:(Address) operand->memory.displacement];
+        NSString *symbol = [_file nameForVirtualAddress:(Address) operand->immediateValue];
         if (symbol) {
-            [line appendName:symbol atAddress:(Address) operand->memory.displacement];
+            [line appendName:symbol atAddress:(Address) operand->immediateValue];
         } else {
             if (format == Format_Default) format = Format_Address;
-            [line append:[file formatNumber:(uint64_t) operand->memory.displacement
+            [line append:[file formatNumber:(uint64_t) operand->immediateValue
                                          at:disasm->virtualAddr
                                 usingFormat:format
                                  andBitSize:32]];
