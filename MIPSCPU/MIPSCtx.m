@@ -10,9 +10,10 @@ enum OpType getInsnType(enum Opcode opcode) {
     switch (opcode) {
         case SPECIAL:
         case COP0:
-        case COP1:
         case COP2:
             return RTYPE;
+        case COP1:
+            return FPUTYPE;
         case J:
         case JAL:
             return JTYPE;
@@ -71,14 +72,6 @@ struct insn *getInsn(uint32_t bytes) {
                     ret->rtype.shift = (uint8_t) ((bytes >> 6) & 0x1f);
                     ret->rtype.specialFunct = (enum SpecialFunct) (bytes & 0x3f);
                     break;
-                case COP0:
-                case COP1:
-                case COP2:
-                    ret->rtype.copFunct = (enum CopFunct) ((bytes >> 21) & 0x1f);
-                    ret->rtype.rt = (enum Reg) ((bytes >> 16) & 0x1f);
-                    ret->rtype.rd = (enum Reg) ((bytes >> 11) & 0x1f);
-                    ret->rtype.sel = (uint8_t) (bytes & 0x07);
-                    break;
             }
             break;
         case ITYPE:
@@ -95,6 +88,15 @@ struct insn *getInsn(uint32_t bytes) {
             ret->jtype.rs = (enum Reg) ((bytes >> 21) & 0x1f);
             ret->jtype.imm = (uint32_t) (bytes & 0x07ffffff);
             break;
+        case FPUTYPE:
+            switch (ret->opcode) {
+                case COP1:
+                    ret->fputype.fmt = (enum FpuFunction) ((bytes >> 21) & 0x1f);
+                    ret->fputype.ft = (enum FpuReg) ((bytes >> 16) & 0x1f);
+                    ret->fputype.fs = (enum FpuReg) ((bytes >> 11) & 0x1f);
+                    ret->fputype.fd = (enum FpuReg) ((bytes >> 6) & 0x1f);
+                    ret->fputype.function = (enum FpuFunction) (bytes & 0x3f);
+            }
         default:
             return ret;
     }
@@ -261,25 +263,6 @@ static inline void clear_operands_from(DisasmStruct *disasm, int index) {
                         populateRType(disasm, in);
                         break;
                     case COP0: /* System Control Coprocessor */
-                        break;
-                    case COP1: /* FPU */
-                        switch (in->rtype.copFunct) {
-                            case MT:
-                                strcpy(disasm->instruction.mnemonic, "mtc1");
-                                populateRegOperand(&disasm->operand[0], in->rtype.rt, DISASM_ACCESS_WRITE);
-                                populateFpuRegOperand(&disasm->operand[1], (enum FpuReg) in->rtype.rd, DISASM_ACCESS_READ);
-                                if (in->rtype.sel != 0) {
-                                    disasm->operand[2].type = DISASM_OPERAND_CONSTANT_TYPE;
-                                    disasm->operand[2].immediateValue = in->rtype.sel;
-                                    disasm->operand[2].size = 3;
-                                }
-                                break;
-                            case MTH:
-                                strcpy(disasm->instruction.mnemonic, "mthc1");
-                                populateRegOperand(&disasm->operand[0], in->rtype.rt, DISASM_ACCESS_WRITE);
-                                populateFpuRegOperand(&disasm->operand[1], (enum FpuReg) in->rtype.rd, DISASM_ACCESS_READ);
-                                break;
-                        }
                         break;
                 }
                 break;
@@ -455,6 +438,75 @@ static inline void clear_operands_from(DisasmStruct *disasm, int index) {
                         break;
                 }
                 break;
+            case FPUTYPE:
+                switch (in->fputype.function) {
+                    case COP1_ADD:
+                        switch (in->fputype.fmt) {
+                            case 0b00100 /* COP1_MT */:
+                                if (in->fputype.fd == 0) {
+                                    strcpy(disasm->instruction.mnemonic, "mtc1");
+                                    populateRegOperand(&disasm->operand[0], (enum Reg) in->fputype.ft, DISASM_ACCESS_WRITE);
+                                    populateFpuRegOperand(&disasm->operand[1], in->fputype.fs, DISASM_ACCESS_READ);
+/*
+                                    if (in->rtype.sel != 0) {
+                                        disasm->operand[2].type = DISASM_OPERAND_CONSTANT_TYPE;
+                                        disasm->operand[2].immediateValue = in->rtype.sel;
+                                        disasm->operand[2].size = 3;
+                                    }
+*/
+                                }
+                                break;
+                            case 0b00111 /* COP1_MTH */:
+                                if (in->fputype.fd == 0) {
+                                    strcpy(disasm->instruction.mnemonic, "mthc1");
+                                    populateRegOperand(&disasm->operand[0], (enum Reg) in->fputype.ft, DISASM_ACCESS_WRITE);
+                                    populateFpuRegOperand(&disasm->operand[1], in->fputype.fs, DISASM_ACCESS_READ);
+                                }
+                                break;
+                            case 0x10:
+                                strcpy(disasm->instruction.mnemonic, "add.s");
+                                populateFpuRegOperand(&disasm->operand[0], in->fputype.fd, DISASM_ACCESS_WRITE);
+                                populateFpuRegOperand(&disasm->operand[1], in->fputype.fs, DISASM_ACCESS_READ);
+                                populateFpuRegOperand(&disasm->operand[2], in->fputype.ft, DISASM_ACCESS_READ);
+                                break;
+                            case 0x11:
+                                strcpy(disasm->instruction.mnemonic, "add.d");
+                                populateFpuRegOperand(&disasm->operand[0], in->fputype.fd, DISASM_ACCESS_WRITE);
+                                populateFpuRegOperand(&disasm->operand[1], in->fputype.fs, DISASM_ACCESS_READ);
+                                populateFpuRegOperand(&disasm->operand[2], in->fputype.ft, DISASM_ACCESS_READ);
+                                break;
+                            case 0x16: // MIPS32R2
+                                strcpy(disasm->instruction.mnemonic, "add.ps");
+                                populateFpuRegOperand(&disasm->operand[0], in->fputype.fd, DISASM_ACCESS_WRITE);
+                                populateFpuRegOperand(&disasm->operand[1], in->fputype.fs, DISASM_ACCESS_READ);
+                                populateFpuRegOperand(&disasm->operand[2], in->fputype.ft, DISASM_ACCESS_READ);
+                                break;
+                        }
+                        break;
+                    case COP1_ABS:
+                        if (in->fputype.ft == 0) {
+                            switch (in->fputype.fmt) {
+                                case 0x10:
+                                    strcpy(disasm->instruction.mnemonic, "abs.s");
+                                    populateFpuRegOperand(&disasm->operand[0], in->fputype.fd, DISASM_ACCESS_WRITE);
+                                    populateFpuRegOperand(&disasm->operand[1], in->fputype.fs, DISASM_ACCESS_READ);
+                                    break;
+                                case 0x11:
+                                    strcpy(disasm->instruction.mnemonic, "abs.d");
+                                    populateFpuRegOperand(&disasm->operand[0], in->fputype.fd, DISASM_ACCESS_WRITE);
+                                    populateFpuRegOperand(&disasm->operand[1], in->fputype.fs, DISASM_ACCESS_READ);
+                                    break;
+                                case 0x16: // MIPS32R2
+                                    strcpy(disasm->instruction.mnemonic, "abs.ps");
+                                    populateFpuRegOperand(&disasm->operand[0], in->fputype.fd, DISASM_ACCESS_WRITE);
+                                    populateFpuRegOperand(&disasm->operand[1], in->fputype.fs, DISASM_ACCESS_READ);
+                                    break;
+                            }
+                        }
+                        break;
+                }
+                break;
+
         }
     }
 

@@ -15,7 +15,7 @@ typedef enum Reg {
     X17, X18, X19, X20, X21, X22, X23, X24,
     X25, X26, X27, X28, X29, X30, X31,
     /** aliases */
-    ZERO = X0, AT, V0, V1, A0, A1, A2, A3,
+            ZERO = X0, AT, V0, V1, A0, A1, A2, A3,
     T0, T1, T2, T3, T4, T5, T6, T7,
     S0, S1, S2, S3, S4, S5, S6, S7,
     T9, T10, K0, K1, GP, SP, FP, RA
@@ -32,6 +32,7 @@ typedef enum OpType {
     RTYPE,
     ITYPE,
     JTYPE,
+    FPUTYPE,
     INVALID,
 } OpTypeEnum;
 
@@ -75,7 +76,7 @@ typedef enum Opcode {
     SWC2 = 0b111010,
 
     // MIPS32R2
-    BEQL = 0b010100,
+            BEQL = 0b010100,
     BLEZL = 0b010110,
     BGTZL = 0b010111,
 
@@ -127,10 +128,12 @@ typedef enum RegImmFunct {
     BLTZALL = 0b10010,
 } RegImmFunctEnum;
 
-typedef enum CopFunct {
-    MT = 0b00100,
-    MTH = 0b00111,
-} CopFunctEnum;
+typedef enum FpuFunction {
+    COP1_ADD = 0b000000,
+    COP1_ABS = 0b000101,
+//    COP1_MT = 0b00100,
+//    COP1_MTH = 0b00111,
+} FpuFunctionEnum;
 
 typedef enum DelaySlotType {
     NONE,
@@ -150,21 +153,11 @@ typedef struct DelaySlot {
 } DelaySlot;
 
 typedef struct rtype {
-    union {
-        enum Reg rs; // bits 25..21 source register 1
-        enum CopFunct copFunct; // bits 25..21
-    };
+    enum Reg rs; // bits 25..21 source register 1
     enum Reg rt; // bits 20..16 source register 2
     enum Reg rd; // bits 15..11 destination register
-    union {
-        struct {
-            uint8_t shift; // bits 10..6 shift amount
-            enum SpecialFunct specialFunct; // bits 5..0 function
-        };
-        struct {
-            uint8_t sel; // bits 2..0 sel
-        };
-    };
+    uint8_t shift; // bits 10..6 shift amount
+    enum SpecialFunct specialFunct; // bits 5..0 function
 } rtype;
 
 typedef struct itype {
@@ -181,6 +174,14 @@ typedef struct jtype {
     uint32_t imm; // bits 20..0 immediate
 } jtype;
 
+typedef struct fputype {
+    uint8_t fmt; // bits 25..21
+    enum FpuReg ft; // bits 20..16
+    enum FpuReg fs; // bits 15..11
+    enum FpuReg fd; // bits 10..6
+    enum FpuFunction function; // bits 5..0
+} fputype;
+
 typedef struct insn {
     enum Opcode opcode; // bits 31..26
     enum OpType type; // instruction format type
@@ -189,6 +190,7 @@ typedef struct insn {
         struct rtype rtype;
         struct itype itype;
         struct jtype jtype;
+        struct fputype fputype;
     };
 } insn;
 

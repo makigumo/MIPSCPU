@@ -218,7 +218,7 @@
             }
             return [NSString stringWithFormat:@"UNKNOWN_REG<%lld>", (long long) reg];
         case (RegClass) RegClass_MIPS_FPU:
-            return [NSString stringWithFormat:@"fp%d", (int) reg];
+            return [NSString stringWithFormat:@"f%d", (int) reg];
         case (RegClass) RegClass_MIPS_DSP:
             return [NSString stringWithFormat:@"dsp%d", (int) reg];
         case (RegClass) RegClass_MIPS_TMP:
