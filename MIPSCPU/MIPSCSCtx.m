@@ -15,7 +15,7 @@
 #define OPERAND_IS_REG(insn, op_index, op_reg) \
     (OPERAND(insn, op_index).type == MIPS_OP_REG && OPERAND(insn, op_index).reg == op_reg)
 #define REG_MASK(reg) \
-    (capstoneRegisterToRegIndex(reg) >= 0 ) ? \
+    (capstoneRegisterToRegIndex(reg) != (uint32_t) -1 ) ? \
     (DISASM_BUILD_REGISTER_CLS_MASK(capstoneRegisterToRegClass(reg)) | DISASM_BUILD_REGISTER_INDEX_MASK(capstoneRegisterToRegIndex(reg))) : \
     0
 
