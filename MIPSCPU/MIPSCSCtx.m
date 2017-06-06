@@ -466,10 +466,12 @@ static inline RegClass capstoneRegisterToRegClass(mips_reg reg) {
         disasm->instruction.pcRegisterValue = disasm->virtualAddr + insn[0].size;
         disasm->instruction.length = 4;
 
+/*
         void *insn_copy = malloc(insn[0].size);
         if (insn_copy) {
             disasm->instruction.userData = (uintptr_t) memcpy(&insn_copy, &insn[0], insn[0].size);
         }
+*/
 
         int op_index;
         for (op_index = 0; op_index < insn[0].detail->mips.op_count; op_index++) {
