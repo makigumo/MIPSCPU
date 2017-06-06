@@ -551,6 +551,7 @@ static inline void clear_operands_from(DisasmStruct *disasm, int index) {
         struct insn *prevIn = getInsn(prev);
         if (prevIn) {
             if ([self calculateAddress:disasm withPrev:prevIn andInsn:in andOp:op]) {
+                free(prevIn);
                 break;
             }
             free(prevIn);
