@@ -33,8 +33,10 @@
     if ([file.cpuFamily isEqualToString:@"mips"]) {
         if ([file.cpuSubFamily isEqualToString:@"mips32"] ||
                 [file.cpuSubFamily isEqualToString:@"mips32r2"] ||
+                [file.cpuSubFamily isEqualToString:@"mips32r5"] ||
                 [file.cpuSubFamily isEqualToString:@"mips32r6"]) {
-            return [[MIPSCtx alloc] initWithCPU:self andFile:file];
+            MIPSCtx *mipsCtx = [[MIPSCtx alloc] initWithCPU:self andFile:file];
+            return mipsCtx;
         }
     }
     return [[MIPSCSCtx alloc] initWithCPU:self andFile:file];
@@ -61,7 +63,7 @@
 }
 
 - (NSString *)pluginCopyright {
-    return @"©2016 - Makigumo";
+    return @"©2016-2017 - Makigumo";
 }
 
 - (NSArray<NSString *> *)cpuFamilies {
@@ -72,23 +74,24 @@
 }
 
 - (NSString *)pluginVersion {
-    return @"0.0.1";
+    return @"0.1.0";
 }
 
 - (NSArray<NSString *> *)cpuSubFamiliesForFamily:(NSString *)family {
     if ([family isEqualToString:@"mips (capstone)"])
         return @[
                 @"mips32",
-                @"mipsIII",
-                @"microMIPS",
-                @"micro32r6",
+                //@"mipsIII",
+                //@"microMIPS",
+                //@"micro32r6",
                 //@"mips64"
         ];
     if ([family isEqualToString:@"mips"]) {
         return @[
                 @"mips32",
                 @"mips32r2",
-                @"mips32r6",
+                @"mips32r5",
+                //@"mips32r6",
         ];
     }
     return nil;
@@ -105,6 +108,7 @@
     if ([family isEqualToString:@"mips"]) {
         if ([subFamily isEqualToString:@"mips32"]) return 32;
         if ([subFamily isEqualToString:@"mips32r2"]) return 32;
+        if ([subFamily isEqualToString:@"mips32r5"]) return 32;
         if ([subFamily isEqualToString:@"mips32r6"]) return 32;
     }
     return 0;
@@ -141,31 +145,21 @@
 - (NSUInteger)registerCountForClass:(RegClass)reg_class {
     switch (reg_class) {
         case RegClass_GeneralPurposeRegister:
-            return 12;
-        case (RegClass) RegClass_MIPS_ARG:
-            return 4;
-        case (RegClass) RegClass_MIPS_VAR:
-            return 2;
-        case (RegClass) RegClass_MIPS_KERNEL:
+            return 32;
         case (RegClass) RegClass_MIPS_FPU:
+            return 32;
+        case (RegClass) RegClass_MIPS_HW:
             return 32;
         case (RegClass) RegClass_MIPS_ACC:
             return 4;
-        case (RegClass) RegClass_MIPS_FCC:
         case (RegClass) RegClass_MIPS_COP:
+            return 32;
+        case (RegClass) RegClass_MIPS_FCC:
         case (RegClass) RegClass_MIPS_DSP:
             return 8;
-        case (RegClass) RegClass_MIPS_TMP:
-            return 10;
         case (RegClass) RegClass_MIPS_P:
         case (RegClass) RegClass_MIPS_MPL:
             return 3;
-        case (RegClass) RegClass_MIPS_PC:
-        case (RegClass) RegClass_MIPS_LO:
-        case (RegClass) RegClass_MIPS_ZERO:
-        case (RegClass) RegClass_MIPS_AT:
-        case (RegClass) RegClass_MIPS_HI:
-            return 1;
         default:
             break;
     }
@@ -173,11 +167,11 @@
 }
 
 - (BOOL)registerIndexIsStackPointer:(NSUInteger)reg ofClass:(RegClass)reg_class {
-    return reg_class == RegClass_GeneralPurposeRegister && reg == 9;
+    return reg_class == RegClass_GeneralPurposeRegister && reg == 29;
 }
 
 - (BOOL)registerIndexIsFrameBasePointer:(NSUInteger)reg ofClass:(RegClass)reg_class {
-    return reg_class == RegClass_GeneralPurposeRegister && reg == 10;
+    return reg_class == RegClass_GeneralPurposeRegister && reg == 30;
 }
 
 - (BOOL)registerIndexIsProgramCounter:(NSUInteger)reg {
@@ -190,49 +184,38 @@
                            position:(DisasmPosition)position
                      andSyntaxIndex:(NSUInteger)syntaxIndex {
     switch (reg_class) {
-        case (RegClass) RegClass_MIPS_PC:
-            return @"pc";
-        case (RegClass) RegClass_MIPS_HI:
-            return @"hi";
-        case (RegClass) RegClass_MIPS_LO:
-            return @"lo";
         case (RegClass) RegClass_MIPS_ACC:
             return [NSString stringWithFormat:@"acc%d", (int) reg];
         case (RegClass) RegClass_MIPS_FCC:
             return [NSString stringWithFormat:@"fcc%d", (int) reg];
         case (RegClass) RegClass_MIPS_COP:
-            return [NSString stringWithFormat:@"cop%d", (int) reg];
+            return [NSString stringWithFormat:@"$%d", (int) reg];
+        case (RegClass) RegClass_MIPS_HW:
+            return [NSString stringWithFormat:@"$%d", (int) reg];
         case (RegClass) RegClass_MIPS_MPL:
             return [NSString stringWithFormat:@"mpl%d", (int) reg];
         case (RegClass) RegClass_MIPS_P:
             return [NSString stringWithFormat:@"p%d", (int) reg];
-        case (RegClass) RegClass_MIPS_ZERO:
-            return @"zero";
-        case (RegClass) RegClass_MIPS_AT:
-            return @"at";
-        case (RegClass) RegClass_MIPS_KERNEL:
-            return [NSString stringWithFormat:@"k%d", (int) reg];
-        case (RegClass) RegClass_MIPS_VAR:
-            return [NSString stringWithFormat:@"v%d", (int) reg];
 
         case RegClass_GeneralPurposeRegister:
-            if (reg < 12) {
+            if (reg < 32) {
                 static NSString *names[] = {
+                        @"zero", @"at", @"v0", @"v1",
+                        @"a0", @"a1", @"a2", @"a3",
+                        @"t0", @"t1", @"t2", @"t3",
+                        @"t4", @"t5", @"t6", @"t7",
                         @"s0", @"s1", @"s2", @"s3",
                         @"s4", @"s5", @"s6", @"s7",
+                        @"t8", @"t9", @"k0", @"k1",
                         @"gp", @"sp", @"fp", @"ra",
                 };
                 return names[reg];
             }
             return [NSString stringWithFormat:@"UNKNOWN_REG<%lld>", (long long) reg];
         case (RegClass) RegClass_MIPS_FPU:
-            return [NSString stringWithFormat:@"f%d", (int) reg];
+            return [NSString stringWithFormat:@"$f%d", (int) reg];
         case (RegClass) RegClass_MIPS_DSP:
             return [NSString stringWithFormat:@"dsp%d", (int) reg];
-        case (RegClass) RegClass_MIPS_TMP:
-            return [NSString stringWithFormat:@"t%d", (int) reg];
-        case (RegClass) RegClass_MIPS_ARG:
-            return [NSString stringWithFormat:@"a%d", (int) reg];
         case (RegClass) -1:
             break;
         default:
@@ -245,16 +228,12 @@
     return @"";
 }
 
-- (NSData *)nopWithSize:(NSUInteger)size andMode:(NSUInteger)cpuMode forFile:(NSObject <HPDisassembledFile> *)file {
+- (NSData *)nopWithSize:(NSUInteger)size
+                andMode:(NSUInteger)cpuMode
+                forFile:(NSObject <HPDisassembledFile> *)file {
     // Instruction size is always a multiple of 4
     if (size % 4 != 0) return nil;
-    NSMutableData *nopArray = [[NSMutableData alloc] initWithCapacity:size];
-    [nopArray setLength:size];
-    uint32_t *ptr = (uint32_t *) [nopArray mutableBytes];
-    for (NSUInteger i = 0; i < size; i += 4) {
-        OSWriteBigInt32(ptr, i, 0x0);
-    }
-    return [NSData dataWithData:nopArray];
+    return [NSMutableData dataWithLength:size];
 }
 
 - (BOOL)canAssembleInstructionsForCPUFamily:(NSString *)family andSubFamily:(NSString *)subFamily {
