@@ -162,7 +162,7 @@ static inline void clear_operands_from(DisasmStruct *disasm, int index) {
 
 - (int)isNopAt:(Address)address {
     uint32_t word = [_file readUInt32AtVirtualAddress:address];
-    return (word == 0x0) ? 4 : 0;
+    return (word == 0x0 /* nop */ || word == 0x25082000 /* move at,at (loongson)*/) ? 4 : 0;
 }
 
 - (BOOL)hasProcedurePrologAt:(Address)address {
@@ -969,9 +969,13 @@ static inline int regIndexFromType(const uint64_t type) {
             break;
         case OR:
             if (pInsn->rtype.rt == ZERO) {
-                strcpy(disasm->instruction.mnemonic, "move");
-                populateRegOperand(&disasm->operand[0], pInsn->rtype.rd, DISASM_ACCESS_WRITE);
-                populateRegOperand(&disasm->operand[1], pInsn->rtype.rs, DISASM_ACCESS_READ);
+                if (pInsn->rtype.rd == pInsn->rtype.rs == AT && disasm->syntaxIndex == 1) {
+                    strcpy(disasm->instruction.mnemonic, "nop");
+                } else {
+                    strcpy(disasm->instruction.mnemonic, "move");
+                    populateRegOperand(&disasm->operand[0], pInsn->rtype.rd, DISASM_ACCESS_WRITE);
+                    populateRegOperand(&disasm->operand[1], pInsn->rtype.rs, DISASM_ACCESS_READ);
+                }
                 return;
             } else {
                 strcpy(disasm->instruction.mnemonic, "or");
@@ -1022,6 +1026,7 @@ static inline int regIndexFromType(const uint64_t type) {
                 disasm->instruction.branchType = DISASM_BRANCH_RET;
             }
             disasm->instruction.branchType = DISASM_BRANCH_JMP;
+            disasm->operand[0].isBranchDestination=1;
             return;
         case JALR:
             strcpy(disasm->instruction.mnemonic, "jalr");
