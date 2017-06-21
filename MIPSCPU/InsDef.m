@@ -6,6 +6,7 @@
 #import "InsDef.h"
 #import "NSArray+BitRange.h"
 #import "BitRange.h"
+
 #if defined(__linux__)
 #include <dispatch/dispatch.h>
 #endif
@@ -45,10 +46,10 @@ NSString *bit_value_pattern = @"=(?:(0x)([a-fA-F\\d]+)|(\\d+))";
 }
 
 - (NSArray<NSValue *> *)rangesFromBitRanges {
-    NSMutableArray<BitRange *> *res = [NSMutableArray array];
+    NSMutableArray<NSValue *> *res = [NSMutableArray array];
     NSArray<InsOp *> *const insOpArray = _op_parts;
     for (NSUInteger idx = 0; idx < insOpArray.count; idx++) {
-        [res addObjectsFromArray:insOpArray[idx].bits.getRanges];
+        [res addObjectsFromArray:[insOpArray[idx].bits getRanges]];
     }
     return res;
 }
@@ -287,7 +288,7 @@ NSString *bit_value_pattern = @"=(?:(0x)([a-fA-F\\d]+)|(\\d+))";
     [description appendFormat:@"_op_parts=%@", _op_parts];
     [description appendFormat:@", self.mask=%u", self.mask];
     [description appendFormat:@", self.match=%u", self.match];
-    [description appendFormat:@", self._release=%d", self._release];
+    [description appendFormat:@", self._release=%lu", (unsigned long) self._release];
     [description appendFormat:@", self.mnemonic=%@", self.mnemonic];
     [description appendFormat:@", self.format=%@", self.format];
     [description appendString:@">"];

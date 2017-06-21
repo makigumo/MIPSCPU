@@ -4,7 +4,6 @@
 //
 
 #import "InsOp.h"
-#import "BitRange.h"
 #import "NSArray+BitRange.h"
 
 
@@ -14,7 +13,7 @@
 - (NSString *)description {
     NSMutableString *description = [NSMutableString stringWithFormat:@"<%@: ", NSStringFromClass([self class])];
     [description appendFormat:@"self.bits=%@", self.bits];
-    [description appendFormat:@", self.type=%d", self.type];
+    [description appendFormat:@", self.type=%lu", (unsigned long) self.type];
     [description appendFormat:@", self.pos=%@", self.pos];
     [description appendFormat:@", self.accessMode=%d", self.accessMode];
     [description appendFormat:@", self.isBranchDestination=%d", self.isBranchDestination];
