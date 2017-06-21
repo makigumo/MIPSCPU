@@ -105,23 +105,23 @@
         NSMutableArray *const _instructions = [NSMutableArray arrayWithCapacity:opcodes.count];
         for (NSDictionary *const opDict in opcodes) {
             NSString *const key = [opDict valueForKey:@"mnemonic"];
-            NSAssert(key != nil, @"missing key 'mnemonic' in %@", opDict);
+            NSAssert1(key != nil, @"missing key 'mnemonic' in %@", opDict);
             isa_release __release = (isa_release) 0;
             NSArray<NSString *> *const releases = (NSArray<NSString *> *) [opDict valueForKey:@"release"];
-            NSAssert(releases != nil, @"missing key 'release' in %@", opDict);
-            NSAssert(releases.count > 0, @"no releases specified in %@", opDict);
+            NSAssert1(releases != nil, @"missing key 'release' in %@", opDict);
+            NSAssert1(releases.count > 0, @"no releases specified in %@", opDict);
             for (NSString *const r in releases) {
                 __release |= [MIPSCtx isaReleases][r].integerValue;
             }
             NSString *const format = opDict[@"format"];
-            NSAssert(format != nil, @"missing key 'format' in %@", opDict);
+            NSAssert1(format != nil, @"missing key 'format' in %@", opDict);
             InsDef *const insDef = [InsDef defWithMnemonic:key release:__release format:format];
             NSString *const branchtype = [opDict valueForKey:@"branchtype"];
             insDef.branchType = [MIPSCtx branchTypes][branchtype];
             if (branchtype && !insDef.branchType) {
                 NSLog(@"unknown `branchtype' in %@", opDict);
             }
-            NSAssert(branchtype == nil || (branchtype && insDef.branchType), @"unknown `branchtype' in %@", opDict);
+            NSAssert1(branchtype == nil || (branchtype && insDef.branchType), @"unknown `branchtype' in %@", opDict);
             [_instructions addObject:insDef];
         }
         // order instructions by mask bit count

@@ -28,7 +28,7 @@ NSString *bit_value_pattern = @"=(?:(0x)([a-fA-F\\d]+)|(\\d+))";
         self.mnemonic = aMnemonic;
         self.format = aFormat;
         [self parseFormat];
-        NSAssert(![self bitRangesIntersect], @"bitRanges intersect %@ %@", aMnemonic, aFormat);
+        NSAssert2(![self bitRangesIntersect], @"bitRanges intersect %@ %@", aMnemonic, aFormat);
     }
     return self;
 }
@@ -105,7 +105,7 @@ NSString *bit_value_pattern = @"=(?:(0x)([a-fA-F\\d]+)|(\\d+))";
             if (insOp.type == OTYPE_INVALID) {
                 NSLog(@"invalid type: in %@ for op %@ in format: %@", self.mnemonic, comp, self.format);
             }
-            NSAssert(insOp.type != OTYPE_INVALID, @"invalid type: in %@ for op %@ in format: %@", self.mnemonic, comp, self.format);
+            NSAssert3(insOp.type != OTYPE_INVALID, @"invalid type: in %@ for op %@ in format: %@", self.mnemonic, comp, self.format);
             insOp.pos = [self getOperandPositionFromString:comp];
             insOp.accessMode = [self getAccessModeFromString:comp];
             insOp.isBranchDestination = [self getIsBranchDestinationFromString:comp];
@@ -152,7 +152,7 @@ NSString *bit_value_pattern = @"=(?:(0x)([a-fA-F\\d]+)|(\\d+))";
         NSTextCheckingResult *match = [bit_range_regex firstMatchInString:bitrangeString
                                                                   options:0
                                                                     range:NSMakeRange(0, [bitrangeString length])];
-        NSAssert(match != nil, @"invalid BitRange format: %@ in %@", bitrangeString, self.format);
+        NSAssert2(match != nil, @"invalid BitRange format: %@ in %@", bitrangeString, self.format);
         NSRange range = [match rangeAtIndex:1];
         if (range.location == NSNotFound) {
             continue;
@@ -163,7 +163,7 @@ NSString *bit_value_pattern = @"=(?:(0x)([a-fA-F\\d]+)|(\\d+))";
         uint8_t last = (uint8_t) bits[1].intValue;
         NSNumber *number = [self getValueFromString:substring];
         BitRange *bitRange = [BitRange range32WithFirst:first last:last value:number];
-        NSAssert(bitRange != nil, @"invalid BitRange format: %@ in %@", substring, self.format);
+        NSAssert2(bitRange != nil, @"invalid BitRange format: %@ in %@", substring, self.format);
         if (bitRange != nil) {
             [bitRanges addObject:bitRange];
         }

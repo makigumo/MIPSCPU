@@ -20,15 +20,15 @@
         self.value = value;
         self.maxBitCount = maxBitCount;
     }
-    NSAssert(first_bit <= self.maxBitCount - 1, @"invalid first bit: 0 <= %d <= %d", first_bit, self.maxBitCount - 1);
-    NSAssert(last_bit <= self.maxBitCount - 1, @"invalid last bit: 0 <= %d <= %d", last_bit, self.maxBitCount);
-    NSAssert(last_bit <= first_bit, @"invalid BitRange: %d..%d", first_bit, last_bit);
+    NSAssert2(first_bit <= self.maxBitCount - 1, @"invalid first bit: 0 <= %d <= %d", first_bit, self.maxBitCount - 1);
+    NSAssert2(last_bit <= self.maxBitCount - 1, @"invalid last bit: 0 <= %d <= %d", last_bit, self.maxBitCount);
+    NSAssert2(last_bit <= first_bit, @"invalid BitRange: %d..%d", first_bit, last_bit);
     if (value != nil) {
         uint64_t maxValue = [self maxValue];
         if (value.unsignedIntValue > maxValue) {
             NSLog(@"invalid BitRange value: %d..%d=%d > %llu", first_bit, last_bit, value.unsignedIntValue, maxValue);
         }
-        NSAssert(value.unsignedIntValue <= maxValue, @"invalid BitRange value: %d..%d=%d", first_bit, last_bit, value.unsignedIntValue);
+        NSAssert3(value.unsignedIntValue <= maxValue, @"invalid BitRange value: %d..%d=%d", first_bit, last_bit, value.unsignedIntValue);
     }
     return self;
 }
