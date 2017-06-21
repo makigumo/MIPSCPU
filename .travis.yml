@@ -62,6 +62,7 @@ before_script:
   - if [[ "$BUILD_TYPE" == "cmake" ]]; then export PATH=$HOME/GNUstep/Library/ApplicationSupport/Hopper/gnustep-x86_64/bin/:$PATH ; fi
 
 script:
-  - if [[ "$BUILD_TYPE" == "xcode" ]]; then xcodebuild -project MIPSCPU.xcodeproj build | xcpretty -f `xcpretty-travis-formatter`; fi
+  - if [[ "$BUILD_TYPE" == "xcode" ]]; then xcodebuild -project MIPSCPU.xcodeproj -scheme MIPSCPUTests test | xcpretty -f `xcpretty-travis-formatter`; fi
+  - if [[ "$BUILD_TYPE" == "xcode" ]]; then xcodebuild -project MIPSCPU.xcodeproj -scheme MIPSCPU build | xcpretty -f `xcpretty-travis-formatter`; fi
   - if [[ "$BUILD_TYPE" == "cmake" ]]; then cmake . -Bbuild -DCMAKE_C_COMPILER=${C_COMPILER} -DCMAKE_CXX_COMPILER=${COMPILER}; fi
   - if [[ "$BUILD_TYPE" == "cmake" ]]; then cmake --build build -- ; fi
