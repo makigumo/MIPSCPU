@@ -7,6 +7,9 @@
 #import "MIPSCtx.h"
 #import "NSArray+BitRange.h"
 #import "Insn.h"
+#if defined(__linux__)
+#include <dispatch/dispatch.h>
+#endif
 
 @implementation MIPSCtx {
     MIPSCPU *_cpu;
