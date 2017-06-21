@@ -280,7 +280,7 @@ NSString *bit_value_pattern = @"=(?:(0x)([a-fA-F\\d]+)|(\\d+))";
 }
 
 - (BOOL)getIsBranchDestinationFromString:(NSString *)string {
-    return [string containsString:@"B"];
+    return [string rangeOfString:@"B"].location != NSNotFound;
 }
 
 - (NSString *)description {
