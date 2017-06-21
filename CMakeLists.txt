@@ -68,6 +68,11 @@ add_library(
     MIPSCPU/MIPSCPU.m
     MIPSCPU/MIPSCtx.m
     MIPSCPU/MIPSCSCtx.m
+    MIPSCPU/BitRange.m
+    MIPSCPU/InsDef.m
+    MIPSCPU/Insn.m
+    MIPSCPU/InsOp.m
+    MIPSCPU/NSArray+BitRange.m
 )
 
 target_compile_options(
