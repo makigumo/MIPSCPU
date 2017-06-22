@@ -10,13 +10,19 @@
 		07F966D818C5BA1200B394AF /* CoreFoundation.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 07F966D718C5BA1200B394AF /* CoreFoundation.framework */; };
 		07F966E718C5BA6500B394AF /* MIPSCPU.m in Sources */ = {isa = PBXBuildFile; fileRef = 07F966E618C5BA6500B394AF /* MIPSCPU.m */; };
 		07F966EB18C5BAFE00B394AF /* MIPSCSCtx.m in Sources */ = {isa = PBXBuildFile; fileRef = 07F966EA18C5BAFE00B394AF /* MIPSCSCtx.m */; };
+		18391054057476597C135B4F /* NSArray+InsCond.m in Sources */ = {isa = PBXBuildFile; fileRef = 18391BC5C27423AF373B975D /* NSArray+InsCond.m */; };
 		1839115A636E1E176363A149 /* InsOp.m in Sources */ = {isa = PBXBuildFile; fileRef = 183919A91BD2E9D9B68765D1 /* InsOp.m */; };
+		1839135D086073BBAE258ACA /* InsCond.m in Sources */ = {isa = PBXBuildFile; fileRef = 183915390A24D69A9144188E /* InsCond.m */; };
 		183913B08A195E5DC1F04989 /* Insn.m in Sources */ = {isa = PBXBuildFile; fileRef = 18391F75EEBCFE687066EDF7 /* Insn.m */; };
+		183913B94CE0E68A9C1F43CD /* NSArray+InsCond.m in Sources */ = {isa = PBXBuildFile; fileRef = 18391BC5C27423AF373B975D /* NSArray+InsCond.m */; };
+		183914DE08D70EAF6963BE5A /* InsOpTests.m in Sources */ = {isa = PBXBuildFile; fileRef = 18391B769A7E7CA7C2C16427 /* InsOpTests.m */; };
 		183915AE3270FEB5F5F2E6B1 /* InsDef.m in Sources */ = {isa = PBXBuildFile; fileRef = 1839137DF86660D18F41C656 /* InsDef.m */; };
 		1839160EB1DD24924F5342D0 /* BitRangeTests.m in Sources */ = {isa = PBXBuildFile; fileRef = 183912E024821EA282C14F08 /* BitRangeTests.m */; };
 		1839187294BC6F56FF368ED1 /* NSArray+BitRange.m in Sources */ = {isa = PBXBuildFile; fileRef = 183918592BF5CA80FC8F499B /* NSArray+BitRange.m */; };
 		18391A9A053B7A534D23557A /* Insn.m in Sources */ = {isa = PBXBuildFile; fileRef = 18391F75EEBCFE687066EDF7 /* Insn.m */; };
 		18391A9A17D73EBB9E02F93D /* opcodes.plist in Resources */ = {isa = PBXBuildFile; fileRef = 18391D5A9937E25DDFD1EF3F /* opcodes.plist */; };
+		18391BFFFC3A41E7A5AAFAD5 /* InsCond.m in Sources */ = {isa = PBXBuildFile; fileRef = 183915390A24D69A9144188E /* InsCond.m */; };
+		18391C3D18A66EC0F88A4319 /* InsCondTests.m in Sources */ = {isa = PBXBuildFile; fileRef = 18391336272A0EA447A90826 /* InsCondTests.m */; };
 		18391C57AEE8EC3940CF2B23 /* BitRange.m in Sources */ = {isa = PBXBuildFile; fileRef = 1839190E805CA62D9338FD36 /* BitRange.m */; };
 		18391CBD36501E06EA3EDC71 /* MIPSCtx.m in Sources */ = {isa = PBXBuildFile; fileRef = 18391184BB7CD7E4AA30DB70 /* MIPSCtx.m */; };
 		18391E0457BFE57311A49BA0 /* NSArray+BitRange.m in Sources */ = {isa = PBXBuildFile; fileRef = 183918592BF5CA80FC8F499B /* NSArray+BitRange.m */; };
@@ -55,14 +61,20 @@
 		183911F5C1E82F75CCFBDF73 /* CMakeLists.txt */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; name = CMakeLists.txt; path = ../CMakeLists.txt; sourceTree = "<group>"; };
 		1839129C7A410747909F25EC /* InsOp.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = InsOp.h; sourceTree = "<group>"; };
 		183912E024821EA282C14F08 /* BitRangeTests.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = BitRangeTests.m; sourceTree = "<group>"; };
+		18391336272A0EA447A90826 /* InsCondTests.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = InsCondTests.m; path = MIPSCPU/InsCondTests.m; sourceTree = SOURCE_ROOT; };
 		1839136F6C6DE333A67B5B0E /* Info.plist.in */ = {isa = PBXFileReference; lastKnownFileType = text.xml; name = Info.plist.in; path = ../Info.plist.in; sourceTree = "<group>"; };
 		1839137DF86660D18F41C656 /* InsDef.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = InsDef.m; sourceTree = "<group>"; };
+		183913EB48EC00951193D3DC /* NSArray+InsCond.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = "NSArray+InsCond.h"; sourceTree = "<group>"; };
+		183914D56D73DCF4603FD137 /* InsCond.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = InsCond.h; sourceTree = "<group>"; };
+		183915390A24D69A9144188E /* InsCond.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = InsCond.m; sourceTree = "<group>"; };
 		183915A74DB91A79FFC3BD96 /* MIPSCtx.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = MIPSCtx.h; sourceTree = "<group>"; };
 		183915DCACF3D8394061724D /* NSArray+BitRangeTests.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = "NSArray+BitRangeTests.m"; sourceTree = "<group>"; };
 		183918592BF5CA80FC8F499B /* NSArray+BitRange.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = "NSArray+BitRange.m"; sourceTree = "<group>"; };
 		1839190E805CA62D9338FD36 /* BitRange.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = BitRange.m; sourceTree = "<group>"; };
 		183919A91BD2E9D9B68765D1 /* InsOp.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = InsOp.m; sourceTree = "<group>"; };
 		18391A1169FEA58729311F60 /* BitRange.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = BitRange.h; sourceTree = "<group>"; };
+		18391B769A7E7CA7C2C16427 /* InsOpTests.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = InsOpTests.m; sourceTree = "<group>"; };
+		18391BC5C27423AF373B975D /* NSArray+InsCond.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = "NSArray+InsCond.m"; sourceTree = "<group>"; };
 		18391D2AEDD01111ADCEAFA1 /* Insn.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = Insn.h; sourceTree = "<group>"; };
 		18391D5A9937E25DDFD1EF3F /* opcodes.plist */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.plist; path = opcodes.plist; sourceTree = "<group>"; };
 		18391F2B2AD679DF42832709 /* NSArray+BitRange.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = "NSArray+BitRange.h"; sourceTree = "<group>"; };
@@ -178,6 +190,10 @@
 				18391F2B2AD679DF42832709 /* NSArray+BitRange.h */,
 				18391F75EEBCFE687066EDF7 /* Insn.m */,
 				18391D2AEDD01111ADCEAFA1 /* Insn.h */,
+				183915390A24D69A9144188E /* InsCond.m */,
+				183914D56D73DCF4603FD137 /* InsCond.h */,
+				18391BC5C27423AF373B975D /* NSArray+InsCond.m */,
+				183913EB48EC00951193D3DC /* NSArray+InsCond.h */,
 			);
 			path = MIPSCPU;
 			sourceTree = "<group>";
@@ -273,6 +289,8 @@
 				37D6E0EF1EED92CB00FE96ED /* InsDefTests.m */,
 				183912E024821EA282C14F08 /* BitRangeTests.m */,
 				183915DCACF3D8394061724D /* NSArray+BitRangeTests.m */,
+				18391336272A0EA447A90826 /* InsCondTests.m */,
+				18391B769A7E7CA7C2C16427 /* InsOpTests.m */,
 			);
 			path = MIPSCPUTests;
 			sourceTree = "<group>";
@@ -409,6 +427,8 @@
 				1839115A636E1E176363A149 /* InsOp.m in Sources */,
 				1839187294BC6F56FF368ED1 /* NSArray+BitRange.m in Sources */,
 				18391A9A053B7A534D23557A /* Insn.m in Sources */,
+				18391BFFFC3A41E7A5AAFAD5 /* InsCond.m in Sources */,
+				18391054057476597C135B4F /* NSArray+InsCond.m in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -424,6 +444,10 @@
 				18391E0457BFE57311A49BA0 /* NSArray+BitRange.m in Sources */,
 				18391E1393EED7CC5C373730 /* NSArray+BitRangeTests.m in Sources */,
 				183913B08A195E5DC1F04989 /* Insn.m in Sources */,
+				1839135D086073BBAE258ACA /* InsCond.m in Sources */,
+				183913B94CE0E68A9C1F43CD /* NSArray+InsCond.m in Sources */,
+				18391C3D18A66EC0F88A4319 /* InsCondTests.m in Sources */,
+				183914DE08D70EAF6963BE5A /* InsOpTests.m in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

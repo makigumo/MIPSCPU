@@ -10,6 +10,7 @@
                 <string>MIPS32</string>
                 <string>MIPS32R2</string>
                 <string>MIPS32R5</string>
+                <string>MIPS32R6</string>
             </array>
             <key>format</key>
             <string>31..26=0x11 25..21=0x10 20..16=0 15..11:fs#2r 10..6:fd#1w 5..0=5</string>
@@ -22,6 +23,7 @@
                 <string>MIPS32</string>
                 <string>MIPS32R2</string>
                 <string>MIPS32R5</string>
+                <string>MIPS32R6</string>
             </array>
             <key>format</key>
             <string>31..26=0x11 25..21=0x11 20..16=0 15..11:fs#2r 10..6:fd#1w 5..0=5</string>
@@ -46,6 +48,7 @@
                 <string>MIPS32</string>
                 <string>MIPS32R2</string>
                 <string>MIPS32R5</string>
+                <string>MIPS32R6</string>
             </array>
             <key>format</key>
             <string>31..26=0 25..21:rs#2r 20..16:rt#3r 15..11:rd#1w 10..6=0 5..0=0x20</string>
@@ -58,6 +61,7 @@
                 <string>MIPS32</string>
                 <string>MIPS32R2</string>
                 <string>MIPS32R5</string>
+                <string>MIPS32R6</string>
             </array>
             <key>format</key>
             <string>31..26=0x11 25..21=0x10 20..16:ft#3r 15..11:fs#2r 10..6:fd#1w 5..0=0</string>
@@ -70,6 +74,7 @@
                 <string>MIPS32</string>
                 <string>MIPS32R2</string>
                 <string>MIPS32R5</string>
+                <string>MIPS32R6</string>
             </array>
             <key>format</key>
             <string>31..26=0x11 25..21=0x11 20..16:ft#3r 15..11:fs#2r 10..6:fd#1w 5..0=0</string>
@@ -110,6 +115,7 @@
                 <string>MIPS32</string>
                 <string>MIPS32R2</string>
                 <string>MIPS32R5</string>
+                <string>MIPS32R6</string>
             </array>
             <key>format</key>
             <string>31..26=9 25..21=0 20..16:rt#1w 15..0:imm16#2r</string>
@@ -122,9 +128,20 @@
                 <string>MIPS32</string>
                 <string>MIPS32R2</string>
                 <string>MIPS32R5</string>
+                <string>MIPS32R6</string>
             </array>
             <key>format</key>
             <string>31..26=9 25..21:rs#2r 20..16:rt#1w 15..0:imm16#3r</string>
+        </dict>
+        <dict>
+            <key>mnemonic</key>
+            <string>addiupc</string>
+            <key>release</key>
+            <array>
+                <string>MIPS32R6</string>
+            </array>
+            <key>format</key>
+            <string>31..26=0x3b 25..21:rs#1w 20..19=0 18..0:imm19sl2#2r</string>
         </dict>
         <dict>
             <key>mnemonic</key>
@@ -138,6 +155,7 @@
                 <string>MIPS32</string>
                 <string>MIPS32R2</string>
                 <string>MIPS32R5</string>
+                <string>MIPS32R6</string>
             </array>
             <key>format</key>
             <string>31..26=0 25..21:rs#2r 20..16=0 15..11:rd#1w 10..6=0 5..0=0x21</string>
@@ -150,9 +168,20 @@
                 <string>MIPS32</string>
                 <string>MIPS32R2</string>
                 <string>MIPS32R5</string>
+                <string>MIPS32R6</string>
             </array>
             <key>format</key>
             <string>31..26=0 25..21:rs#2r 20..16:rt#3r 15..11:rd#1w 10..6=0 5..0=0x21</string>
+        </dict>
+        <dict>
+            <key>mnemonic</key>
+            <string>align</string>
+            <key>release</key>
+            <array>
+                <string>MIPS32R6</string>
+            </array>
+            <key>format</key>
+            <string>31..26=0x1f 25..21:rs#2r 20..16:rt#3r 15..11:rd#1w 10..8=2 7..6:bp#4r 5..0=0x20</string>
         </dict>
         <dict>
             <key>mnemonic</key>
@@ -168,12 +197,23 @@
         </dict>
         <dict>
             <key>mnemonic</key>
+            <string>aluipc</string>
+            <key>release</key>
+            <array>
+                <string>MIPS32R6</string>
+            </array>
+            <key>format</key>
+            <string>31..26=0x3b 25..21:rs#1w 20..16=0x1f 15..0:imm16sl16#2r</string>
+        </dict>
+        <dict>
+            <key>mnemonic</key>
             <string>and</string>
             <key>release</key>
             <array>
                 <string>MIPS32</string>
                 <string>MIPS32R2</string>
                 <string>MIPS32R5</string>
+                <string>MIPS32R6</string>
             </array>
             <key>format</key>
             <string>31..26=0 25..21:rs#2r 20..16:rt#3r 15..11:rd#1w 10..6=0 5..0=0x24#3r</string>
@@ -186,9 +226,30 @@
                 <string>MIPS32</string>
                 <string>MIPS32R2</string>
                 <string>MIPS32R5</string>
+                <string>MIPS32R6</string>
             </array>
             <key>format</key>
             <string>31..26=0xc 25..21:rs#2r 20..16:rt#1w 15..0:imm16#3r</string>
+        </dict>
+        <dict>
+            <key>mnemonic</key>
+            <string>aui</string>
+            <key>release</key>
+            <array>
+                <string>MIPS32R6</string>
+            </array>
+            <key>format</key>
+            <string>31..26=0xf 25..21:rs#2r 20..16:rt#1w 15..0:imm16sl16#3r</string>
+        </dict>
+        <dict>
+            <key>mnemonic</key>
+            <string>auipc</string>
+            <key>release</key>
+            <array>
+                <string>MIPS32R6</string>
+            </array>
+            <key>format</key>
+            <string>31..26=0x3b 25..21:rs#1w 20..16=0x1e 15..0:imm16sl16#3r</string>
         </dict>
         <dict>
             <key>mnemonic</key>
@@ -202,75 +263,12 @@
                 <string>MIPS32</string>
                 <string>MIPS32R2</string>
                 <string>MIPS32R5</string>
+                <string>MIPS32R6</string>
             </array>
             <key>branchtype</key>
             <string>ALWAYS</string>
             <key>format</key>
             <string>31..26=4 25..21=0 20..16=0 15..0:off18B#1r</string>
-        </dict>
-        <dict>
-            <key>mnemonic</key>
-            <string>beqz</string>
-            <key>comment</key>
-            <string>special case of beq rs, rt=zero, offset</string>
-            <key>idiom</key>
-            <true/>
-            <key>release</key>
-            <array>
-                <string>MIPS32</string>
-                <string>MIPS32R2</string>
-                <string>MIPS32R5</string>
-            </array>
-            <key>branchtype</key>
-            <string>EQUAL_ZERO</string>
-            <key>format</key>
-            <string>31..26=4 25..21:rs#1r 20..16=0 15..0:off18B#2r</string>
-        </dict>
-        <dict>
-            <key>mnemonic</key>
-            <string>beqzl</string>
-            <key>comment</key>
-            <string>special case of beql rs, rt=zero, offset</string>
-            <key>idiom</key>
-            <true/>
-            <key>release</key>
-            <array>
-                <string>MIPS32</string>
-                <string>MIPS32R2</string>
-                <string>MIPS32R5</string>
-            </array>
-            <key>branchtype</key>
-            <string>EQUAL_ZERO</string>
-            <key>format</key>
-            <string>31..26=0x14 25..21:rs#1r 20..16=0 15..0:off18B#2r</string>
-        </dict>
-        <dict>
-            <key>mnemonic</key>
-            <string>beq</string>
-            <key>release</key>
-            <array>
-                <string>MIPS32</string>
-                <string>MIPS32R2</string>
-                <string>MIPS32R5</string>
-            </array>
-            <key>branchtype</key>
-            <string>EQUAL</string>
-            <key>format</key>
-            <string>31..26=4 25..21:rs#1r 20..16:rt#2r 15..0:off18B#3r</string>
-        </dict>
-        <dict>
-            <key>mnemonic</key>
-            <string>beql</string>
-            <key>release</key>
-            <array>
-                <string>MIPS32</string>
-                <string>MIPS32R2</string>
-                <string>MIPS32R5</string>
-            </array>
-            <key>branchtype</key>
-            <string>EQUAL</string>
-            <key>format</key>
-            <string>31..26=0x14 25..21:rs#1r 20..16:rt#2r 15..0:off18B#3r</string>
         </dict>
         <dict>
             <key>mnemonic</key>
@@ -292,17 +290,63 @@
         </dict>
         <dict>
             <key>mnemonic</key>
-            <string>bgezal</string>
+            <string>bal</string>
             <key>release</key>
             <array>
-                <string>MIPS32</string>
-                <string>MIPS32R2</string>
-                <string>MIPS32R5</string>
+                <string>MIPS32R6</string>
             </array>
             <key>branchtype</key>
             <string>CALL</string>
             <key>format</key>
-            <string>31..26=1 25..21:rs#1r 20..16=0x11 15..0:off18B#2r</string>
+            <string>31..26=1 25..21=0 20..16=0x11 15..0:off18B#1r</string>
+        </dict>
+        <dict>
+            <key>mnemonic</key>
+            <string>balc</string>
+            <key>release</key>
+            <array>
+                <string>MIPS32R6</string>
+            </array>
+            <key>branchtype</key>
+            <string>CALL</string>
+            <key>format</key>
+            <string>31..26=0x3a 25..0:off28B#1r</string>
+        </dict>
+        <dict>
+            <key>mnemonic</key>
+            <string>bc</string>
+            <key>release</key>
+            <array>
+                <string>MIPS32R6</string>
+            </array>
+            <key>branchtype</key>
+            <string>CALL</string>
+            <key>format</key>
+            <string>31..26=0x32 25..0:off28B#1r</string>
+        </dict>
+        <dict>
+            <key>mnemonic</key>
+            <string>bc1eqz</string>
+            <key>release</key>
+            <array>
+                <string>MIPS32R6</string>
+            </array>
+            <key>branchtype</key>
+            <string>EQUAL_ZERO</string>
+            <key>format</key>
+            <string>31..26=0x11 25..21=9 20..16:ft#1r 15..0:off18B#2r</string>
+        </dict>
+        <dict>
+            <key>mnemonic</key>
+            <string>bc1nez</string>
+            <key>release</key>
+            <array>
+                <string>MIPS32R6</string>
+            </array>
+            <key>branchtype</key>
+            <string>NOT_EQUAL_ZERO</string>
+            <key>format</key>
+            <string>31..26=0x11 25..21=0xd 20..16:ft#1r 15..0:off18B#2r</string>
         </dict>
         <dict>
             <key>mnemonic</key>
@@ -426,6 +470,30 @@
         </dict>
         <dict>
             <key>mnemonic</key>
+            <string>bc2eqz</string>
+            <key>release</key>
+            <array>
+                <string>MIPS32R6</string>
+            </array>
+            <key>branchtype</key>
+            <string>EQUAL_ZERO</string>
+            <key>format</key>
+            <string>31..26=0x12 25..21=9 20..16:coprt#1r 15..0:off18B#2r</string>
+        </dict>
+        <dict>
+            <key>mnemonic</key>
+            <string>bc2nez</string>
+            <key>release</key>
+            <array>
+                <string>MIPS32R6</string>
+            </array>
+            <key>branchtype</key>
+            <string>NOT_EQUAL_ZERO</string>
+            <key>format</key>
+            <string>31..26=0x12 25..21=0xd 20..16:coprt#1r 15..0:off18B#2r</string>
+        </dict>
+        <dict>
+            <key>mnemonic</key>
             <string>bc2f</string>
             <key>comment</key>
             <string>special case of bc2f cc=0, offset</string>
@@ -546,7 +614,40 @@
         </dict>
         <dict>
             <key>mnemonic</key>
-            <string>bgez</string>
+            <string>beq</string>
+            <key>release</key>
+            <array>
+                <string>MIPS32</string>
+                <string>MIPS32R2</string>
+                <string>MIPS32R5</string>
+                <string>MIPS32R6</string>
+            </array>
+            <key>branchtype</key>
+            <string>EQUAL</string>
+            <key>format</key>
+            <string>31..26=4 25..21:rs#1r 20..16:rt#2r 15..0:off18B#3r</string>
+        </dict>
+        <dict>
+            <key>mnemonic</key>
+            <string>beqc</string>
+            <key>release</key>
+            <array>
+                <string>MIPS32R6</string>
+            </array>
+            <key>branchtype</key>
+            <string>GREATER_EQUAL</string>
+            <key>condition</key>
+            <array>
+                <string>#1&lt;#2</string>
+                <string>#1!=0</string>
+                <string>#2!=0</string>
+            </array>
+            <key>format</key>
+            <string>31..26=8 25..21:rs#1r 20..16:rt#2r 15..0:off18B#3r</string>
+        </dict>
+        <dict>
+            <key>mnemonic</key>
+            <string>beql</string>
             <key>release</key>
             <array>
                 <string>MIPS32</string>
@@ -554,9 +655,160 @@
                 <string>MIPS32R5</string>
             </array>
             <key>branchtype</key>
+            <string>EQUAL</string>
+            <key>format</key>
+            <string>31..26=0x14 25..21:rs#1r 20..16:rt#2r 15..0:off18B#3r</string>
+        </dict>
+        <dict>
+            <key>mnemonic</key>
+            <string>beqz</string>
+            <key>comment</key>
+            <string>special case of beq rs, rt=zero, offset</string>
+            <key>idiom</key>
+            <true/>
+            <key>release</key>
+            <array>
+                <string>MIPS32</string>
+                <string>MIPS32R2</string>
+                <string>MIPS32R5</string>
+            </array>
+            <key>branchtype</key>
+            <string>EQUAL_ZERO</string>
+            <key>format</key>
+            <string>31..26=4 25..21:rs#1r 20..16=0 15..0:off18B#2r</string>
+        </dict>
+        <dict>
+            <key>mnemonic</key>
+            <string>beqzl</string>
+            <key>comment</key>
+            <string>special case of beql rs, rt=zero, offset</string>
+            <key>idiom</key>
+            <true/>
+            <key>release</key>
+            <array>
+                <string>MIPS32</string>
+                <string>MIPS32R2</string>
+                <string>MIPS32R5</string>
+            </array>
+            <key>branchtype</key>
+            <string>EQUAL_ZERO</string>
+            <key>format</key>
+            <string>31..26=0x14 25..21:rs#1r 20..16=0 15..0:off18B#2r</string>
+        </dict>
+        <dict>
+            <key>mnemonic</key>
+            <string>beqzalc</string>
+            <key>release</key>
+            <array>
+                <string>MIPS32R6</string>
+            </array>
+            <key>branchtype</key>
+            <string>EQUAL_ZERO</string>
+            <key>condition</key>
+            <array>
+                <string>#2!=0</string>
+            </array>
+            <key>format</key>
+            <string>31..26=8 25..21=0 20..16:rt#1r 15..0:off18B#2r</string>
+        </dict>
+        <dict>
+            <key>mnemonic</key>
+            <string>bgec</string>
+            <key>release</key>
+            <array>
+                <string>MIPS32R6</string>
+            </array>
+            <key>branchtype</key>
+            <string>GREATER_EQUAL</string>
+            <key>condition</key>
+            <array>
+                <string>#1!=#2</string>
+                <string>#1!=0</string>
+                <string>#2!=0</string>
+            </array>
+            <key>format</key>
+            <string>31..26=0x16 25..21:rs#1r 20..16:rt#2r 15..0:off18B#3r</string>
+        </dict>
+        <dict>
+            <key>mnemonic</key>
+            <string>bgeuc</string>
+            <key>release</key>
+            <array>
+                <string>MIPS32R6</string>
+            </array>
+            <key>branchtype</key>
+            <string>GREATER_EQUAL</string>
+            <key>condition</key>
+            <array>
+                <string>#1!=#2</string>
+                <string>#1!=0</string>
+                <string>#2!=0</string>
+            </array>
+            <key>format</key>
+            <string>31..26=6 25..21:rs#1r 20..16:rt#2r 15..0:off18B#3r</string>
+        </dict>
+        <dict>
+            <key>mnemonic</key>
+            <string>bgez</string>
+            <key>release</key>
+            <array>
+                <string>MIPS32</string>
+                <string>MIPS32R2</string>
+                <string>MIPS32R5</string>
+                <string>MIPS32R6</string>
+            </array>
+            <key>branchtype</key>
             <string>GREATER_EQUAL_ZERO</string>
             <key>format</key>
             <string>31..26=1 25..21:rs#1r 20..16=1 15..0:off18B#2r</string>
+        </dict>
+        <dict>
+            <key>mnemonic</key>
+            <string>bgezc</string>
+            <key>release</key>
+            <array>
+                <string>MIPS32R6</string>
+            </array>
+            <key>branchtype</key>
+            <string>GREATER_EQUAL_ZERO</string>
+            <key>condition</key>
+            <array>
+                <string>#1==#2</string>
+                <string>#2!=0</string>
+            </array>
+            <key>format</key>
+            <string>31..26=0x16 25..21:rs 20..16:rt#1r 15..0:off18B#2r</string>
+        </dict>
+        <dict>
+            <key>mnemonic</key>
+            <string>bgezal</string>
+            <key>release</key>
+            <array>
+                <string>MIPS32</string>
+                <string>MIPS32R2</string>
+                <string>MIPS32R5</string>
+            </array>
+            <key>branchtype</key>
+            <string>CALL</string>
+            <key>format</key>
+            <string>31..26=1 25..21:rs#1r 20..16=0x11 15..0:off18B#2r</string>
+        </dict>
+        <dict>
+            <key>mnemonic</key>
+            <string>bgezalc</string>
+            <key>release</key>
+            <array>
+                <string>MIPS32R6</string>
+            </array>
+            <key>branchtype</key>
+            <string>EQUAL_ZERO</string>
+            <key>condition</key>
+            <array>
+                <string>#1==#2</string>
+                <string>#2!=0</string>
+            </array>
+            <key>format</key>
+            <string>31..26=6 25..21:rs 20..16:rt#1r 15..0:off18B#2r</string>
         </dict>
         <dict>
             <key>mnemonic</key>
@@ -602,6 +854,38 @@
         </dict>
         <dict>
             <key>mnemonic</key>
+            <string>bgtzc</string>
+            <key>release</key>
+            <array>
+                <string>MIPS32R6</string>
+            </array>
+            <key>branchtype</key>
+            <string>GREATER_ZERO</string>
+            <key>condition</key>
+            <array>
+                <string>#2!=0</string>
+            </array>
+            <key>format</key>
+            <string>31..26=0x17 25..21=0 20..16:rt#1r 15..0:off18B#2r</string>
+        </dict>
+        <dict>
+            <key>mnemonic</key>
+            <string>bgtzalc</string>
+            <key>release</key>
+            <array>
+                <string>MIPS32R6</string>
+            </array>
+            <key>branchtype</key>
+            <string>GREATER_ZERO</string>
+            <key>condition</key>
+            <array>
+                <string>#2!=0</string>
+            </array>
+            <key>format</key>
+            <string>31..26=7 25..21=0 20..16:rt#1r 15..0:off18B#2r</string>
+        </dict>
+        <dict>
+            <key>mnemonic</key>
             <string>bgtzl</string>
             <key>release</key>
             <array>
@@ -630,6 +914,38 @@
         </dict>
         <dict>
             <key>mnemonic</key>
+            <string>blezc</string>
+            <key>release</key>
+            <array>
+                <string>MIPS32R6</string>
+            </array>
+            <key>branchtype</key>
+            <string>LESS_EQUAL_ZERO</string>
+            <key>condition</key>
+            <array>
+                <string>#2!=0</string>
+            </array>
+            <key>format</key>
+            <string>31..26=0x16 25..21=0 20..16:rt#1r 15..0:off18B#2r</string>
+        </dict>
+        <dict>
+            <key>mnemonic</key>
+            <string>blezalc</string>
+            <key>release</key>
+            <array>
+                <string>MIPS32R6</string>
+            </array>
+            <key>branchtype</key>
+            <string>EQUAL_ZERO</string>
+            <key>condition</key>
+            <array>
+                <string>#2!=0</string>
+            </array>
+            <key>format</key>
+            <string>31..26=6 25..21=0 20..16:rt#1r 15..0:off18B#2r</string>
+        </dict>
+        <dict>
+            <key>mnemonic</key>
             <string>blezl</string>
             <key>release</key>
             <array>
@@ -644,6 +960,42 @@
         </dict>
         <dict>
             <key>mnemonic</key>
+            <string>bltc</string>
+            <key>release</key>
+            <array>
+                <string>MIPS32R6</string>
+            </array>
+            <key>branchtype</key>
+            <string>LESS</string>
+            <key>condition</key>
+            <array>
+                <string>#1!=#2</string>
+                <string>#1!=0</string>
+                <string>#2!=0</string>
+            </array>
+            <key>format</key>
+            <string>31..26=0x17 25..21:rs#1r 20..16:rt#2r 15..0:off18B#3r</string>
+        </dict>
+        <dict>
+            <key>mnemonic</key>
+            <string>bltuc</string>
+            <key>release</key>
+            <array>
+                <string>MIPS32R6</string>
+            </array>
+            <key>branchtype</key>
+            <string>LESS</string>
+            <key>condition</key>
+            <array>
+                <string>#1!=#2</string>
+                <string>#1!=0</string>
+                <string>#2!=0</string>
+            </array>
+            <key>format</key>
+            <string>31..26=7 25..21:rs#1r 20..16:rt#2r 15..0:off18B#3r</string>
+        </dict>
+        <dict>
+            <key>mnemonic</key>
             <string>bltz</string>
             <key>release</key>
             <array>
@@ -652,9 +1004,26 @@
                 <string>MIPS32R5</string>
             </array>
             <key>branchtype</key>
-            <string>LESS_THAN_ZERO</string>
+            <string>LESS_ZERO</string>
             <key>format</key>
             <string>31..26=1 25..21:rs#1r 20..16=0 15..0:off18B#2r</string>
+        </dict>
+        <dict>
+            <key>mnemonic</key>
+            <string>bltzc</string>
+            <key>release</key>
+            <array>
+                <string>MIPS32R6</string>
+            </array>
+            <key>branchtype</key>
+            <string>LESS_ZERO</string>
+            <key>condition</key>
+            <array>
+                <string>#1==#2</string>
+                <string>#2!=0</string>
+            </array>
+            <key>format</key>
+            <string>31..26=0x17 25..21:rs 20..16:rt#1r 15..0:off18B#2r</string>
         </dict>
         <dict>
             <key>mnemonic</key>
@@ -666,9 +1035,26 @@
                 <string>MIPS32R5</string>
             </array>
             <key>branchtype</key>
-            <string>LESS_THAN_ZERO</string>
+            <string>LESS_ZERO</string>
             <key>format</key>
             <string>31..26=1 25..21:rs#1r 20..16=0x10 15..0:off18B#2r</string>
+        </dict>
+        <dict>
+            <key>mnemonic</key>
+            <string>bltzalc</string>
+            <key>release</key>
+            <array>
+                <string>MIPS32R6</string>
+            </array>
+            <key>branchtype</key>
+            <string>LESS_ZERO</string>
+            <key>condition</key>
+            <array>
+                <string>#1==#2</string>
+                <string>#2!=0</string>
+            </array>
+            <key>format</key>
+            <string>31..26=7 25..21:rs 20..16:rt#1r 15..0:off18B#2r</string>
         </dict>
         <dict>
             <key>mnemonic</key>
@@ -680,7 +1066,7 @@
                 <string>MIPS32R5</string>
             </array>
             <key>branchtype</key>
-            <string>LESS_THAN_ZERO</string>
+            <string>LESS_ZERO</string>
             <key>format</key>
             <string>31..26=1 25..21:rs#1r 20..16=0x12 15..0:off18B#2r</string>
         </dict>
@@ -694,7 +1080,7 @@
                 <string>MIPS32R5</string>
             </array>
             <key>branchtype</key>
-            <string>LESS_THAN_ZERO</string>
+            <string>LESS_ZERO</string>
             <key>format</key>
             <string>31..26=1 25..21:rs#1r 20..16=2 15..0:off18B#2r</string>
         </dict>
@@ -713,6 +1099,22 @@
             <string>NOT_EQUAL_ZERO</string>
             <key>format</key>
             <string>31..26=5 25..21:rs#1r 20..16=0 15..0:off18B#2r</string>
+        </dict>
+        <dict>
+            <key>mnemonic</key>
+            <string>bnezalc</string>
+            <key>release</key>
+            <array>
+                <string>MIPS32R6</string>
+            </array>
+            <key>branchtype</key>
+            <string>GREATER_ZERO</string>
+            <key>condition</key>
+            <array>
+                <string>#2!=0</string>
+            </array>
+            <key>format</key>
+            <string>31..26=0x18 25..21=0 20..16:rt#1r 15..0:off18B#2r</string>
         </dict>
         <dict>
             <key>mnemonic</key>
@@ -1700,7 +2102,21 @@
                 <string>MIPS32R5</string>
             </array>
             <key>format</key>
-            <string>31..26=0xf 25..21=0 20..16:rt#1w 15..0:uimm</string>
+            <string>31..26=0xf 25..21=0 20..16:rt#1w 15..0:uimm#2r</string>
+        </dict>
+        <dict>
+            <key>mnemonic</key>
+            <string>lui</string>
+            <key>comment</key>
+            <string>special case of aui rt, rs=zero, uimm</string>
+            <key>idiom</key>
+            <true/>
+            <key>release</key>
+            <array>
+                <string>MIPS32R6</string>
+            </array>
+            <key>format</key>
+            <string>31..26=0xf 25..21=0 20..16:rt#1w 15..0:uimm#2r</string>
         </dict>
         <dict>
             <key>mnemonic</key>
@@ -2668,6 +3084,7 @@
                 <string>MIPS32</string>
                 <string>MIPS32R2</string>
                 <string>MIPS32R5</string>
+                <string>MIPS32R6</string>
             </array>
             <key>format</key>
             <string>31..0=0</string>

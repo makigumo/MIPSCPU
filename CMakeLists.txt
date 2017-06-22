@@ -69,10 +69,12 @@ add_library(
     MIPSCPU/MIPSCtx.m
     MIPSCPU/MIPSCSCtx.m
     MIPSCPU/BitRange.m
+    MIPSCPU/InsCond.m
     MIPSCPU/InsDef.m
     MIPSCPU/Insn.m
     MIPSCPU/InsOp.m
     MIPSCPU/NSArray+BitRange.m
+    MIPSCPU/NSArray+InsCond.m
 )
 
 target_compile_options(

@@ -8,6 +8,8 @@
 
 @class InsOp;
 @class BitRange;
+@class InsCond;
+@class InsCond;
 
 typedef NS_ENUM(NSUInteger, isa_release) {
     MIPS32 = 1 << 0,
@@ -32,14 +34,21 @@ typedef NS_ENUM(NSUInteger, isa_release) {
  * type (reg, fpureg, imm16, uimm16)
  */
 @property NSString *format;
+@property NSArray<InsCond *> *conditions;
 
 - (instancetype)initWithMnemonic:(NSString *)aMnemonic
                          release:(isa_release)aRelease
-                          format:(NSString *)aFormat;
+                          format:(NSString *)aFormat
+                      conditions:(NSArray<NSString *> *)conditionStrings;
 
 + (instancetype)defWithMnemonic:(NSString *)aMnemonic
                         release:(isa_release)aRelease
                          format:(NSString *)format;
+
++ (instancetype)defWithMnemonic:(NSString *)aMnemonic
+                        release:(isa_release)aRelease
+                         format:(NSString *)aFormat
+                     conditions:(NSArray<NSString *> *)conditionStrings;
 
 - (BOOL)matches:(uint32_t)bytes isa:(isa_release)isa;
 
@@ -47,19 +56,8 @@ typedef NS_ENUM(NSUInteger, isa_release) {
 
 - (uint32_t)numberOfMaskBitsSet;
 
-- (NSNumber *)getOperandPositionFromString:(NSString *)string;
-
-- (NSArray<BitRange *> *)bitrangesFromString:(NSString *)string;
-
-- (NSNumber *)getValueFromString:(NSString *)string;
-
-- (oper_type)getOperandTypeFromString:(NSString *)string;
-
-- (DisasmAccessMode)getAccessModeFromString:(NSString *)string;
-
-- (BOOL)getIsBranchDestinationFromString:(NSString *)string;
-
 - (NSString *)description;
 
 - (uint8_t)instructionLength;
+
 @end

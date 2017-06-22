@@ -8,7 +8,7 @@
 
 @class BitRange;
 
-typedef NS_ENUM(NSUInteger, oper_type) {
+typedef NS_ENUM(NSUInteger, InsOpType) {
     OTYPE_UNDEFINED,
     OTYPE_INVALID,
     OTYPE_IGNORED,
@@ -24,10 +24,12 @@ typedef NS_ENUM(NSUInteger, oper_type) {
     OTYPE_FPU_REG_SOURCE, // fs
     OTYPE_FPU_REG_R, // fr
     OTYPE_IMM16, // signed 16-bit immediate
-    OTYPE_IMM24, // signed 24-bit immediate
+    OTYPE_IMM16SL16, // signed 16-bit immediate (shifted left by 16 bits)
+    OTYPE_IMM19SL2, // signed 19-bit immediate (shifted left by 2 bits)
     OTYPE_OFF9, // signed 9-bit offset
     OTYPE_OFF16, // signed 16-bit offset
     OTYPE_OFF18, // signed 18-bit offset (16-bit offset field shifted left by 2 bits)
+    OTYPE_OFF28, // signed 28-bit offset (26-bit offset field shifted left by 2 bits)
     OTYPE_FPU_FMT, // ffmt - format
     OTYPE_FPU_FCC, // fcc - condition code register
     OTYPE_FPU_COND, // fcond - compare condition, eq, le, lt,
@@ -40,15 +42,33 @@ typedef NS_ENUM(NSUInteger, oper_type) {
     OTYPE_SIZE, // unsigned immediate - 1
     OTYPE_POSSIZE, // pos + unsigned immediate - 1
     OTYPE_JMP_ADR, // unsigned immediate left shifted by 2 bits
+    OTYPE_BYTE_POS, // 2-bit byte position
 };
 
 @interface InsOp : NSObject {
 }
 @property NSArray<BitRange *> *bits;
-@property oper_type type;
+@property InsOpType type;
 @property NSNumber *pos;
 @property DisasmAccessMode accessMode;
 @property BOOL isBranchDestination;
+
+
++ (instancetype)insOpFromString:(NSString *)string;
+
++ (NSArray<BitRange *> *)bitrangesFromString:(NSString *)string;
+
++ (InsOpType)getOperandTypeFromString:(NSString *)string;
+
++ (InsOpType)typeLookup:(NSString *)string;
+
++ (NSNumber *)getValueFromString:(NSString *)string;
+
++ (DisasmAccessMode)getAccessModeFromString:(NSString *)string;
+
++ (NSNumber *)getOperandPositionFromString:(NSString *)string;
+
++ (BOOL)getIsBranchDestinationFromString:(NSString *)string;
 
 - (NSString *)description;
 

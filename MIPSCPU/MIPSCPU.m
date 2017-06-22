@@ -91,7 +91,7 @@
                 @"mips32",
                 @"mips32r2",
                 @"mips32r5",
-                //@"mips32r6",
+                @"mips32r6",
         ];
     }
     return nil;

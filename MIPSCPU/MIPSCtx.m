@@ -66,10 +66,12 @@
         branchTypeLookup = @{
                 @"ALWAYS": @(DISASM_BRANCH_JMP),
                 @"EQUAL_ZERO": @(DISASM_BRANCH_JECXZ),
+                @"GREATER_EQUAL": @(DISASM_BRANCH_JGE),
                 @"GREATER_EQUAL_ZERO": @(DISASM_BRANCH_JGE),
                 @"GREATER_ZERO": @(DISASM_BRANCH_JG),
                 @"LESS_EQUAL_ZERO": @(DISASM_BRANCH_JLE),
-                @"LESS_THAN_ZERO": @(DISASM_BRANCH_JL),
+                @"LESS": @(DISASM_BRANCH_JL),
+                @"LESS_ZERO": @(DISASM_BRANCH_JL),
                 @"EQUAL": @(DISASM_BRANCH_JE),
                 @"NOT_EQUAL": @(DISASM_BRANCH_JNE),
                 @"NOT_EQUAL_ZERO": @(DISASM_BRANCH_JNE),
@@ -119,7 +121,11 @@
             }
             NSString *const format = opDict[@"format"];
             NSAssert1(format != nil, @"missing key 'format' in %@", opDict);
-            InsDef *const insDef = [InsDef defWithMnemonic:key release:__release format:format];
+            NSArray<NSString *> *const conditions = opDict[@"condition"];
+            InsDef *const insDef = [InsDef defWithMnemonic:key
+                                                   release:__release
+                                                    format:format
+                                                conditions:conditions];
             NSString *const branchtype = [opDict valueForKey:@"branchtype"];
             insDef.branchType = [MIPSCtx branchTypes][branchtype];
             if (branchtype && !insDef.branchType) {
@@ -285,17 +291,33 @@ static inline void clear_operands_from(DisasmStruct *disasm, int index) {
                     disasm->operand[idx].type |= getFpuRegMask((enum FpuReg) [operand valueFromBytes:bytes]);
                     disasm->operand[idx].accessMode = operand.accessMode;
                     break;
+                case OTYPE_BYTE_POS:
+                    disasm->operand[idx].type = DISASM_OPERAND_CONSTANT_TYPE;
+                    disasm->operand[idx].immediateValue = [operand valueFromBytes:bytes];
+                    disasm->operand[idx].size = 2;
+                    disasm->operand[idx].accessMode = operand.accessMode;
+                    break;
                 case OTYPE_IMM16:
                     disasm->operand[idx].type = DISASM_OPERAND_CONSTANT_TYPE | DISASM_OPERAND_RELATIVE;
                     disasm->operand[idx].immediateValue = [operand valueFromBytes:bytes];
                     disasm->operand[idx].size = 16;
                     disasm->operand[idx].accessMode = operand.accessMode;
                     break;
-                case OTYPE_IMM24:
+                case OTYPE_IMM16SL16:
                     disasm->operand[idx].type = DISASM_OPERAND_CONSTANT_TYPE | DISASM_OPERAND_RELATIVE;
                     disasm->operand[idx].immediateValue = [operand valueFromBytes:bytes];
-                    disasm->operand[idx].size = 24;
+                    disasm->operand[idx].size = 16;
                     disasm->operand[idx].accessMode = operand.accessMode;
+                    disasm->instruction.addressValue = (Address) disasm->virtualAddr + (
+                            (int32_t) ([operand valueFromBytes:bytes] << 13) >> 11);
+                    break;
+                case OTYPE_IMM19SL2:
+                    disasm->operand[idx].type = DISASM_OPERAND_CONSTANT_TYPE | DISASM_OPERAND_RELATIVE;
+                    disasm->operand[idx].immediateValue = [operand valueFromBytes:bytes] << 2;
+                    disasm->operand[idx].size = 19;
+                    disasm->operand[idx].accessMode = operand.accessMode;
+                    disasm->instruction.addressValue = (Address) disasm->virtualAddr + 4 + (
+                            (int32_t) ([operand valueFromBytes:bytes] << 13) >> 11);
                     break;
                 case OTYPE_OFF9:
                     if (idx > 0 && operands[idx - 1].type == OTYPE_MEM_BASE) {
@@ -315,9 +337,20 @@ static inline void clear_operands_from(DisasmStruct *disasm, int index) {
                 case OTYPE_OFF18:
                     disasm->operand[idx].type = DISASM_OPERAND_CONSTANT_TYPE;
                     const int16_t int16 = (int16_t) [operand valueFromBytes:bytes];
-                    disasm->operand[idx].immediateValue = disasm->virtualAddr + 4 + (int16 << 2);;
+                    disasm->operand[idx].immediateValue = disasm->virtualAddr + 4 + (int16 << 2);
                     disasm->operand[idx].size = 32;
                     disasm->instruction.addressValue = disasm->virtualAddr + 4 + (int16 << 2);
+                    if (operand.isBranchDestination) {
+                        disasm->operand[idx].isBranchDestination = 1;
+                    }
+                    disasm->operand[idx].accessMode = operand.accessMode;
+                    break;
+                case OTYPE_OFF28:
+                    disasm->operand[idx].type = DISASM_OPERAND_CONSTANT_TYPE | DISASM_OPERAND_RELATIVE;
+                    disasm->operand[idx].immediateValue = ((int32_t) ([operand valueFromBytes:bytes] << 6)) >> 4;
+                    disasm->operand[idx].size = 28;
+                    disasm->instruction.addressValue = (Address) (disasm->virtualAddr + 4) +
+                            (((int32_t) ([operand valueFromBytes:bytes] << 6) >> 4));
                     if (operand.isBranchDestination) {
                         disasm->operand[idx].isBranchDestination = 1;
                     }

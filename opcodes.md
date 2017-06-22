@@ -27,26 +27,47 @@ Instruction opcodes and their operands are defined in `opcodes.plist`. This file
     * If operand is branch destination: `B`
     * Operand position: `#1`
         * If operand is read and/or written: `#1w`, `#2r`, `#3rw`
+        * Operands without a position are not considered for output.
     * Operand type
-        * `rt`
-        * `rs`
-        * `rd`
-        * `coprt`
-        * `coprs`
-        * `coprd`
-        * `ft`
-        * `fs`
-        * `fd`
-        * `uimm`
-        * `imm16`
-        * `fcc`
-        * `base`
-        * `index`
-        * `off9`
-        * `off16`
-        * `off18`
+        * `rt` GPR
+        * `rs` GPR
+        * `rd` GPR
+        * `coprt` CPR
+        * `coprs` CPR
+        * `coprd` CPR
+        * `hwrd` HWR
+        * `ft` FPR
+        * `fs` FPR
+        * `fd` FPR
+        * `uimm` unsigned immediate of size determined by bit range length.
+        * `imm16` 16-bit signed immediate
+        * `imm16sl16` 16-bit signed immediate shifted left by 16 bits
+        * `imm19sl2` 19-bit signed immediate shifted left by 2 bits
+        * `fcc` FPU control
+        * `ffmt` FPU format
+        * `fcond` FPU condition
+        * `base` base register for memory
+        * `copbase` cop base register for memory
+        * `index` index register for memory
+        * `off9` 9-bit offset
+        * `off16` 16-bit offset
+        * `off18` 18-bit offset
+        * `off28` 28-bit offset
         * `size`
         * `possize`
         * `jmpadr`
         * `ignored`
+        * `bp`
+        * `sa`
+        * `op`
+        * `ignored`
 * Idiom: Optional boolean.
+* Conditions: Optional conditions that must be satisfied, e.g. for MIPS32R6.
+    * compare operand and operand, or
+        * `#1=#2`
+    * compare operand and value
+        * `#1!=0`
+    * operands are designated by their position from the left inside the format string `0..n-1`
+    * compare operations are:
+        * `==`
+        * `!=`

@@ -28,82 +28,6 @@ InsDef *insDef;
     [super tearDown];
 }
 
-- (void)testSingleBitrange {
-    NSArray<BitRange *> *array = [insDef bitrangesFromString:@"31..26"];
-    XCTAssertEqual(array.count, 1);
-    XCTAssertEqual(array[0].firstBit, 31);
-    XCTAssertEqual(array[0].lastBit, 26);
-    XCTAssertNil(array[0].value);
-}
-
-- (void)testSingleBitrangeWithExtraData {
-    NSArray<BitRange *> *array = [insDef bitrangesFromString:@"31..26=0x23"];
-    XCTAssertEqual(array.count, 1);
-    XCTAssertEqual(array[0].firstBit, 31);
-    XCTAssertEqual(array[0].lastBit, 26);
-    XCTAssertEqual(array[0].value.unsignedIntValue, 0x23);
-    XCTAssertEqual(array[0].asMask, 0xfc000000);
-    XCTAssertEqual(array[0].asMatch, 0x8c000000);
-
-    array = [insDef bitrangesFromString:@"31..0=0"];
-    XCTAssertEqual(array.count, 1);
-    XCTAssertEqual(array[0].firstBit, 31);
-    XCTAssertEqual(array[0].lastBit, 0);
-    XCTAssertEqual(array[0].value.integerValue, 0);
-    XCTAssertEqual(array[0].asMask, 0xffffffff);
-    XCTAssertEqual(array[0].asMatch, 0);
-}
-
-- (void)testDualBitrange {
-    NSArray<BitRange *> *array = [insDef bitrangesFromString:@"31..26=1,20..16=0xf"];
-    XCTAssertEqual(array.count, 2);
-    XCTAssertEqual(array[0].firstBit, 31);
-    XCTAssertEqual(array[0].lastBit, 26);
-    XCTAssertEqual(array[0].value.unsignedIntValue, 1);
-    XCTAssertEqual(array[1].firstBit, 20);
-    XCTAssertEqual(array[1].lastBit, 16);
-    XCTAssertEqual(array[1].value.unsignedIntValue, 0xf);
-}
-
-- (void)testInvalidBitrange {
-    XCTAssertThrowsSpecificNamed([insDef bitrangesFromString:@"16..20"], NSException, NSInternalInconsistencyException);
-    XCTAssertThrowsSpecificNamed([insDef bitrangesFromString:@"31..26,16..20"], NSException, NSInternalInconsistencyException);
-    XCTAssertThrowsSpecificNamed([insDef bitrangesFromString:@"32..26"], NSException, NSInternalInconsistencyException);
-    XCTAssertThrowsSpecificNamed([insDef bitrangesFromString:@"-1..26"], NSException, NSInternalInconsistencyException);
-    XCTAssertThrowsSpecificNamed([insDef bitrangesFromString:@"31..-1"], NSException, NSInternalInconsistencyException);
-}
-
-- (void)testInvalidBitrangeValue {
-    XCTAssertThrowsSpecificNamed([insDef bitrangesFromString:@"0..0=2"], NSException, NSInternalInconsistencyException);
-    XCTAssertThrowsSpecificNamed([insDef bitrangesFromString:@"1..1=2"], NSException, NSInternalInconsistencyException);
-    XCTAssertThrowsSpecificNamed([insDef bitrangesFromString:@"31..26=0x40"], NSException, NSInternalInconsistencyException);
-}
-
-- (void)testOperandType {
-    XCTAssertEqual([insDef getOperandTypeFromString:@"16..20"], OTYPE_UNDEFINED);
-    XCTAssertEqual([insDef getOperandTypeFromString:@"16..20=12"], OTYPE_UNDEFINED);
-    XCTAssertEqual([insDef getOperandTypeFromString:@"16..20:rd"], OTYPE_REG_DEST);
-    XCTAssertEqual([insDef getOperandTypeFromString:@"16..20:rt"], OTYPE_REG_TEMP);
-    XCTAssertEqual([insDef getOperandTypeFromString:@"16..20:rs"], OTYPE_REG_SOURCE);
-    XCTAssertEqual([insDef getOperandTypeFromString:@"16..20:fd"], OTYPE_FPU_REG_DEST);
-    XCTAssertEqual([insDef getOperandTypeFromString:@"16..20:ft"], OTYPE_FPU_REG_TEMP);
-    XCTAssertEqual([insDef getOperandTypeFromString:@"16..20:fs"], OTYPE_FPU_REG_SOURCE);
-    XCTAssertEqual([insDef getOperandTypeFromString:@"16..20:imm16"], OTYPE_IMM16);
-    XCTAssertEqual([insDef getOperandTypeFromString:@"16..20:imm24"], OTYPE_IMM24);
-    XCTAssertEqual([insDef getOperandTypeFromString:@"15..0:off18"], OTYPE_OFF18);
-    XCTAssertEqual([insDef getOperandTypeFromString:@"16..20:ffmt"], OTYPE_FPU_FMT);
-
-    XCTAssertEqual([insDef getOperandTypeFromString:@"16..20:x"], OTYPE_INVALID);
-    XCTAssertEqual([insDef getOperandTypeFromString:@"16..20:"], OTYPE_UNDEFINED);
-}
-
-- (void)testOperandPosition {
-    XCTAssertNil([insDef getOperandPositionFromString:@"16..20"]);
-    XCTAssertNil([insDef getOperandPositionFromString:@"16..20#"]);
-    XCTAssertEqual([insDef getOperandPositionFromString:@"16..20#1"].intValue, 1);
-    XCTAssertEqual([insDef getOperandPositionFromString:@"16..20#1rw"].intValue, 1);
-}
-
 - (void)testOperands {
     InsDef *def = [InsDef defWithMnemonic:@"alnv.ps"
                                   release:MIPS32R2 | MIPS64
@@ -191,25 +115,4 @@ InsDef *insDef;
             NSException, NSInternalInconsistencyException, @"should throw NSInternalInconsistencyException");
 }
 
-- (void)testGetValueFromString {
-    XCTAssertEqual([[insDef getValueFromString:@"16..20=1"] unsignedIntValue], 1);
-    XCTAssertEqual([[insDef getValueFromString:@"16..20=0"] unsignedIntValue], 0);
-    XCTAssertEqual([[insDef getValueFromString:@"16..20=0x1"] unsignedIntValue], 0x1);
-    XCTAssertEqual([[insDef getValueFromString:@"16..20=0x20"] unsignedIntValue], 0x20);
-    XCTAssertEqual([[insDef getValueFromString:@"5..0=0x1e"] unsignedIntValue], 0x1e);
-    XCTAssertNil([insDef getValueFromString:@"16..20="]);
-}
-
-- (void)testGetAccessModeFromString {
-    XCTAssertEqual([insDef getAccessModeFromString:@"16..20=1"], DISASM_ACCESS_NONE);
-    XCTAssertEqual([insDef getAccessModeFromString:@"16..20=1r"], DISASM_ACCESS_READ);
-    XCTAssertEqual([insDef getAccessModeFromString:@"16..20=1w"], DISASM_ACCESS_WRITE);
-    XCTAssertEqual([insDef getAccessModeFromString:@"16..20=1rw"], DISASM_ACCESS_READ | DISASM_ACCESS_WRITE);
-    XCTAssertEqual([insDef getAccessModeFromString:@"16..20=1wr"], DISASM_ACCESS_READ | DISASM_ACCESS_WRITE);
-}
-
-- (void)testGetIsBranchDestinationFromString {
-    XCTAssertFalse([insDef getIsBranchDestinationFromString:@"15..0:off18#2r"]);
-    XCTAssertTrue([insDef getIsBranchDestinationFromString:@"15..0:off18B#2r"]);
-}
 @end
