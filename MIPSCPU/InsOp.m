@@ -7,6 +7,9 @@
 #import "NSArray+BitRange.h"
 #import "BitRange.h"
 
+#if defined(__linux__)
+#include <dispatch/dispatch.h>
+#endif
 
 @implementation InsOp {
 }

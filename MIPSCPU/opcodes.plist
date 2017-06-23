@@ -1102,6 +1102,24 @@
         </dict>
         <dict>
             <key>mnemonic</key>
+            <string>bnec</string>
+            <key>release</key>
+            <array>
+                <string>MIPS32R6</string>
+            </array>
+            <key>branchtype</key>
+            <string>NOT_EQUAL</string>
+            <key>condition</key>
+            <array>
+                <string>#1&lt;#2</string>
+                <string>#1!=0</string>
+                <string>#2!=0</string>
+            </array>
+            <key>format</key>
+            <string>31..26=0x18 25..21:rs#1r 20..16:rt#2r 15..0:off18B#3r</string>
+        </dict>
+        <dict>
+            <key>mnemonic</key>
             <string>bnezalc</string>
             <key>release</key>
             <array>

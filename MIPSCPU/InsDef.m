@@ -8,10 +8,6 @@
 #import "NSArray+InsCond.h"
 #import "InsCond.h"
 
-#if defined(__linux__)
-#include <dispatch/dispatch.h>
-#endif
-
 @class BitRange;
 
 @interface InsDef ()
