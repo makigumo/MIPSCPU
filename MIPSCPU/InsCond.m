@@ -45,7 +45,7 @@ NSString *const condition_pattern = @"^#(\\d+)(?:(!=)?+(==)?+(\\<)?+)(?:(?:#(\\d
     NSRange range = [match rangeAtIndex:1];
     NSAssert1(range.location != NSNotFound, @"left operand index required: %@", condition);
     unsigned int left_op_idx = (unsigned int) [condition substringWithRange:range].intValue;
-    NSAssert3(left_op_idx < ops.count, @"left operand index %d not in op[%d]: %@", left_op_idx, (unsigned long) ops.count, condition);
+    NSAssert3(left_op_idx < ops.count, @"left operand index %d not in op[%lu]: %@", left_op_idx, (unsigned long) ops.count, condition);
 
     // comparison operators
     // not equal '!='
@@ -73,7 +73,7 @@ NSString *const condition_pattern = @"^#(\\d+)(?:(!=)?+(==)?+(\\<)?+)(?:(?:#(\\d
 
     if (right_op.location != NSNotFound) {
         unsigned int right_op_idx = (unsigned int) [condition substringWithRange:right_op].intValue;
-        NSAssert3(right_op_idx < ops.count, @"right operand index %d not in op[%d]: %@", right_op_idx, (unsigned long) ops.count, condition);
+        NSAssert3(right_op_idx < ops.count, @"right operand index %d not in op[%lu]: %@", right_op_idx, (unsigned long) ops.count, condition);
         return [self condWithLeftOp:ops[left_op_idx] rightOp:ops[right_op_idx] condType:condType];
     } else if (right_value.location != NSNotFound) {
         unsigned int right_val = (unsigned int) [condition substringWithRange:right_value].intValue;

@@ -61,7 +61,7 @@
 		183911F5C1E82F75CCFBDF73 /* CMakeLists.txt */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; name = CMakeLists.txt; path = ../CMakeLists.txt; sourceTree = "<group>"; };
 		1839129C7A410747909F25EC /* InsOp.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = InsOp.h; sourceTree = "<group>"; };
 		183912E024821EA282C14F08 /* BitRangeTests.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = BitRangeTests.m; sourceTree = "<group>"; };
-		18391336272A0EA447A90826 /* InsCondTests.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = InsCondTests.m; path = MIPSCPU/InsCondTests.m; sourceTree = SOURCE_ROOT; };
+		18391336272A0EA447A90826 /* InsCondTests.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = InsCondTests.m; path = MIPSCPUTests/InsCondTests.m; sourceTree = SOURCE_ROOT; };
 		1839136F6C6DE333A67B5B0E /* Info.plist.in */ = {isa = PBXFileReference; lastKnownFileType = text.xml; name = Info.plist.in; path = ../Info.plist.in; sourceTree = "<group>"; };
 		1839137DF86660D18F41C656 /* InsDef.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = InsDef.m; sourceTree = "<group>"; };
 		183913EB48EC00951193D3DC /* NSArray+InsCond.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = "NSArray+InsCond.h"; sourceTree = "<group>"; };
@@ -286,11 +286,11 @@
 			isa = PBXGroup;
 			children = (
 				37D6E0EB1EED92AB00FE96ED /* Info.plist */,
-				37D6E0EF1EED92CB00FE96ED /* InsDefTests.m */,
 				183912E024821EA282C14F08 /* BitRangeTests.m */,
-				183915DCACF3D8394061724D /* NSArray+BitRangeTests.m */,
 				18391336272A0EA447A90826 /* InsCondTests.m */,
+				37D6E0EF1EED92CB00FE96ED /* InsDefTests.m */,
 				18391B769A7E7CA7C2C16427 /* InsOpTests.m */,
+				183915DCACF3D8394061724D /* NSArray+BitRangeTests.m */,
 			);
 			path = MIPSCPUTests;
 			sourceTree = "<group>";
