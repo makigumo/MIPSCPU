@@ -26,7 +26,7 @@
 
 }
 
-NSString *const condition_pattern = @"^#(\\d+)(?:(!=)?+(==)?+(\\<)?+)(?:(?:#(\\d+))?(\\d+)?)$";
+NSString *const condition_pattern = @"^#(\\d+)(?:(!=)?+(==)?+(\\<)?+(\\>=)?+)(?:(?:#(\\d+))?(\\d+)?)$";
 
 + (instancetype)condWith:(NSString *const)condition
                   andOps:(NSArray<InsOp *> *const)ops {
@@ -49,26 +49,33 @@ NSString *const condition_pattern = @"^#(\\d+)(?:(!=)?+(==)?+(\\<)?+)(?:(?:#(\\d
 
     // comparison operators
     // not equal '!='
-    NSRange notequalrange = [match rangeAtIndex:2];
+    NSRange notEqualRange = [match rangeAtIndex:2];
     // equal '=='
-    NSRange equalrange = [match rangeAtIndex:3];
+    NSRange equalRange = [match rangeAtIndex:3];
     // less '<'
-    NSRange lessrange = [match rangeAtIndex:4];
-    NSAssert1(equalrange.location != NSNotFound ^ notequalrange.location != NSNotFound ^ lessrange.location != NSNotFound, @"invalid comparison operator: %@", condition);
+    NSRange lessRange = [match rangeAtIndex:4];
+    // greater equal '>='
+    NSRange greaterEqualRange = [match rangeAtIndex:5];
+    NSAssert1(equalRange.location != NSNotFound ^
+            notEqualRange.location != NSNotFound ^
+            lessRange.location != NSNotFound ^
+            greaterEqualRange.location != NSNotFound, @"invalid comparison operator: %@", condition);
     CondType condType = COND_FALSE;
-    if (notequalrange.location != NSNotFound) {
+    if (notEqualRange.location != NSNotFound) {
         condType = COND_NOT_EQUAL;
-    } else if (equalrange.location != NSNotFound) {
+    } else if (equalRange.location != NSNotFound) {
         condType = COND_EQUAL;
-    } else if (lessrange.location != NSNotFound) {
+    } else if (lessRange.location != NSNotFound) {
         condType = COND_LESS;
+    } else if (greaterEqualRange.location != NSNotFound) {
+        condType = COND_GREATER_EQUAL;
     }
 
     // right operand
-    NSRange right_op = [match rangeAtIndex:5];
+    NSRange right_op = [match rangeAtIndex:6];
 
     // right value
-    NSRange right_value = [match rangeAtIndex:6];
+    NSRange right_value = [match rangeAtIndex:7];
     NSAssert1(right_op.location != NSNotFound ^ right_value.location != NSNotFound, @"invalid right operand/value: %@", condition);
 
     if (right_op.location != NSNotFound) {
@@ -135,6 +142,8 @@ NSString *const condition_pattern = @"^#(\\d+)(?:(!=)?+(==)?+(\\<)?+)(?:(?:#(\\d
             return [_left valueFromBytes:bytes] != [_right valueFromBytes:bytes];
         case COND_LESS:
             return [_left valueFromBytes:bytes] < [_right valueFromBytes:bytes];
+        case COND_GREATER_EQUAL:
+            return [_left valueFromBytes:bytes] >= [_right valueFromBytes:bytes];
         case COND_FALSE:
             return NO;
     }
@@ -181,6 +190,8 @@ NSString *const condition_pattern = @"^#(\\d+)(?:(!=)?+(==)?+(\\<)?+)(?:(?:#(\\d
             return [_left valueFromBytes:bytes] != _right.unsignedIntValue;
         case COND_LESS:
             return [_left valueFromBytes:bytes] < _right.unsignedIntValue;
+        case COND_GREATER_EQUAL:
+            return [_left valueFromBytes:bytes] >= _right.unsignedIntValue;
         case COND_FALSE:
             return NO;
     }

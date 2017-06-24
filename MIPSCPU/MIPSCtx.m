@@ -43,6 +43,51 @@
     return _condStrings;
 }
 
++ (NSArray<NSString *> *const)condR6Strings {
+    static NSArray<NSString *> *_condStrings;
+    static dispatch_once_t onceToken;
+    dispatch_once(&onceToken, ^{
+        _condStrings = @[
+                @"af",
+                @"un",
+                @"eq",
+                @"ueq",
+                @"lt",
+                @"ult",
+                @"le",
+                @"ule",
+
+                @"saf",
+                @"sun",
+                @"seq",
+                @"sueq",
+                @"slt",
+                @"sult",
+                @"sle",
+                @"sule",
+
+                @"at",
+                @"or",
+                @"une",
+                @"ne",
+                @"uge",
+                @"oge",
+                @"ugt",
+                @"ogt",
+
+                @"sat",
+                @"sor",
+                @"sune",
+                @"sne",
+                @"suge",
+                @"soge",
+                @"sugt",
+                @"sogt",
+        ];
+    });
+    return _condStrings;
+}
+
 + (NSDictionary<NSString *, NSNumber *> *const)isaReleases {
     static NSDictionary<NSString *, NSNumber *> *_releases;
     static dispatch_once_t onceToken;
@@ -75,6 +120,8 @@
                 @"EQUAL": @(DISASM_BRANCH_JE),
                 @"NOT_EQUAL": @(DISASM_BRANCH_JNE),
                 @"NOT_EQUAL_ZERO": @(DISASM_BRANCH_JNE),
+                @"OVERFLOW": @(DISASM_BRANCH_JO),
+                @"NO_OVERFLOW": @(DISASM_BRANCH_JNO),
                 @"CALL": @(DISASM_BRANCH_CALL),
                 @"RET": @(DISASM_BRANCH_RET),
                 @"FALSE": @(DISASM_BRANCH_JNE),
@@ -327,11 +374,24 @@ static inline void clear_operands_from(DisasmStruct *disasm, int index) {
                                 (int16_t) ([operand valueFromBytes:bytes] << 7) >> 7;
                     }
                     break;
+                case OTYPE_OFF11:
+                    if (idx > 0 && operands[idx - 1].type == OTYPE_MEM_BASE) {
+                        disasm->operand[idx - 1].type |= DISASM_OPERAND_RELATIVE;
+                        disasm->operand[idx - 1].size = 11;
+                        disasm->operand[idx - 1].memory.displacement =
+                                (int16_t) ([operand valueFromBytes:bytes] << 5) >> 5;
+                    }
+                    break;
                 case OTYPE_OFF16:
                     if (idx > 0 && operands[idx - 1].type == OTYPE_MEM_BASE) {
                         disasm->operand[idx - 1].type |= DISASM_OPERAND_RELATIVE;
                         disasm->operand[idx - 1].size = 16;
                         disasm->operand[idx - 1].memory.displacement = (int16_t) [operand valueFromBytes:bytes];
+                    } else {
+                        disasm->operand[idx].type = DISASM_OPERAND_CONSTANT_TYPE | DISASM_OPERAND_RELATIVE;
+                        disasm->operand[idx].immediateValue = [operand valueFromBytes:bytes];
+                        disasm->operand[idx].size = 16;
+                        disasm->operand[idx].accessMode = operand.accessMode;
                     }
                     break;
                 case OTYPE_OFF18:
@@ -340,6 +400,26 @@ static inline void clear_operands_from(DisasmStruct *disasm, int index) {
                     disasm->operand[idx].immediateValue = disasm->virtualAddr + 4 + (int16 << 2);
                     disasm->operand[idx].size = 32;
                     disasm->instruction.addressValue = disasm->virtualAddr + 4 + (int16 << 2);
+                    if (operand.isBranchDestination) {
+                        disasm->operand[idx].isBranchDestination = 1;
+                    }
+                    disasm->operand[idx].accessMode = operand.accessMode;
+                    break;
+                case OTYPE_OFF21:
+                    disasm->operand[idx].type = DISASM_OPERAND_CONSTANT_TYPE;
+                    disasm->operand[idx].immediateValue =
+                            disasm->virtualAddr + (((int32_t) ([operand valueFromBytes:bytes] << 13)) >> 11);
+                    disasm->operand[idx].size = 21;
+                    disasm->instruction.addressValue = (Address) (disasm->virtualAddr +
+                            ((int32_t) ([operand valueFromBytes:bytes] << 13) >> 11));
+                    disasm->operand[idx].accessMode = operand.accessMode;
+                    break;
+                case OTYPE_OFF23:
+                    disasm->operand[idx].type = DISASM_OPERAND_CONSTANT_TYPE | DISASM_OPERAND_RELATIVE;
+                    disasm->operand[idx].immediateValue = ((int32_t) ([operand valueFromBytes:bytes] << 11)) >> 9;
+                    disasm->operand[idx].size = 23;
+                    disasm->instruction.addressValue = (Address) (disasm->virtualAddr + 4) +
+                            (((int32_t) ([operand valueFromBytes:bytes] << 11) >> 9));
                     if (operand.isBranchDestination) {
                         disasm->operand[idx].isBranchDestination = 1;
                     }
@@ -366,6 +446,12 @@ static inline void clear_operands_from(DisasmStruct *disasm, int index) {
                 case OTYPE_FPU_COND: {
                     uint32_t cond_index = [operand valueFromBytes:bytes];
                     NSString *const condString = [MIPSCtx condStrings][cond_index];
+                    const char *const mnemonicCString = [[NSString stringWithFormat:insn.mnemonic, condString] UTF8String];
+                    strcpy(disasm->instruction.mnemonic, mnemonicCString);
+                }
+                case OTYPE_FPU_CONDN: {
+                    uint32_t cond_index = [operand valueFromBytes:bytes];
+                    NSString *const condString = [MIPSCtx condR6Strings][cond_index];
                     const char *const mnemonicCString = [[NSString stringWithFormat:insn.mnemonic, condString] UTF8String];
                     strcpy(disasm->instruction.mnemonic, mnemonicCString);
                 }
@@ -415,6 +501,12 @@ static inline void clear_operands_from(DisasmStruct *disasm, int index) {
                     disasm->operand[idx].type = DISASM_OPERAND_CONSTANT_TYPE;
                     disasm->operand[idx].immediateValue = [operand valueFromBytes:bytes];
                     disasm->operand[idx].size = [operand bitCount];
+                    disasm->operand[idx].accessMode = operand.accessMode;
+                    break;
+                case OTYPE_UIMM_PLUS_ONE:
+                    disasm->operand[idx].type = DISASM_OPERAND_CONSTANT_TYPE;
+                    disasm->operand[idx].immediateValue = [operand valueFromBytes:bytes] + 1;
+                    disasm->operand[idx].size = [operand bitCount] + 1;
                     disasm->operand[idx].accessMode = operand.accessMode;
                     break;
                 case OTYPE_SIZE:

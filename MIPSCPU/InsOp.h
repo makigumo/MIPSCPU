@@ -27,18 +27,23 @@ typedef NS_ENUM(NSUInteger, InsOpType) {
     OTYPE_IMM16SL16, // signed 16-bit immediate (shifted left by 16 bits)
     OTYPE_IMM19SL2, // signed 19-bit immediate (shifted left by 2 bits)
     OTYPE_OFF9, // signed 9-bit offset
+    OTYPE_OFF11, // signed 11-bit offset
     OTYPE_OFF16, // signed 16-bit offset
     OTYPE_OFF18, // signed 18-bit offset (16-bit offset field shifted left by 2 bits)
+    OTYPE_OFF21, // signed 21-bit offset (19-bit offset field shifted left by 2 bits)
+    OTYPE_OFF23, // signed 23-bit offset (21-bit offset field shifted left by 2 bits)
     OTYPE_OFF28, // signed 28-bit offset (26-bit offset field shifted left by 2 bits)
     OTYPE_FPU_FMT, // ffmt - format
     OTYPE_FPU_FCC, // fcc - condition code register
     OTYPE_FPU_COND, // fcond - compare condition, eq, le, lt,
+    OTYPE_FPU_CONDN, // fcondn MIPS32R6
     OTYPE_CODE10, // 10-bit code
     OTYPE_CODE20, // 20-bit code
     OTYPE_MEM_BASE, // base of '(base)offset' memory operand
     OTYPE_MEM_INDEX, // index of 'index(base)' memory operand
     OTYPE_COP_MEM_BASE, // base of (base)offset memory operand
     OTYPE_UIMM, // unsigned immediate (length determined by bitcount)
+    OTYPE_UIMM_PLUS_ONE, // unsigned immediate (length determined by bitcount) + 1
     OTYPE_SIZE, // unsigned immediate - 1
     OTYPE_POSSIZE, // pos + unsigned immediate - 1
     OTYPE_JMP_ADR, // unsigned immediate left shifted by 2 bits

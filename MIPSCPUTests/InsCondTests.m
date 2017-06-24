@@ -50,6 +50,11 @@
             [InsOp insOpFromString:@"15..0:rt"]]];
     XCTAssertTrue([insCond satisfiedWith:1]);
     XCTAssertFalse([insCond satisfiedWith:0x10000]);
+    insCond = [InsCond condWith:@"#0>=#1" andOps:@[[InsOp insOpFromString:@"31..16:rs"],
+            [InsOp insOpFromString:@"15..0:rt"]]];
+    XCTAssertTrue([insCond satisfiedWith:0]);
+    XCTAssertTrue([insCond satisfiedWith:0x10000]);
+    XCTAssertFalse([insCond satisfiedWith:0x1]);
 }
 
 - (void)testOpOp {

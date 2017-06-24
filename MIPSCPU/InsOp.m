@@ -14,8 +14,9 @@
 @implementation InsOp {
 }
 
-NSString *bit_range_pattern = @"(\\d+\\.\\.\\d+(?:=(?:0x)?[a-fA-F\\d]+)?)";
-NSString *bit_value_pattern = @"=(?:(0x)([a-fA-F\\d]+)|(\\d+))";
+static NSString *const bit_range_pattern = @"(\\d+\\.\\.\\d+(?:=(?:0x)?[a-fA-F\\d]+)?)";
+static NSString *const bit_value_pattern = @"=(?:(0x)([a-fA-F\\d]+)|(\\d+))";
+static NSString *const type_pattern = @":([a-z0-9+]+)";
 
 + (instancetype)insOpFromString:(NSString *)string {
     InsOp *const insOp = [[self alloc] init];
@@ -61,7 +62,7 @@ NSString *bit_value_pattern = @"=(?:(0x)([a-fA-F\\d]+)|(\\d+))";
 
 + (InsOpType)getOperandTypeFromString:(NSString *)string {
     NSError *error = nil;
-    NSRegularExpression *value_regex = [NSRegularExpression regularExpressionWithPattern:@":([a-z0-9]+)"
+    NSRegularExpression *value_regex = [NSRegularExpression regularExpressionWithPattern:type_pattern
                                                                                  options:0
                                                                                    error:&error];
     NSTextCheckingResult *match = [value_regex firstMatchInString:string
@@ -92,6 +93,7 @@ NSString *bit_value_pattern = @"=(?:(0x)([a-fA-F\\d]+)|(\\d+))";
                 @"coprs": @(OTYPE_COP_REG_SOURCE),
                 @"bp": @(OTYPE_BYTE_POS),
                 @"sa": @(OTYPE_UIMM),
+                @"sa+1": @(OTYPE_UIMM_PLUS_ONE),
                 @"uimm": @(OTYPE_UIMM),
                 @"pos": @(OTYPE_UIMM),
                 @"size": @(OTYPE_SIZE),
@@ -101,12 +103,16 @@ NSString *bit_value_pattern = @"=(?:(0x)([a-fA-F\\d]+)|(\\d+))";
                 @"imm16sl16": @(OTYPE_IMM16SL16),
                 @"imm19sl2": @(OTYPE_IMM19SL2),
                 @"off9": @(OTYPE_OFF9),
+                @"off11": @(OTYPE_OFF11),
                 @"off16": @(OTYPE_OFF16),
                 @"off18": @(OTYPE_OFF18),
+                @"off21": @(OTYPE_OFF21),
+                @"off23": @(OTYPE_OFF23),
                 @"off28": @(OTYPE_OFF28),
                 @"ffmt": @(OTYPE_FPU_FMT),
                 @"fcc": @(OTYPE_FPU_FCC),
                 @"fcond": @(OTYPE_FPU_COND),
+                @"fcondn": @(OTYPE_FPU_CONDN),
                 @"code10": @(OTYPE_CODE10),
                 @"code20": @(OTYPE_CODE20),
                 @"base": @(OTYPE_MEM_BASE),

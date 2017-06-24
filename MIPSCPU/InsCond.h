@@ -15,6 +15,7 @@ typedef NS_ENUM(NSUInteger, CondType) {
     COND_EQUAL,
     COND_NOT_EQUAL,
     COND_LESS,
+    COND_GREATER_EQUAL,
 };
 
 + (instancetype)condWith:(NSString *const)condition andOps:(NSArray<InsOp *> *const)ops;
