@@ -2,7 +2,7 @@
 
 # MIPS CPU plugin for Hopper Disassembler
 
-This is an experimental, highly unsophisticated plugin prototype using the [capstone](https://github.com/aquynh/capstone) (http://www.capstone-engine.org/) engine for the MIPS architecture (currently 32 bit EL only) whose main purpose is to provide a play and learning ground for the Hopper plugin system and the MIPS architecture and some assembly language in general.
+This is an experimental, unsophisticated plugin prototype using a custom disassembler and the [capstone](https://github.com/aquynh/capstone) (http://www.capstone-engine.org/) engine for the MIPS architecture (currently 32 bit EL only) whose main purpose is to provide a play and learning ground for the Hopper plugin system and the MIPS architecture and some assembly language in general.
 
 ## Requirements
 
@@ -28,17 +28,18 @@ Then adjust your `PATH` to include `~/GNUstep/Library/ApplicationSupport/Hopper/
 
 ## Status
 
-* Disassembly should mostly work (with mnemonic and operand formatting) 
+* Disassembly should mostly work (with mnemonic and operand formatting)
+    * support for MIPS32 (releases 1 to 6)
 * Branch typing is incomplete (still need to figure out the different `DISASM_BRANCH_*` types)
 * NOPping should work
 
 ## TODO
 
+* [ ] Big endian support
 * [ ] Extend instruction analysis for Hopper to do its magic
 * [ ] Handle branch delay slots
 * [ ] Disassemble into pseudo instructions (ideally as a second syntax option)
     * Find a way to make syntax variant work
-* [x] String references (?)
 * [ ] Add support for assembling instructions (using keystone)
 * [ ] Support for EB (big endian), 64 bit
 * [ ] Find ways to utilize some of `performBranchesAnalysis:`, `performInstructionSpecificAnalysis:`, `performProcedureAnalysis:`, `hasProcedurePrologAt:` etc.
