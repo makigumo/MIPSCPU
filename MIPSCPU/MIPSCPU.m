@@ -34,7 +34,12 @@
         if ([file.cpuSubFamily isEqualToString:@"mips32"] ||
                 [file.cpuSubFamily isEqualToString:@"mips32r2"] ||
                 [file.cpuSubFamily isEqualToString:@"mips32r5"] ||
-                [file.cpuSubFamily isEqualToString:@"mips32r6"]) {
+                [file.cpuSubFamily isEqualToString:@"mips32r6"] ||
+                [file.cpuSubFamily isEqualToString:@"mips I"] ||
+                [file.cpuSubFamily isEqualToString:@"mips II"] ||
+                [file.cpuSubFamily isEqualToString:@"mips III"] ||
+                [file.cpuSubFamily isEqualToString:@"mips IV"]
+                ) {
             MIPSCtx *mipsCtx = [[MIPSCtx alloc] initWithCPU:self andFile:file];
             return mipsCtx;
         }
@@ -74,7 +79,7 @@
 }
 
 - (NSString *)pluginVersion {
-    return @"0.1.0";
+    return @"0.1.1";
 }
 
 - (NSArray<NSString *> *)cpuSubFamiliesForFamily:(NSString *)family {
@@ -92,6 +97,10 @@
                 @"mips32r2",
                 @"mips32r5",
                 @"mips32r6",
+                @"mips I",
+                @"mips II",
+                @"mips III",
+                @"mips IV",
         ];
     }
     return nil;
@@ -110,6 +119,10 @@
         if ([subFamily isEqualToString:@"mips32r2"]) return 32;
         if ([subFamily isEqualToString:@"mips32r5"]) return 32;
         if ([subFamily isEqualToString:@"mips32r6"]) return 32;
+        if ([subFamily isEqualToString:@"mips I"]) return 32;
+        if ([subFamily isEqualToString:@"mips II"]) return 32;
+        if ([subFamily isEqualToString:@"mips III"]) return 32;
+        if ([subFamily isEqualToString:@"mips IV"]) return 32;
     }
     return 0;
 }

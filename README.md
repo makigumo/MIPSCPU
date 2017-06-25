@@ -29,7 +29,14 @@ Then adjust your `PATH` to include `~/GNUstep/Library/ApplicationSupport/Hopper/
 ## Status
 
 * Disassembly should mostly work (with mnemonic and operand formatting)
-    * support for MIPS32 (releases 1 to 6)
+    * support for MIPS I
+    * support for MIPS II
+    * support for MIPS III
+    * support for MIPS IV
+    * support for MIPS32 (release 1)
+    * support for MIPS32 release 2
+    * support for MIPS32 release 5
+    * support for MIPS32 release 6
 * Branch typing is incomplete (still need to figure out the different `DISASM_BRANCH_*` types)
 * NOPping should work
 

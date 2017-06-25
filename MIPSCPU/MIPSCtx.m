@@ -98,6 +98,10 @@
                 @"MIPS32R3": @(MIPS32R3),
                 @"MIPS32R5": @(MIPS32R5),
                 @"MIPS32R6": @(MIPS32R6),
+                @"MIPSI": @(MIPS_I),
+                @"MIPSII": @(MIPS_II),
+                @"MIPSIII": @(MIPS_III),
+                @"MIPSIV": @(MIPS_IV),
                 @"MIPS64": @(MIPS64),
         };
     });
@@ -142,6 +146,14 @@
             self.isaRelease = MIPS32R5;
         } else if ([_file.cpuSubFamily isEqualToString:@"mips32r6"]) {
             self.isaRelease = MIPS32R6;
+        } else if ([_file.cpuSubFamily isEqualToString:@"mips I"]) {
+            self.isaRelease = MIPS_I;
+        } else if ([_file.cpuSubFamily isEqualToString:@"mips II"]) {
+            self.isaRelease = MIPS_II;
+        } else if ([_file.cpuSubFamily isEqualToString:@"mips III"]) {
+            self.isaRelease = MIPS_III;
+        } else if ([_file.cpuSubFamily isEqualToString:@"mips IV"]) {
+            self.isaRelease = MIPS_IV;
         } else {
             self.isaRelease = MIPS32;
         }

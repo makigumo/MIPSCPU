@@ -17,7 +17,11 @@ typedef NS_ENUM(NSUInteger, isa_release) {
     MIPS32R3 = 1 << 2,
     MIPS32R5 = 1 << 3,
     MIPS32R6 = 1 << 4,
-    MIPS64 = 1 << 5,
+    MIPS_I = 1 << 5,
+    MIPS_II = 1 << 6,
+    MIPS_III = 1 << 7,
+    MIPS_IV = 1 << 8,
+    MIPS64 = 1 << 9,
 };
 
 @interface InsDef : NSObject {
