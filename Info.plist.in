@@ -7,6 +7,6 @@
 	<key>CFBundlePackageType</key>
 	<string>BNDL</string>
 	<key>NSHumanReadableCopyright</key>
-	<string>©2016 – Makigumo</string>
+	<string>Copyright © 2016-2017 Makigumo. All rights reserved.</string>
 </dict>
 </plist>

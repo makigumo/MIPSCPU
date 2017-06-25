@@ -165,19 +165,19 @@ static inline uint32_t capstoneRegisterToRegIndex(mips_reg reg) {
             0,
 
             // zero, at, v0..v1
-            0, 0, 0, 1,
+            0, 1, 2, 3,
             // a0..a3
-            0, 1, 2, 3,
+            4, 5, 6, 7,
             // t0..t7
-            0, 1, 2, 3,
-            4, 5, 6, 7,
-            // s0..s7
-            0, 1, 2, 3,
-            4, 5, 6, 7,
-            // t8..t9, k0..k1
-            8, 9, 0, 1,
-            // gp, sp, s8/fp, ra
             8, 9, 10, 11,
+            12, 13, 14, 15,
+            // s0..s7
+            16, 17, 18, 19,
+            20, 21, 22, 23,
+            // t8..t9, k0..k1
+            24, 25, 26, 27,
+            // gp, sp, s8/fp, ra
+            28, 29, 30, 31,
 
             // DSP
             0, 1, 2, 3,
@@ -237,24 +237,24 @@ static inline RegClass capstoneRegisterToRegClass(mips_reg reg) {
             (RegClass) -1,
 
             // PC
-            (RegClass) RegClass_MIPS_PC,
+            (RegClass) RegClass_GeneralPurposeRegister,
 
             // zero, at, v0..v1
-            (RegClass) RegClass_MIPS_ZERO, (RegClass) RegClass_MIPS_AT, (RegClass) RegClass_MIPS_VAR, (RegClass) RegClass_MIPS_VAR,
+            (RegClass) RegClass_GeneralPurposeRegister, (RegClass) RegClass_GeneralPurposeRegister, (RegClass) RegClass_GeneralPurposeRegister, (RegClass) RegClass_GeneralPurposeRegister,
 
             // a0..a3
-            (RegClass) RegClass_MIPS_ARG, (RegClass) RegClass_MIPS_ARG, (RegClass) RegClass_MIPS_ARG, (RegClass) RegClass_MIPS_ARG,
+            (RegClass) RegClass_GeneralPurposeRegister, (RegClass) RegClass_GeneralPurposeRegister, (RegClass) RegClass_GeneralPurposeRegister, (RegClass) RegClass_GeneralPurposeRegister,
 
             // t0..t7
-            (RegClass) RegClass_MIPS_TMP, (RegClass) RegClass_MIPS_TMP, (RegClass) RegClass_MIPS_TMP, (RegClass) RegClass_MIPS_TMP,
-            (RegClass) RegClass_MIPS_TMP, (RegClass) RegClass_MIPS_TMP, (RegClass) RegClass_MIPS_TMP, (RegClass) RegClass_MIPS_TMP,
+            (RegClass) RegClass_GeneralPurposeRegister, (RegClass) RegClass_GeneralPurposeRegister, (RegClass) RegClass_GeneralPurposeRegister, (RegClass) RegClass_GeneralPurposeRegister,
+            (RegClass) RegClass_GeneralPurposeRegister, (RegClass) RegClass_GeneralPurposeRegister, (RegClass) RegClass_GeneralPurposeRegister, (RegClass) RegClass_GeneralPurposeRegister,
 
             // s0..s7
             RegClass_GeneralPurposeRegister, RegClass_GeneralPurposeRegister, RegClass_GeneralPurposeRegister, RegClass_GeneralPurposeRegister,
             RegClass_GeneralPurposeRegister, RegClass_GeneralPurposeRegister, RegClass_GeneralPurposeRegister, RegClass_GeneralPurposeRegister,
 
             // t8..t9, k0..k1
-            (RegClass) RegClass_MIPS_TMP, (RegClass) RegClass_MIPS_TMP, (RegClass) RegClass_MIPS_KERNEL, (RegClass) RegClass_MIPS_KERNEL,
+            (RegClass) RegClass_GeneralPurposeRegister, (RegClass) RegClass_GeneralPurposeRegister, (RegClass) RegClass_GeneralPurposeRegister, (RegClass) RegClass_GeneralPurposeRegister,
 
             // gp, sp, s8/fp, ra
             RegClass_GeneralPurposeRegister, RegClass_GeneralPurposeRegister, RegClass_GeneralPurposeRegister, RegClass_GeneralPurposeRegister,
@@ -296,7 +296,7 @@ static inline RegClass capstoneRegisterToRegClass(mips_reg reg) {
             (RegClass) RegClass_MIPS_FPU, (RegClass) RegClass_MIPS_FPU, (RegClass) RegClass_MIPS_FPU, (RegClass) RegClass_MIPS_FPU,
 
             // HI..LO
-            (RegClass) RegClass_MIPS_HI, (RegClass) RegClass_MIPS_LO,
+            (RegClass) RegClass_GeneralPurposeRegister, (RegClass) RegClass_GeneralPurposeRegister,
 
             // P
             (RegClass) RegClass_MIPS_P, (RegClass) RegClass_MIPS_P, (RegClass) RegClass_MIPS_P,

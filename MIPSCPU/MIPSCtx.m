@@ -5,118 +5,188 @@
 
 #import <Hopper/Hopper.h>
 #import "MIPSCtx.h"
+#import "NSArray+BitRange.h"
+#import "Insn.h"
 
-enum OpType getInsnType(enum Opcode opcode) {
-    switch (opcode) {
-        case SPECIAL:
-        case COP0:
-        case COP2:
-            return RTYPE;
-        case COP1:
-            return FPUTYPE;
-        case J:
-        case JAL:
-            return JTYPE;
-        case REGIMM:
-        case BEQ:
-        case BNE:
-        case BLEZ:
-        case BGTZ:
-        case ADDI:
-        case ADDIU:
-        case SLTI:
-        case SLTIU:
-        case ANDI:
-        case ORI:
-        case XORI:
-        case LUI:
-        case BEQL:
-        case BLEZL:
-        case BGTZL:
-        case LB:
-        case LH:
-        case LW:
-        case LBU:
-        case LHU:
-        case SB:
-        case SH:
-        case SW:
-        case SWC1:
-        case SWC2:
-        case LDC1:
-        case LDC2:
-        case LWC1:
-        case LWC2:
-            return ITYPE;
-        case SPECIAL2:
-            break;
-        case SPECIAL3:
-            break;
-    }
-    return INVALID;
-}
-
-struct insn *getInsn(uint32_t bytes) {
-    struct insn *ret = calloc(1, sizeof(struct insn));
-    if (!ret) return nil;
-
-    ret->opcode = (enum Opcode) (bytes >> 26);
-    ret->type = getInsnType(ret->opcode);
-    switch (ret->type) {
-        case RTYPE:
-            switch (ret->opcode) {
-                case SPECIAL:
-                    ret->rtype.rs = (enum Reg) ((bytes >> 21) & 0x1f);
-                    ret->rtype.rt = (enum Reg) ((bytes >> 16) & 0x1f);
-                    ret->rtype.rd = (enum Reg) ((bytes >> 11) & 0x1f);
-                    ret->rtype.shift = (uint8_t) ((bytes >> 6) & 0x1f);
-                    ret->rtype.specialFunct = (enum SpecialFunct) (bytes & 0x3f);
-                    break;
-            }
-            break;
-        case ITYPE:
-            ret->itype.rs = (enum Reg) ((bytes >> 21) & 0x1f);
-            if (ret->opcode == REGIMM) {
-                ret->itype.regImmFunct = (enum RegImmFunct) ((bytes >> 16) & 0x1f);
-            } else {
-                ret->itype.rt = (enum Reg) ((bytes >> 16) & 0x1f);
-            }
-            ret->itype.imm = (uint16_t) (bytes & 0xffff);
-            ret->delayslot.type = NONE;
-            break;
-        case JTYPE:
-            ret->jtype.rs = (enum Reg) ((bytes >> 21) & 0x1f);
-            ret->jtype.imm = (uint32_t) (bytes & 0x07ffffff);
-            break;
-        case FPUTYPE:
-            switch (ret->opcode) {
-                case COP1:
-                    ret->fputype.fmt = (enum FpuFunction) ((bytes >> 21) & 0x1f);
-                    ret->fputype.ft = (enum FpuReg) ((bytes >> 16) & 0x1f);
-                    ret->fputype.fs = (enum FpuReg) ((bytes >> 11) & 0x1f);
-                    ret->fputype.fd = (enum FpuReg) ((bytes >> 6) & 0x1f);
-                    ret->fputype.function = (enum FpuFunction) (bytes & 0x3f);
-            }
-        default:
-            return ret;
-    }
-    setDelaySlot(ret);
-    return ret;
-}
+#if defined(__linux__)
+#include <dispatch/dispatch.h>
+#endif
 
 @implementation MIPSCtx {
     MIPSCPU *_cpu;
     NSObject <HPDisassembledFile> *_file;
+};
+
++ (NSArray<NSString *> *const)condStrings {
+    static NSArray<NSString *> *_condStrings;
+    static dispatch_once_t onceToken;
+    dispatch_once(&onceToken, ^{
+        _condStrings = @[
+                @"f",
+                @"un",
+                @"eq",
+                @"ueq",
+                @"olt",
+                @"ult",
+                @"ole",
+                @"ule",
+                @"sf",
+                @"ngle",
+                @"seq",
+                @"ngl",
+                @"lt",
+                @"nge",
+                @"le",
+                @"ngt",
+        ];
+    });
+    return _condStrings;
 }
 
-- (instancetype)initWithCPU:(MIPSCPU *)cpu andFile:(NSObject <HPDisassembledFile> *)file {
++ (NSArray<NSString *> *const)condR6Strings {
+    static NSArray<NSString *> *_condStrings;
+    static dispatch_once_t onceToken;
+    dispatch_once(&onceToken, ^{
+        _condStrings = @[
+                @"af",
+                @"un",
+                @"eq",
+                @"ueq",
+                @"lt",
+                @"ult",
+                @"le",
+                @"ule",
+
+                @"saf",
+                @"sun",
+                @"seq",
+                @"sueq",
+                @"slt",
+                @"sult",
+                @"sle",
+                @"sule",
+
+                @"at",
+                @"or",
+                @"une",
+                @"ne",
+                @"uge",
+                @"oge",
+                @"ugt",
+                @"ogt",
+
+                @"sat",
+                @"sor",
+                @"sune",
+                @"sne",
+                @"suge",
+                @"soge",
+                @"sugt",
+                @"sogt",
+        ];
+    });
+    return _condStrings;
+}
+
++ (NSDictionary<NSString *, NSNumber *> *const)isaReleases {
+    static NSDictionary<NSString *, NSNumber *> *_releases;
+    static dispatch_once_t onceToken;
+    dispatch_once(&onceToken, ^{
+        _releases = @{
+                @"MIPS32": @(MIPS32),
+                @"MIPS32R2": @(MIPS32R2),
+                @"MIPS32R3": @(MIPS32R3),
+                @"MIPS32R5": @(MIPS32R5),
+                @"MIPS32R6": @(MIPS32R6),
+                @"MIPS64": @(MIPS64),
+        };
+    });
+    return _releases;
+}
+
++ (NSDictionary<NSString *, NSNumber *> *const)branchTypes {
+    static NSDictionary<NSString *, NSNumber *> *branchTypeLookup;
+    static dispatch_once_t onceToken;
+    dispatch_once(&onceToken, ^{
+        branchTypeLookup = @{
+                @"ALWAYS": @(DISASM_BRANCH_JMP),
+                @"EQUAL_ZERO": @(DISASM_BRANCH_JECXZ),
+                @"GREATER_EQUAL": @(DISASM_BRANCH_JGE),
+                @"GREATER_EQUAL_ZERO": @(DISASM_BRANCH_JGE),
+                @"GREATER_ZERO": @(DISASM_BRANCH_JG),
+                @"LESS_EQUAL_ZERO": @(DISASM_BRANCH_JLE),
+                @"LESS": @(DISASM_BRANCH_JL),
+                @"LESS_ZERO": @(DISASM_BRANCH_JL),
+                @"EQUAL": @(DISASM_BRANCH_JE),
+                @"NOT_EQUAL": @(DISASM_BRANCH_JNE),
+                @"NOT_EQUAL_ZERO": @(DISASM_BRANCH_JNE),
+                @"OVERFLOW": @(DISASM_BRANCH_JO),
+                @"NO_OVERFLOW": @(DISASM_BRANCH_JNO),
+                @"CALL": @(DISASM_BRANCH_CALL),
+                @"RET": @(DISASM_BRANCH_RET),
+                @"FALSE": @(DISASM_BRANCH_JNE),
+                @"TRUE": @(DISASM_BRANCH_JE),
+        };
+    });
+    return branchTypeLookup;
+}
+
+- (instancetype)initWithCPU:(MIPSCPU *)cpu
+                    andFile:(NSObject <HPDisassembledFile> *)file {
     if (self = [super init]) {
         _cpu = cpu;
         _file = file;
-        self.mips32r2 = [_file.cpuSubFamily isEqualToString:@"mips32r2"];
-        self.mips32r6 = [_file.cpuSubFamily isEqualToString:@"mips32r6"];
+        if ([_file.cpuSubFamily isEqualToString:@"mips32r2"]) {
+            self.isaRelease = MIPS32R2;
+        } else if ([_file.cpuSubFamily isEqualToString:@"mips32r5"]) {
+            self.isaRelease = MIPS32R5;
+        } else if ([_file.cpuSubFamily isEqualToString:@"mips32r6"]) {
+            self.isaRelease = MIPS32R6;
+        } else {
+            self.isaRelease = MIPS32;
+        }
     }
     return self;
+}
+
+- (NSArray<InsDef *> *const)getInstructions {
+    static NSArray<InsDef *> *instructions;
+    static dispatch_once_t onceToken;
+    dispatch_once(&onceToken, ^{
+        NSString *const opcodesPath = [[NSBundle bundleForClass:[self class]] pathForResource:@"opcodes" ofType:@"plist"];
+        NSArray<NSDictionary *> *const opcodes = [NSArray arrayWithContentsOfFile:opcodesPath];
+        NSMutableArray *const _instructions = [NSMutableArray arrayWithCapacity:opcodes.count];
+        for (NSDictionary *const opDict in opcodes) {
+            NSString *const key = [opDict valueForKey:@"mnemonic"];
+            NSAssert1(key != nil, @"missing key 'mnemonic' in %@", opDict);
+            isa_release __release = (isa_release) 0;
+            NSArray<NSString *> *const releases = (NSArray<NSString *> *) [opDict valueForKey:@"release"];
+            NSAssert1(releases != nil, @"missing key 'release' in %@", opDict);
+            NSAssert1(releases.count > 0, @"no releases specified in %@", opDict);
+            for (NSString *const r in releases) {
+                __release |= [MIPSCtx isaReleases][r].integerValue;
+            }
+            NSString *const format = opDict[@"format"];
+            NSAssert1(format != nil, @"missing key 'format' in %@", opDict);
+            NSArray<NSString *> *const conditions = opDict[@"condition"];
+            InsDef *const insDef = [InsDef defWithMnemonic:key
+                                                   release:__release
+                                                    format:format
+                                                conditions:conditions];
+            NSString *const branchtype = [opDict valueForKey:@"branchtype"];
+            insDef.branchType = [MIPSCtx branchTypes][branchtype];
+            if (branchtype && !insDef.branchType) {
+                NSLog(@"unknown `branchtype' in %@", opDict);
+            }
+            NSAssert1(branchtype == nil || (branchtype && insDef.branchType), @"unknown `branchtype' in %@", opDict);
+            [_instructions addObject:insDef];
+        }
+        // order instructions by mask bit count
+        instructions = [_instructions sortedArrayUsingComparator:^NSComparisonResult(InsDef *const a, InsDef *const b) {
+            return [@([b numberOfMaskBitsSet]) compare:@([a numberOfMaskBitsSet])];
+        }];
+    });
+    return instructions;
 }
 
 - (void)dealloc {
@@ -228,310 +298,271 @@ static inline void clear_operands_from(DisasmStruct *disasm, int index) {
     disasm->instruction.pcRegisterValue = disasm->virtualAddr + 4;
 
     uint32_t bytes = _MyOSReadInt32(disasm->bytes, 0);
-    struct insn *in = getInsn(bytes);
-    if (in == NULL) {
-        return DISASM_UNKNOWN_OPCODE;
-    }
+    Insn *const insn = [self getInsnForBytes:bytes];
+    if (insn) {
+        NSArray<InsOp *> *const operands = insn.insDef.operands;
+        strcpy(disasm->instruction.mnemonic, [insn.mnemonic UTF8String]);
+        [operands enumerateObjectsUsingBlock:^(InsOp *operand, NSUInteger idx, BOOL *stop) {
+            switch (operand.type) {
 
-    if ([_file userRequestedSyntaxIndex] == 1 /* pseudo instructions */) {
-        // lui x, y; addiu x, z = la x, y << 16 + z
-        if (in->opcode == LUI) {
-            uint32_t nextbytes = _MyOSReadInt32(disasm->bytes, 4);
-            struct insn *nextin = getInsn(nextbytes);
-            if (nextin) {
-                if (nextin->opcode == ADDIU && in->itype.rt == nextin->itype.rt) {
-                    strcpy(disasm->instruction.mnemonic, "la");
-                    populateRegOperand(&disasm->operand[0], in->rtype.rt, DISASM_ACCESS_WRITE);
-                    disasm->operand[1].type = DISASM_OPERAND_ABSOLUTE;
-                    disasm->operand[1].immediateValue = (uint32_t) ((in->itype.imm
-                            << 16) + ((int16_t) nextin->itype.imm));
-                    disasm->operand[1].size = 32;
-                    disasm->operand[1].accessMode = DISASM_ACCESS_READ;
-                    disasm->instruction.addressValue = (uint32_t) ((in->itype.imm
-                            << 16) + ((int16_t) nextin->itype.imm));
-                    isPseudoIns = YES;
-                    pseudoInsSize = 8;
+                case OTYPE_UNDEFINED:
+                    break;
+                case OTYPE_INVALID:
+                    break;
+                case OTYPE_IGNORED:
+                    break;
+                case OTYPE_REG_DEST:
+                case OTYPE_REG_TEMP:
+                case OTYPE_REG_SOURCE:
+                    disasm->operand[idx].type = DISASM_OPERAND_REGISTER_TYPE;
+                    disasm->operand[idx].type |= getRegMask((enum Reg) [operand valueFromBytes:bytes]);
+                    disasm->operand[idx].accessMode = operand.accessMode;
+                    break;
+                case OTYPE_HW_REG_DEST:
+                    disasm->operand[idx].type = DISASM_OPERAND_REGISTER_TYPE;
+                    disasm->operand[idx].type |= getHwRegMask((uint8_t) [operand valueFromBytes:bytes]);
+                    disasm->operand[idx].accessMode = operand.accessMode;
+                    break;
+                case OTYPE_COP_REG_DEST:
+                case OTYPE_COP_REG_TEMP:
+                case OTYPE_COP_REG_SOURCE:
+                    disasm->operand[idx].type = DISASM_OPERAND_REGISTER_TYPE;
+                    disasm->operand[idx].type |= getCopRegMask((uint8_t) [operand valueFromBytes:bytes]);
+                    disasm->operand[idx].accessMode = operand.accessMode;
+                    break;
+                case OTYPE_FPU_REG_DEST:
+                case OTYPE_FPU_REG_TEMP:
+                case OTYPE_FPU_REG_SOURCE:
+                case OTYPE_FPU_REG_R:
+                    disasm->operand[idx].type = DISASM_OPERAND_REGISTER_TYPE;
+                    disasm->operand[idx].type |= getFpuRegMask((enum FpuReg) [operand valueFromBytes:bytes]);
+                    disasm->operand[idx].accessMode = operand.accessMode;
+                    break;
+                case OTYPE_BYTE_POS:
+                    disasm->operand[idx].type = DISASM_OPERAND_CONSTANT_TYPE;
+                    disasm->operand[idx].immediateValue = [operand valueFromBytes:bytes];
+                    disasm->operand[idx].size = 2;
+                    disasm->operand[idx].accessMode = operand.accessMode;
+                    break;
+                case OTYPE_IMM16:
+                    disasm->operand[idx].type = DISASM_OPERAND_CONSTANT_TYPE | DISASM_OPERAND_RELATIVE;
+                    disasm->operand[idx].immediateValue = [operand valueFromBytes:bytes];
+                    disasm->operand[idx].size = 16;
+                    disasm->operand[idx].accessMode = operand.accessMode;
+                    break;
+                case OTYPE_IMM16SL16:
+                    disasm->operand[idx].type = DISASM_OPERAND_CONSTANT_TYPE | DISASM_OPERAND_RELATIVE;
+                    disasm->operand[idx].immediateValue = [operand valueFromBytes:bytes];
+                    disasm->operand[idx].size = 16;
+                    disasm->operand[idx].accessMode = operand.accessMode;
+                    disasm->instruction.addressValue = (Address) disasm->virtualAddr + (
+                            (int32_t) ([operand valueFromBytes:bytes] << 13) >> 11);
+                    break;
+                case OTYPE_IMM19SL2:
+                    disasm->operand[idx].type = DISASM_OPERAND_CONSTANT_TYPE | DISASM_OPERAND_RELATIVE;
+                    disasm->operand[idx].immediateValue = [operand valueFromBytes:bytes] << 2;
+                    disasm->operand[idx].size = 19;
+                    disasm->operand[idx].accessMode = operand.accessMode;
+                    disasm->instruction.addressValue = (Address) disasm->virtualAddr + 4 + (
+                            (int32_t) ([operand valueFromBytes:bytes] << 13) >> 11);
+                    break;
+                case OTYPE_OFF9:
+                    if (idx > 0 && operands[idx - 1].type == OTYPE_MEM_BASE) {
+                        disasm->operand[idx - 1].type |= DISASM_OPERAND_RELATIVE;
+                        disasm->operand[idx - 1].size = 9;
+                        disasm->operand[idx - 1].memory.displacement =
+                                (int16_t) ([operand valueFromBytes:bytes] << 7) >> 7;
+                    }
+                    break;
+                case OTYPE_OFF11:
+                    if (idx > 0 && operands[idx - 1].type == OTYPE_MEM_BASE) {
+                        disasm->operand[idx - 1].type |= DISASM_OPERAND_RELATIVE;
+                        disasm->operand[idx - 1].size = 11;
+                        disasm->operand[idx - 1].memory.displacement =
+                                (int16_t) ([operand valueFromBytes:bytes] << 5) >> 5;
+                    }
+                    break;
+                case OTYPE_OFF16:
+                    if (idx > 0 && operands[idx - 1].type == OTYPE_MEM_BASE) {
+                        disasm->operand[idx - 1].type |= DISASM_OPERAND_RELATIVE;
+                        disasm->operand[idx - 1].size = 16;
+                        disasm->operand[idx - 1].memory.displacement = (int16_t) [operand valueFromBytes:bytes];
+                    } else {
+                        disasm->operand[idx].type = DISASM_OPERAND_CONSTANT_TYPE | DISASM_OPERAND_RELATIVE;
+                        disasm->operand[idx].immediateValue = [operand valueFromBytes:bytes];
+                        disasm->operand[idx].size = 16;
+                        disasm->operand[idx].accessMode = operand.accessMode;
+                    }
+                    break;
+                case OTYPE_OFF18:
+                    disasm->operand[idx].type = DISASM_OPERAND_CONSTANT_TYPE;
+                    const int16_t int16 = (int16_t) [operand valueFromBytes:bytes];
+                    disasm->operand[idx].immediateValue = disasm->virtualAddr + 4 + (int16 << 2);
+                    disasm->operand[idx].size = 32;
+                    disasm->instruction.addressValue = disasm->virtualAddr + 4 + (int16 << 2);
+                    if (operand.isBranchDestination) {
+                        disasm->operand[idx].isBranchDestination = 1;
+                    }
+                    disasm->operand[idx].accessMode = operand.accessMode;
+                    break;
+                case OTYPE_OFF21:
+                    disasm->operand[idx].type = DISASM_OPERAND_CONSTANT_TYPE;
+                    disasm->operand[idx].immediateValue =
+                            disasm->virtualAddr + (((int32_t) ([operand valueFromBytes:bytes] << 13)) >> 11);
+                    disasm->operand[idx].size = 21;
+                    disasm->instruction.addressValue = (Address) (disasm->virtualAddr +
+                            ((int32_t) ([operand valueFromBytes:bytes] << 13) >> 11));
+                    disasm->operand[idx].accessMode = operand.accessMode;
+                    break;
+                case OTYPE_OFF23:
+                    disasm->operand[idx].type = DISASM_OPERAND_CONSTANT_TYPE | DISASM_OPERAND_RELATIVE;
+                    disasm->operand[idx].immediateValue = ((int32_t) ([operand valueFromBytes:bytes] << 11)) >> 9;
+                    disasm->operand[idx].size = 23;
+                    disasm->instruction.addressValue = (Address) (disasm->virtualAddr + 4) +
+                            (((int32_t) ([operand valueFromBytes:bytes] << 11) >> 9));
+                    if (operand.isBranchDestination) {
+                        disasm->operand[idx].isBranchDestination = 1;
+                    }
+                    disasm->operand[idx].accessMode = operand.accessMode;
+                    break;
+                case OTYPE_OFF28:
+                    disasm->operand[idx].type = DISASM_OPERAND_CONSTANT_TYPE | DISASM_OPERAND_RELATIVE;
+                    disasm->operand[idx].immediateValue = ((int32_t) ([operand valueFromBytes:bytes] << 6)) >> 4;
+                    disasm->operand[idx].size = 28;
+                    disasm->instruction.addressValue = (Address) (disasm->virtualAddr + 4) +
+                            (((int32_t) ([operand valueFromBytes:bytes] << 6) >> 4));
+                    if (operand.isBranchDestination) {
+                        disasm->operand[idx].isBranchDestination = 1;
+                    }
+                    disasm->operand[idx].accessMode = operand.accessMode;
+                    break;
+                case OTYPE_FPU_FMT:
+                    break;
+                case OTYPE_FPU_FCC:
+                    disasm->operand[idx].type = DISASM_OPERAND_REGISTER_TYPE;
+                    disasm->operand[idx].type |= getFccRegMask((uint8_t) [operand valueFromBytes:bytes]);
+                    disasm->operand[idx].accessMode = operand.accessMode;
+                    break;
+                case OTYPE_FPU_COND: {
+                    uint32_t cond_index = [operand valueFromBytes:bytes];
+                    NSString *const condString = [MIPSCtx condStrings][cond_index];
+                    const char *const mnemonicCString = [[NSString stringWithFormat:insn.mnemonic, condString] UTF8String];
+                    strcpy(disasm->instruction.mnemonic, mnemonicCString);
                 }
-                free(nextin);
+                case OTYPE_FPU_CONDN: {
+                    uint32_t cond_index = [operand valueFromBytes:bytes];
+                    NSString *const condString = [MIPSCtx condR6Strings][cond_index];
+                    const char *const mnemonicCString = [[NSString stringWithFormat:insn.mnemonic, condString] UTF8String];
+                    strcpy(disasm->instruction.mnemonic, mnemonicCString);
+                }
+                    break;
+                case OTYPE_CODE10:
+                    disasm->operand[idx].type = DISASM_OPERAND_CONSTANT_TYPE;
+                    disasm->operand[idx].immediateValue = [operand valueFromBytes:bytes];
+                    disasm->operand[idx].size = 10;
+                    disasm->operand[idx].accessMode = operand.accessMode;
+                    break;
+                case OTYPE_CODE20:
+                    disasm->operand[idx].type = DISASM_OPERAND_CONSTANT_TYPE;
+                    disasm->operand[idx].immediateValue = [operand valueFromBytes:bytes];
+                    disasm->operand[idx].size = 20;
+                    disasm->operand[idx].accessMode = operand.accessMode;
+                    break;
+                case OTYPE_MEM_BASE:
+                    if (idx > 0 &&
+                            (disasm->operand[idx - 1].type & DISASM_OPERAND_REGISTER_INDEX)) {
+                        // index(base)
+                        disasm->operand[idx].type = DISASM_OPERAND_REGISTER_TYPE | DISASM_OPERAND_REGISTER_BASE;
+                        disasm->operand[idx].type |= getRegMask((enum Reg) [operand valueFromBytes:bytes]);
+                        disasm->operand[idx].accessMode = operand.accessMode;
+                    } else {
+                        // offset(base)
+                        disasm->operand[idx].type = DISASM_OPERAND_MEMORY_TYPE;
+                        disasm->operand[idx].type |= getRegMask((enum Reg) [operand valueFromBytes:bytes]);
+                        disasm->operand[idx].memory.baseRegistersMask = getRegMask((enum Reg) [operand.bits valueFromBytes:bytes]);
+                    }
+                    break;
+                case OTYPE_COP_MEM_BASE: // index(base)
+                    disasm->operand[idx].type = DISASM_OPERAND_REGISTER_TYPE | DISASM_OPERAND_REGISTER_BASE;
+                    disasm->operand[idx].type |= getCopRegMask((uint8_t) [operand valueFromBytes:bytes]);
+                    disasm->operand[idx].accessMode = operand.accessMode;
+                    break;
+                case OTYPE_MEM_INDEX: // index(base)
+                    // TODO use indexRegistersMask
+                    //if (operands.count - 1 > idx) {
+                    //    disasm->operand[idx - 1].memory.indexRegistersMask = getRegMask((enum Reg) [operand.bits valueFromBytes:bytes]);
+                    //} else {
+                    disasm->operand[idx].type = DISASM_OPERAND_REGISTER_TYPE | DISASM_OPERAND_REGISTER_INDEX;
+                    disasm->operand[idx].type |= getRegMask((enum Reg) [operand valueFromBytes:bytes]);
+                    disasm->operand[idx].accessMode = operand.accessMode;
+                    //}
+                    break;
+                case OTYPE_UIMM:
+                    disasm->operand[idx].type = DISASM_OPERAND_CONSTANT_TYPE;
+                    disasm->operand[idx].immediateValue = [operand valueFromBytes:bytes];
+                    disasm->operand[idx].size = [operand bitCount];
+                    disasm->operand[idx].accessMode = operand.accessMode;
+                    break;
+                case OTYPE_UIMM_PLUS_ONE:
+                    disasm->operand[idx].type = DISASM_OPERAND_CONSTANT_TYPE;
+                    disasm->operand[idx].immediateValue = [operand valueFromBytes:bytes] + 1;
+                    disasm->operand[idx].size = [operand bitCount] + 1;
+                    disasm->operand[idx].accessMode = operand.accessMode;
+                    break;
+                case OTYPE_SIZE:
+                    disasm->operand[idx].type = DISASM_OPERAND_CONSTANT_TYPE;
+                    disasm->operand[idx].immediateValue = [operand.bits valueFromBytes:bytes] + 1;
+                    disasm->operand[idx].size = [operand bitCount] + 1;
+                    disasm->operand[idx].accessMode = operand.accessMode;
+                    break;
+                case OTYPE_POSSIZE:
+                    if (idx > 0) {
+                        uint8_t pos = (uint8_t) [operands[idx - 1] valueFromBytes:bytes];
+                        disasm->operand[idx].type = DISASM_OPERAND_CONSTANT_TYPE;
+                        disasm->operand[idx].immediateValue = [operand valueFromBytes:bytes] - pos + 1;
+                        disasm->operand[idx].size = [operand bitCount] + 1;
+                        disasm->operand[idx].accessMode = operand.accessMode;
+                    }
+                    break;
+                case OTYPE_JMP_ADR:
+                    disasm->operand[idx].type = DISASM_OPERAND_CONSTANT_TYPE | DISASM_OPERAND_RELATIVE;
+                    disasm->operand[idx].immediateValue =
+                            (int32_t) ([operand valueFromBytes:bytes] << 6) >> 6;
+                    disasm->operand[idx].size = [operand bitCount];
+                    disasm->operand[idx].accessMode = operand.accessMode;
+                    disasm->operand[idx].isBranchDestination = 1;
+                    // target address is a full 32-bit address consisting of
+                    // * highest 4 bits of PC (instruction after jump)
+                    // * 2-bit left shifted 26-bit immediate
+                    disasm->instruction.addressValue = ((disasm->virtualAddr + 4) & 0xff000000)
+                            + (disasm->operand[idx].immediateValue << 2);
+
+                    break;
             }
+        }];
+        disasm->instruction.pcRegisterValue = disasm->virtualAddr + [insn.insDef instructionLength];
+        disasm->instruction.length = [insn.insDef instructionLength];
+        if (insn.insDef.branchType) {
+            disasm->instruction.branchType = (DisasmBranchType) insn.insDef.branchType.integerValue;
         }
-    }
-    if (!isPseudoIns) {
-        switch (in->type) {
-
-            case RTYPE:
-                switch (in->opcode) {
-                    case SPECIAL:
-                        [self populateRType:disasm withInsn:in];
-                        break;
-                    case COP0: /* System Control Coprocessor */
-                        break;
-                }
-                break;
-            case ITYPE:
-                switch (in->opcode) {
-                    case REGIMM:
-                        switch (in->itype.regImmFunct) {
-                            case BLTZ:
-                                populateITypeRegLabel(disasm, in, "bltz");
-                                break;
-                            case BGEZ:
-                                populateITypeRegLabel(disasm, in, "bgez");
-                                break;
-                            case BGEZAL:
-                                if (in->itype.rs == ZERO) {
-                                    strcpy(disasm->instruction.mnemonic, "bal");
-                                    disasm->operand[0].type = DISASM_OPERAND_CONSTANT_TYPE | DISASM_OPERAND_RELATIVE;
-                                    disasm->operand[0].immediateValue = (int16_t) in->itype.imm;
-                                    disasm->operand[0].size = 16;
-                                    disasm->operand[0].accessMode = DISASM_ACCESS_READ;
-                                    disasm->operand[0].isBranchDestination = 1;
-
-                                    disasm->instruction.addressValue =
-                                            disasm->virtualAddr + 4 + (disasm->operand[0].immediateValue << 2);
-                                    disasm->instruction.pcRegisterValue = disasm->virtualAddr + 8;
-                                    disasm->instruction.branchType = DISASM_BRANCH_CALL;
-                                } else {
-                                    populateITypeRegLabel(disasm, in, "bgezal");
-                                }
-                                break;
-                            case BLTZALL:
-                                populateITypeRegLabel(disasm, in, "bltzall");
-                                break;
-                        }
-                        break;
-                    case ADDI:
-                        if (!self.mips32r6) {
-                            [self populateITypeS:disasm withInsn:in andName:"addi"];
-                        }
-                        break;
-                    case ADDIU:
-                        if (in->itype.rs == ZERO) {
-                            [self populateITypeSZero:disasm withInsn:in andName:"li"];
-                        } else {
-                            [self populateITypeS:disasm withInsn:in andName:"addiu"];
-                            [self calculateAddress:disasm withInsn:in andOp:BUILDOP_ADD];
-                        }
-                        break;
-                    case ANDI:
-                        [self populateITypeU:disasm withInsn:in andName:"andi"];
-                        break;
-                    case ORI:
-                        [self populateITypeU:disasm withInsn:in andName:"ori"];
-                        [self calculateAddress:disasm withInsn:in andOp:BUILDOP_OR];
-                        break;
-                    case XORI:
-                        [self populateITypeU:disasm withInsn:in andName:"xori"];
-                        break;
-                    case BEQ:
-                        if (in->itype.rt == ZERO) {
-                            if (in->itype.rs == ZERO) {
-                                populateITypeLabelZeroZero(disasm, in, "b");
-                            } else {
-                                populateITypeLabelZero(disasm, in, "beqz");
-                            }
-                        } else {
-                            populateITypeLabel(disasm, in, "beq");
-                        }
-                        disasm->instruction.branchType = DISASM_BRANCH_JE;
-                        break;
-                    case BNE:
-                        if (in->itype.rt == ZERO) {
-                            populateITypeLabelZero(disasm, in, "bnez");
-                        } else {
-                            populateITypeLabel(disasm, in, "bne");
-                        }
-                        disasm->instruction.branchType = DISASM_BRANCH_JNE;
-                        break;
-                    case BLEZ:
-                        if (in->rtype.rt == ZERO) {
-                            populateITypeRegLabel(disasm, in, "blez");
-                            disasm->instruction.branchType = DISASM_BRANCH_JLE;
-                        }
-                        break;
-                    case BGTZ:
-                        if (in->rtype.rt == ZERO) {
-                            populateITypeRegLabel(disasm, in, "bgtz");
-                            disasm->instruction.branchType = DISASM_BRANCH_JGE;
-                        }
-                        break;
-                    case SLTI:
-                        strcpy(disasm->instruction.mnemonic, "slti");
-                        populateRegOperand(&disasm->operand[0], in->itype.rt, DISASM_ACCESS_WRITE);
-                        populateRegOperand(&disasm->operand[1], in->itype.rs, DISASM_ACCESS_READ);
-                        populateImm16Operand(&disasm->operand[2], in->itype.imm);
-                        break;
-                    case SLTIU:
-                        strcpy(disasm->instruction.mnemonic, "sltiu");
-                        populateRegOperand(&disasm->operand[0], in->itype.rt, DISASM_ACCESS_WRITE);
-                        populateRegOperand(&disasm->operand[1], in->itype.rs, DISASM_ACCESS_READ);
-                        populateUImm16Operand(&disasm->operand[2], in->itype.imm);
-                        break;
-                    case LUI:
-                        populateITypeImm(disasm, in, "lui");
-                        break;
-                    case BEQL:
-                        if (in->itype.rt == ZERO) {
-                            populateITypeLabelZero(disasm, in, "beqzl");
-                        } else {
-                            populateITypeLabel(disasm, in, "beql");
-                        }
-                        break;
-                    case BLEZL:
-                        if (in->rtype.rt == ZERO) {
-                            populateITypeRegLabel(disasm, in, "blezl");
-                            disasm->instruction.branchType = DISASM_BRANCH_JGE;
-                        }
-                        break;
-                    case BGTZL:
-                        if (in->rtype.rt == ZERO) {
-                            populateITypeRegLabel(disasm, in, "bgtzl");
-                            disasm->instruction.branchType = DISASM_BRANCH_JGE;
-                        }
-                        break;
-                    case LB:
-                        populateITypeMemRead(disasm, in, "lb");
-                        break;
-                    case LH:
-                        populateITypeMemRead(disasm, in, "lh");
-                        break;
-                    case LW:
-                        populateITypeMemRead(disasm, in, "lw");
-                        [self calculateAddress:disasm withInsn:in andOp:BUILDOP_ADD];
-                        break;
-                    case LBU:
-                        populateITypeMemRead(disasm, in, "lbu");
-                        break;
-                    case LHU:
-                        populateITypeMemRead(disasm, in, "lhu");
-                        break;
-                    case SB:
-                        populateITypeMemWrite(disasm, in, "sb");
-                        break;
-                    case SH:
-                        populateITypeMemWrite(disasm, in, "sh");
-                        break;
-                    case SW:
-                        populateITypeMemWrite(disasm, in, "sw");
-                        break;
-                    case LWC1:
-                        populateFPUITypeMemRead(disasm, in, "lwc1");
-                        break;
-                    case LWC2:
-                        populateFPUITypeMemRead(disasm, in, "lwc2");
-                        break;
-                    case LDC1:
-                        populateFPUITypeMemRead(disasm, in, "ldc1");
-                        break;
-                    case LDC2:
-                        populateFPUITypeMemRead(disasm, in, "ldc2");
-                        break;
-                    case SWC1:
-                        populateFPUITypeMemWrite(disasm, in, "swc1");
-                        break;
-                    case SWC2:
-                        populateFPUITypeMemWrite(disasm, in, "swc2");
-                        break;
-                }
-                break;
-            case JTYPE:
-                switch (in->opcode) {
-                    case J:
-                    case JAL:
-                        [self populateJType:disasm withInsn:in];
-                        break;
-                }
-                break;
-            case FPUTYPE:
-                switch (in->fputype.function) {
-                    case COP1_ADD:
-                        switch (in->fputype.fmt) {
-                            case 0b00100 /* COP1_MT */:
-                                if (in->fputype.fd == 0) {
-                                    strcpy(disasm->instruction.mnemonic, "mtc1");
-                                    populateRegOperand(&disasm->operand[0], (enum Reg) in->fputype.ft, DISASM_ACCESS_WRITE);
-                                    populateFpuRegOperand(&disasm->operand[1], in->fputype.fs, DISASM_ACCESS_READ);
-/*
-                                    if (in->rtype.sel != 0) {
-                                        disasm->operand[2].type = DISASM_OPERAND_CONSTANT_TYPE;
-                                        disasm->operand[2].immediateValue = in->rtype.sel;
-                                        disasm->operand[2].size = 3;
-                                    }
-*/
-                                }
-                                break;
-                            case 0b00111 /* COP1_MTH */:
-                                if (in->fputype.fd == 0) {
-                                    strcpy(disasm->instruction.mnemonic, "mthc1");
-                                    populateRegOperand(&disasm->operand[0], (enum Reg) in->fputype.ft, DISASM_ACCESS_WRITE);
-                                    populateFpuRegOperand(&disasm->operand[1], in->fputype.fs, DISASM_ACCESS_READ);
-                                }
-                                break;
-                            case 0x10:
-                                strcpy(disasm->instruction.mnemonic, "add.s");
-                                populateFpuRegOperand(&disasm->operand[0], in->fputype.fd, DISASM_ACCESS_WRITE);
-                                populateFpuRegOperand(&disasm->operand[1], in->fputype.fs, DISASM_ACCESS_READ);
-                                populateFpuRegOperand(&disasm->operand[2], in->fputype.ft, DISASM_ACCESS_READ);
-                                break;
-                            case 0x11:
-                                strcpy(disasm->instruction.mnemonic, "add.d");
-                                populateFpuRegOperand(&disasm->operand[0], in->fputype.fd, DISASM_ACCESS_WRITE);
-                                populateFpuRegOperand(&disasm->operand[1], in->fputype.fs, DISASM_ACCESS_READ);
-                                populateFpuRegOperand(&disasm->operand[2], in->fputype.ft, DISASM_ACCESS_READ);
-                                break;
-                            case 0x16: // MIPS32R2
-                                if (self.mips32r2) {
-                                    strcpy(disasm->instruction.mnemonic, "add.ps");
-                                    populateFpuRegOperand(&disasm->operand[0], in->fputype.fd, DISASM_ACCESS_WRITE);
-                                    populateFpuRegOperand(&disasm->operand[1], in->fputype.fs, DISASM_ACCESS_READ);
-                                    populateFpuRegOperand(&disasm->operand[2], in->fputype.ft, DISASM_ACCESS_READ);
-                                }
-                                break;
-                        }
-                        break;
-                    case COP1_ABS:
-                        if (in->fputype.ft == 0) {
-                            switch (in->fputype.fmt) {
-                                case 0x10:
-                                    strcpy(disasm->instruction.mnemonic, "abs.s");
-                                    populateFpuRegOperand(&disasm->operand[0], in->fputype.fd, DISASM_ACCESS_WRITE);
-                                    populateFpuRegOperand(&disasm->operand[1], in->fputype.fs, DISASM_ACCESS_READ);
-                                    break;
-                                case 0x11:
-                                    strcpy(disasm->instruction.mnemonic, "abs.d");
-                                    populateFpuRegOperand(&disasm->operand[0], in->fputype.fd, DISASM_ACCESS_WRITE);
-                                    populateFpuRegOperand(&disasm->operand[1], in->fputype.fs, DISASM_ACCESS_READ);
-                                    break;
-                                case 0x16: // MIPS32R2
-                                    if (self.mips32r2) {
-                                        strcpy(disasm->instruction.mnemonic, "abs.ps");
-                                        populateFpuRegOperand(&disasm->operand[0], in->fputype.fd, DISASM_ACCESS_WRITE);
-                                        populateFpuRegOperand(&disasm->operand[1], in->fputype.fs, DISASM_ACCESS_READ);
-                                    }
-                                    break;
-                            }
-                        }
-                        break;
-                }
-                break;
-
+        if ([insn.mnemonic isEqualToString:@"addiu"]) {
+            [self calculateAddress:disasm withInsn:insn andOp:BUILDOP_ADD];
         }
+        if ([insn.mnemonic isEqualToString:@"ori"]) {
+            [self calculateAddress:disasm withInsn:insn andOp:BUILDOP_OR];
+        }
+
+        len = [insn.insDef instructionLength];
     }
 
-    if (in->delayslot.type != NONE) {
-        disasm->instruction.pcRegisterValue += 4;
-    } else {
 
-    }
-
-    free(in);
     if (disasm->instruction.mnemonic[0] == 0) {
         return DISASM_UNKNOWN_OPCODE;
     }
     if (isPseudoIns) {
         return pseudoInsSize;
     }
-    return 4;
+    return len;
 }
 
 /**
@@ -541,23 +572,22 @@ static inline void clear_operands_from(DisasmStruct *disasm, int index) {
  * @param in current instruction
  * @param op how to calculate the address
  */
+
 - (void)calculateAddress:(DisasmStruct *)disasm
-                withInsn:(const struct insn *)in
+                withInsn:(const Insn *)in
                    andOp:(const enum BuildOp)op {
     const uint8_t STEPS_BACK = 2;
     for (int stepBack = 1; stepBack <= STEPS_BACK; stepBack++) {
         // fetch previous instruction
-        uint32_t prev = [_file readUInt32AtVirtualAddress:disasm->virtualAddr - (4 * stepBack)];
-        struct insn *prevIn = getInsn(prev);
+        Insn *prevIn = [self getInsnAtAddress:disasm->virtualAddr - ([in.insDef instructionLength] * stepBack)];
         if (prevIn) {
-            if ([self calculateAddress:disasm withPrev:prevIn andInsn:in andOp:op]) {
-                free(prevIn);
+            if ([self calculateAddress:disasm withPrev:prevIn andInsDef:in andOp:op]) {
                 break;
             }
-            free(prevIn);
         }
     }
 }
+
 
 /**
  * Calculate an address from lui, addiu or lui, ori instructions
@@ -567,26 +597,54 @@ static inline void clear_operands_from(DisasmStruct *disasm, int index) {
  * @param in current instruction
  * @param op how to calculate the address
  */
+
 - (BOOL)calculateAddress:(DisasmStruct *)disasm
-                withPrev:(const struct insn *)prev
-                 andInsn:(const struct insn *)in
+                withPrev:(const Insn *)prev
+               andInsDef:(const Insn *)in
                    andOp:(const enum BuildOp)op {
-    if (prev->opcode == LUI && prev->itype.rt == in->itype.rs) {
+    if ([prev.mnemonic isEqualToString:@"lui"]) {
+        NSNumber *in_reg = [in operandValue:1];
+        if (!in_reg) {
+            return NO;
+        }
+        NSNumber *prev_reg = [prev operandValue:0];
+        if (!prev_reg) {
+            return NO;
+        }
+        if ([in_reg unsignedIntValue] != [prev_reg unsignedIntValue]) {
+            return NO;
+        }
+        const unsigned int prev_imm = [prev operandValue:1].unsignedIntValue;
+        const unsigned int in_imm = [in operandValue:2].unsignedIntValue;
         disasm->instruction.addressValue = (op == BUILDOP_ADD) ?
-                (uint32_t) ((prev->itype.imm << 16) + ((int16_t) in->itype.imm)) :
-                (uint32_t) ((prev->itype.imm << 16) | in->itype.imm);
+                (uint32_t) ((prev_imm << 16) + ((int16_t) in_imm)) :
+                (uint32_t) ((prev_imm << 16) | in_imm);
         NSObject <HPSegment> *segment = [_file segmentForVirtualAddress:disasm->virtualAddr];
         [segment addReferencesToAddress:(uint32_t) disasm->instruction.addressValue
                             fromAddress:disasm->virtualAddr];
-        [_file setInlineComment:[NSString stringWithFormat:@"%@ = %08x",
-                                                           [self getRegNameFromOperand:disasm->operand
-                                                                        andSyntaxIndex:disasm->syntaxIndex],
-                                                           (uint32_t) disasm->instruction.addressValue]
+        NSString *comment = [NSString stringWithFormat:@"%@ = %08x",
+                                                       [self getRegNameFromOperand:disasm->operand
+                                                                    andSyntaxIndex:disasm->syntaxIndex],
+                                                       (uint32_t) disasm->instruction.addressValue];
+        [_file setInlineComment:comment
                atVirtualAddress:disasm->virtualAddr
                          reason:CCReason_Automatic];
         return YES;
     }
     return NO;
+}
+
+- (Insn *const)getInsnAtAddress:(Address)address {
+    return [self getInsnForBytes:[_file readUInt32AtVirtualAddress:address]];
+}
+
+- (Insn *const)getInsnForBytes:(uint32_t)bytes {
+    for (InsDef *const ins_def in [self getInstructions]) {
+        if ([ins_def matches:bytes isa:self.isaRelease]) {
+            return [Insn insnWithInsDef:ins_def bytes:bytes];
+        }
+    }
+    return nil;
 }
 
 - (BOOL)instructionHaltsExecutionFlow:(DisasmStruct *)disasm {
@@ -601,6 +659,7 @@ static inline void clear_operands_from(DisasmStruct *disasm, int index) {
                       ofSegment:(NSObject <HPSegment> *)segment
                 calledAddresses:(NSMutableArray<NSNumber *> *)calledAddresses
                       callsites:(NSMutableArray<NSNumber *> *)callSitesAddresses {
+
 }
 
 - (void)performInstructionSpecificAnalysis:(DisasmStruct *)disasm
@@ -646,7 +705,7 @@ static inline int regIndexFromType(const uint64_t type) {
     if (regIdx < 0) {
         return @"invalid_reg";
     }
-    return [_cpu registerIndexToString:regIdx
+    return [_cpu registerIndexToString:(NSUInteger) regIdx
                                ofClass:regCls
                            withBitSize:32
                               position:operand->position
@@ -697,7 +756,7 @@ static inline int regIndexFromType(const uint64_t type) {
                     format |= Format_Signed;
                 }
             }
-            [line appendRawString:@"#"];
+            //[line appendRawString:@"#"];
             [line append:[file formatNumber:(uint64_t) operand->immediateValue
                                          at:disasm->virtualAddr
                                 usingFormat:format
@@ -729,7 +788,6 @@ static inline int regIndexFromType(const uint64_t type) {
 
             BOOL varNameAdded = NO;
             if ([reg_name isEqualToString:@"sp"]) {
-                NSLog(@"%lx", (unsigned long) format);
                 if (((format & Format_Default) == Format_Default) || (format & Format_StackVariable)) {
                     NSObject <HPProcedure> *proc = [file procedureAt:disasm->virtualAddr];
                     if (proc) {
@@ -801,9 +859,20 @@ static inline int regIndexFromType(const uint64_t type) {
                                                           raw:raw];
         if (part == nil) break;
         if (op_index) {
-            [line appendRawString:@", "];
+            // index(base)
+            if ((disasm->operand[op_index].type & DISASM_OPERAND_REGISTER_BASE) &&
+                    (disasm->operand[op_index - 1].type & DISASM_OPERAND_REGISTER_INDEX)) {
+                [line appendRawString:@"("];
+                [line append:part];
+                [line appendRawString:@")"];
+
+            } else {
+                [line appendRawString:@", "];
+                [line append:part];
+            }
+        } else {
+            [line append:part];
         }
-        [line append:part];
     }
 
     return line;
@@ -858,337 +927,7 @@ static inline int regIndexFromType(const uint64_t type) {
     return NO;
 }
 
-- (void)populateRType:(DisasmStruct *)disasm
-             withInsn:(struct insn *)pInsn {
-
-    switch (pInsn->rtype.specialFunct) {
-        case NOP:
-            if (pInsn->rtype.rs == ZERO && pInsn->rtype.rt == ZERO &&
-                    pInsn->rtype.rd == ZERO && pInsn->rtype.shift == 0) {
-                strcpy(disasm->instruction.mnemonic, "nop");
-            } else {
-                strcpy(disasm->instruction.mnemonic, "sll");
-
-                populateRegOperand(&disasm->operand[0], pInsn->rtype.rd, DISASM_ACCESS_WRITE);
-
-                if (pInsn->rtype.rd == pInsn->rtype.rt) {
-                    disasm->operand[1].type = DISASM_OPERAND_CONSTANT_TYPE;
-                    disasm->operand[1].immediateValue = pInsn->rtype.shift;
-                    disasm->operand[1].size = 5;
-                } else {
-                    populateRegOperand(&disasm->operand[1], pInsn->rtype.rt, DISASM_ACCESS_READ);
-
-                    disasm->operand[2].type = DISASM_OPERAND_CONSTANT_TYPE;
-                    disasm->operand[2].immediateValue = pInsn->rtype.shift;
-                    disasm->operand[2].size = 5;
-                }
-            }
-            return;
-        case SRL:
-            strcpy(disasm->instruction.mnemonic, "srl");
-
-            populateRegOperand(&disasm->operand[0], pInsn->rtype.rd, DISASM_ACCESS_WRITE);
-
-            if (pInsn->rtype.rd == pInsn->rtype.rt) {
-                disasm->operand[1].type = DISASM_OPERAND_CONSTANT_TYPE;
-                disasm->operand[1].immediateValue = pInsn->rtype.shift;
-                disasm->operand[1].size = 5;
-            } else {
-                populateRegOperand(&disasm->operand[1], pInsn->rtype.rt, DISASM_ACCESS_READ);
-
-                disasm->operand[2].type = DISASM_OPERAND_CONSTANT_TYPE;
-                disasm->operand[2].immediateValue = pInsn->rtype.shift;
-                disasm->operand[2].size = 5;
-            }
-            return;
-        case SRA:
-            strcpy(disasm->instruction.mnemonic, "sra");
-
-            populateRegOperand(&disasm->operand[0], pInsn->rtype.rd, DISASM_ACCESS_WRITE);
-
-            if (pInsn->rtype.rd == pInsn->rtype.rt) {
-                disasm->operand[1].type = DISASM_OPERAND_CONSTANT_TYPE;
-                disasm->operand[1].immediateValue = pInsn->rtype.shift;
-                disasm->operand[1].size = 5;
-            } else {
-                populateRegOperand(&disasm->operand[1], pInsn->rtype.rt, DISASM_ACCESS_READ);
-
-                disasm->operand[2].type = DISASM_OPERAND_CONSTANT_TYPE;
-                disasm->operand[2].immediateValue = pInsn->rtype.shift;
-                disasm->operand[2].size = 5;
-            }
-            return;
-        case SLLV:
-            strcpy(disasm->instruction.mnemonic, "sllv");
-            populateRegOperand(&disasm->operand[0], pInsn->rtype.rd, DISASM_ACCESS_WRITE);
-            if (pInsn->rtype.rd == pInsn->rtype.rt) {
-                populateRegOperand(&disasm->operand[1], pInsn->rtype.rs, DISASM_ACCESS_READ);
-            } else {
-                populateRegOperand(&disasm->operand[1], pInsn->rtype.rt, DISASM_ACCESS_READ);
-                populateRegOperand(&disasm->operand[2], pInsn->rtype.rs, DISASM_ACCESS_READ);
-            }
-            return;
-        case SRLV:
-            strcpy(disasm->instruction.mnemonic, "srlv");
-            populateRegOperand(&disasm->operand[0], pInsn->rtype.rd, DISASM_ACCESS_WRITE);
-            if (pInsn->rtype.rd == pInsn->rtype.rt) {
-                populateRegOperand(&disasm->operand[1], pInsn->rtype.rs, DISASM_ACCESS_READ);
-            } else {
-                populateRegOperand(&disasm->operand[1], pInsn->rtype.rt, DISASM_ACCESS_READ);
-                populateRegOperand(&disasm->operand[2], pInsn->rtype.rs, DISASM_ACCESS_READ);
-            }
-            return;
-        case SRAV:
-            strcpy(disasm->instruction.mnemonic, "srav");
-            populateRegOperand(&disasm->operand[0], pInsn->rtype.rd, DISASM_ACCESS_WRITE);
-            if (pInsn->rtype.rd == pInsn->rtype.rt) {
-                populateRegOperand(&disasm->operand[1], pInsn->rtype.rs, DISASM_ACCESS_READ);
-            } else {
-                populateRegOperand(&disasm->operand[1], pInsn->rtype.rt, DISASM_ACCESS_READ);
-                populateRegOperand(&disasm->operand[2], pInsn->rtype.rs, DISASM_ACCESS_READ);
-            }
-            return;
-        case MOVN:
-            strcpy(disasm->instruction.mnemonic, "movn");
-            break;
-        case ADD:
-            strcpy(disasm->instruction.mnemonic, "add");
-            break;
-        case ADDU:
-            if (pInsn->rtype.rt == ZERO) {
-                strcpy(disasm->instruction.mnemonic, "move");
-                populateRegOperand(&disasm->operand[0], pInsn->rtype.rd, DISASM_ACCESS_WRITE);
-                populateRegOperand(&disasm->operand[1], pInsn->rtype.rs, DISASM_ACCESS_READ);
-                return;
-            } else {
-                strcpy(disasm->instruction.mnemonic, "addu");
-            }
-            break;
-        case AND:
-            strcpy(disasm->instruction.mnemonic, "and");
-            break;
-        case OR:
-            if (pInsn->rtype.rt == ZERO) {
-                if (pInsn->rtype.rd == pInsn->rtype.rs == AT && disasm->syntaxIndex == 1) {
-                    strcpy(disasm->instruction.mnemonic, "nop");
-                } else {
-                    strcpy(disasm->instruction.mnemonic, "move");
-                    populateRegOperand(&disasm->operand[0], pInsn->rtype.rd, DISASM_ACCESS_WRITE);
-                    populateRegOperand(&disasm->operand[1], pInsn->rtype.rs, DISASM_ACCESS_READ);
-                }
-                return;
-            } else {
-                strcpy(disasm->instruction.mnemonic, "or");
-                if (pInsn->rtype.rd == pInsn->rtype.rs) {
-                    populateRegOperand(&disasm->operand[0], pInsn->rtype.rd, DISASM_ACCESS_WRITE);
-                    populateRegOperand(&disasm->operand[1], pInsn->rtype.rt, DISASM_ACCESS_READ);
-                    return;
-                }
-            }
-            break;
-        case SLT:
-            strcpy(disasm->instruction.mnemonic, "slt");
-            break;
-        case SLTU:
-            strcpy(disasm->instruction.mnemonic, "sltu");
-            break;
-        case SUB:
-            strcpy(disasm->instruction.mnemonic, "sub");
-            break;
-        case SUBU:
-            if (pInsn->rtype.rs == ZERO) {
-                strcpy(disasm->instruction.mnemonic, "negu");
-                populateRegOperand(&disasm->operand[0], pInsn->rtype.rd, DISASM_ACCESS_WRITE);
-                populateRegOperand(&disasm->operand[1], pInsn->rtype.rt, DISASM_ACCESS_READ);
-                return;
-            } else {
-                strcpy(disasm->instruction.mnemonic, "subu");
-                if (pInsn->rtype.rd == pInsn->rtype.rs) {
-                    populateRegOperand(&disasm->operand[0], pInsn->rtype.rd, DISASM_ACCESS_WRITE);
-                    populateRegOperand(&disasm->operand[1], pInsn->rtype.rt, DISASM_ACCESS_READ);
-                    return;
-                }
-            }
-            break;
-        case XOR:
-            strcpy(disasm->instruction.mnemonic, "xor");
-            break;
-        case NOR:
-            strcpy(disasm->instruction.mnemonic, "nor");
-            break;
-        case BREAK:
-            strcpy(disasm->instruction.mnemonic, "break");
-            return;
-        case JR:
-            strcpy(disasm->instruction.mnemonic, "jr");
-            populateRegOperand(&disasm->operand[0], pInsn->rtype.rs, DISASM_ACCESS_WRITE);
-            if (pInsn->rtype.rs == RA) {
-                disasm->instruction.branchType = DISASM_BRANCH_RET;
-            }
-            disasm->instruction.branchType = DISASM_BRANCH_JMP;
-            disasm->operand[0].isBranchDestination=1;
-            return;
-        case JALR:
-            strcpy(disasm->instruction.mnemonic, "jalr");
-            if (pInsn->rtype.rd == RA) {
-                populateRegOperand(&disasm->operand[0], pInsn->rtype.rs, DISASM_ACCESS_WRITE);
-            } else {
-                populateRegOperand(&disasm->operand[0], pInsn->rtype.rd, DISASM_ACCESS_WRITE);
-                populateRegOperand(&disasm->operand[1], pInsn->rtype.rs, DISASM_ACCESS_READ);
-            }
-
-            disasm->instruction.branchType = DISASM_BRANCH_CALL;
-            return;
-        case SYSCALL:
-            strcpy(disasm->instruction.mnemonic, "syscall");
-            return;
-        case MULT:
-            strcpy(disasm->instruction.mnemonic, "mult");
-            populateRegOperand(&disasm->operand[0], pInsn->rtype.rs, DISASM_ACCESS_WRITE);
-            populateRegOperand(&disasm->operand[1], pInsn->rtype.rt, DISASM_ACCESS_READ);
-            return;
-        case MULTU:
-            strcpy(disasm->instruction.mnemonic, "multu");
-            populateRegOperand(&disasm->operand[0], pInsn->rtype.rs, DISASM_ACCESS_WRITE);
-            populateRegOperand(&disasm->operand[1], pInsn->rtype.rt, DISASM_ACCESS_READ);
-            return;
-        case DIV:
-            strcpy(disasm->instruction.mnemonic, "div");
-            populateRegOperand(&disasm->operand[0], pInsn->rtype.rs, DISASM_ACCESS_WRITE);
-            populateRegOperand(&disasm->operand[1], pInsn->rtype.rt, DISASM_ACCESS_READ);
-            return;
-        case DIVU:
-            strcpy(disasm->instruction.mnemonic, "divu");
-            populateRegOperand(&disasm->operand[0], pInsn->rtype.rs, DISASM_ACCESS_WRITE);
-            populateRegOperand(&disasm->operand[1], pInsn->rtype.rt, DISASM_ACCESS_READ);
-            return;
-        case MFHI:
-            strcpy(disasm->instruction.mnemonic, "mfhi");
-            populateRegOperand(&disasm->operand[0], pInsn->rtype.rd, DISASM_ACCESS_WRITE);
-            return;
-        case MTHI:
-            strcpy(disasm->instruction.mnemonic, "mthi");
-            populateRegOperand(&disasm->operand[0], pInsn->rtype.rs, DISASM_ACCESS_READ);
-            return;
-        case MFLO:
-            strcpy(disasm->instruction.mnemonic, "mflo");
-            populateRegOperand(&disasm->operand[0], pInsn->rtype.rd, DISASM_ACCESS_WRITE);
-            return;
-        case MTLO:
-            strcpy(disasm->instruction.mnemonic, "mtlo");
-            populateRegOperand(&disasm->operand[0], pInsn->rtype.rs, DISASM_ACCESS_READ);
-            return;
-        default:
-            return;
-    }
-
-    populateRegOperand(&disasm->operand[0], pInsn->rtype.rd, DISASM_ACCESS_WRITE);
-    populateRegOperand(&disasm->operand[1], pInsn->rtype.rs, DISASM_ACCESS_READ);
-    populateRegOperand(&disasm->operand[2], pInsn->rtype.rt, DISASM_ACCESS_READ);
-}
-
-/**
- * setup for unsigned immediate value
- * @param disasm
- * @param pInsn
- * @param name
- */
-- (void)populateITypeU:(DisasmStruct *)disasm
-              withInsn:(struct insn *)pInsn
-               andName:(const char *const)name {
-    strncpy(disasm->instruction.mnemonic, name, sizeof(disasm->instruction.mnemonic));
-    populateRegOperand(&disasm->operand[0], pInsn->rtype.rt, DISASM_ACCESS_WRITE);
-
-    if (pInsn->itype.rt != pInsn->itype.rs) {
-        populateRegOperand(&disasm->operand[1], pInsn->rtype.rs, DISASM_ACCESS_READ);
-
-        disasm->operand[2].type = DISASM_OPERAND_CONSTANT_TYPE;
-        disasm->operand[2].immediateValue = pInsn->itype.imm;
-        disasm->operand[2].size = 16;
-        disasm->operand[2].accessMode = DISASM_ACCESS_READ;
-    } else {
-        disasm->operand[1].type = DISASM_OPERAND_CONSTANT_TYPE;
-        disasm->operand[1].immediateValue = pInsn->itype.imm;
-        disasm->operand[1].size = 16;
-        disasm->operand[1].accessMode = DISASM_ACCESS_READ;
-    }
-}
-
-/**
- * setup for signed immediate value
- * @param disasm
- * @param pInsn
- * @param name
- */
-- (void)populateITypeS:(DisasmStruct *)disasm
-              withInsn:(struct insn *)pInsn
-               andName:(const char *const)name {
-    strncpy(disasm->instruction.mnemonic, name, sizeof(disasm->instruction.mnemonic));
-    populateRegOperand(&disasm->operand[0], pInsn->itype.rt, DISASM_ACCESS_WRITE);
-
-    if (pInsn->itype.rt != pInsn->itype.rs) {
-        populateRegOperand(&disasm->operand[1], pInsn->itype.rs, DISASM_ACCESS_READ);
-
-        disasm->operand[2].type = DISASM_OPERAND_CONSTANT_TYPE | DISASM_OPERAND_RELATIVE;
-        disasm->operand[2].immediateValue = pInsn->itype.imm;
-        disasm->operand[2].size = 16;
-        disasm->operand[2].accessMode = DISASM_ACCESS_READ;
-    } else {
-        disasm->operand[1].type = DISASM_OPERAND_CONSTANT_TYPE | DISASM_OPERAND_RELATIVE;
-        disasm->operand[1].immediateValue = pInsn->itype.imm;
-        disasm->operand[1].size = 16;
-        disasm->operand[1].accessMode = DISASM_ACCESS_READ;
-    }
-}
-
-/**
- * setup for signed immediate value
- * @param disasm
- * @param pInsn
- * @param name
- */
-- (void)populateITypeSZero:(DisasmStruct *)disasm
-                  withInsn:(struct insn *)pInsn
-                   andName:(const char *const)name {
-    strncpy(disasm->instruction.mnemonic, name, sizeof(disasm->instruction.mnemonic));
-    populateRegOperand(&disasm->operand[0], pInsn->itype.rt, DISASM_ACCESS_WRITE);
-
-    disasm->operand[1].type = DISASM_OPERAND_CONSTANT_TYPE | DISASM_OPERAND_RELATIVE;
-    disasm->operand[1].immediateValue = pInsn->itype.imm;
-    disasm->operand[1].size = 16;
-    disasm->operand[1].accessMode = DISASM_ACCESS_READ;
-}
-
-/**
- * J-type instructions.
- * @param disasm
- * @param pInsn
- */
-- (void)populateJType:(DisasmStruct *)disasm
-             withInsn:(struct insn *)pInsn {
-    switch (pInsn->opcode) {
-        case J:
-            strcpy(disasm->instruction.mnemonic, "j");
-            disasm->instruction.branchType = DISASM_BRANCH_JMP;
-            break;
-        case JAL:
-            strcpy(disasm->instruction.mnemonic, "jal");
-            disasm->instruction.branchType = DISASM_BRANCH_CALL;
-            break;
-        default:
-            strcpy(disasm->instruction.mnemonic, "unk_jtype");
-    }
-
-    disasm->operand[0].type = DISASM_OPERAND_CONSTANT_TYPE | DISASM_OPERAND_RELATIVE;
-    disasm->operand[0].immediateValue = (int32_t) (pInsn->jtype.imm << 6) >> 6;
-    disasm->operand[0].accessMode = DISASM_ACCESS_READ;
-    disasm->operand[0].size = 26;
-    disasm->operand[0].isBranchDestination = 1;
-    // target address is a full 32-bit address consisting of
-    // * highest 4 bits of PC (instruction after jump)
-    // * 2-bit left shifted 26-bit immediate
-    disasm->instruction.addressValue = ((disasm->virtualAddr + 4) & 0xff000000)
-            + (disasm->operand[0].immediateValue << 2);
-}
+// Helper functions
+#pragma mark - Helper functions -
 
 @end
