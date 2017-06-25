@@ -8,18 +8,24 @@ Instruction opcodes and their operands are defined in `opcodes.plist`. This file
 * Branchtype: Optional string specifying a branch type.
     * `ALWAYS`
     * `EQUAL_ZERO`
+    * `GREATER_EQUAL`
     * `GREATER_EQUAL_ZERO`
     * `GREATER_ZERO`
     * `LESS_EQUAL_ZERO`
-    * `LESS_THAN_ZERO`
+    * `LESS`
+    * `LESS_ZERO`
     * `EQUAL`
     * `NOT_EQUAL`
     * `NOT_EQUAL_ZERO`
+    * `OVERFLOW`
+    * `NO_OVERFLOW`
     * `CALL`
     * `RET`
     * `TRUE`
     * `FALSE`
-* Format: A string describing the instruction format. Consisting of bit range definitions.
+* Format: A string describing the instruction format. Consisting of bit range definitions describing the instruction parts.
+    * Instruction parts are separated by one space.
+    * Each instruction part must have at least bit range defined.
     * Bit range(s) have the form of `n..m` with n > m >=0 denoting the leftmost und rightmost bit.
         * a single bit has to be denoted as `n..n`
         * non-continuous bit ranges can be expressed as a comma-separated list, e.g. `31..29,26..23`
@@ -46,19 +52,26 @@ Instruction opcodes and their operands are defined in `opcodes.plist`. This file
         * `fcc` FPU control
         * `ffmt` FPU format
         * `fcond` FPU condition
+        * `fcondn` FPU condition (MIPS32R6)
         * `base` base register for memory
         * `copbase` cop base register for memory
         * `index` index register for memory
         * `off9` 9-bit offset
+        * `off11` 11-bit offset
         * `off16` 16-bit offset
         * `off18` 18-bit offset
+        * `off21` 21-bit offset
+        * `off23` 23-bit offset
         * `off28` 28-bit offset
         * `size`
+        * `code10`
+        * `code20`
         * `possize`
         * `jmpadr`
         * `ignored`
         * `bp`
         * `sa`
+        * `sa+1`
         * `op`
         * `ignored`
 * Idiom: Optional boolean.
@@ -71,3 +84,4 @@ Instruction opcodes and their operands are defined in `opcodes.plist`. This file
     * compare operations are:
         * `==`
         * `!=`
+        * `>`
