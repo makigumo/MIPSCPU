@@ -4145,7 +4145,7 @@
         </dict>
         <dict>
             <key>mnemonic</key>
-            <key>mul.ps</key>
+            <string>mul.ps</string>
             <key>release</key>
             <array>
                 <string>MIPS32R2</string>
@@ -4241,7 +4241,7 @@
         </dict>
         <dict>
             <key>mnemonic</key>
-            <key>neg.ps</key>
+            <string>neg.ps</string>
             <key>release</key>
             <array>
                 <string>MIPS32R2</string>
@@ -4277,7 +4277,7 @@
         </dict>
         <dict>
             <key>mnemonic</key>
-            <key>nmadd.ps</key>
+            <string>nmadd.ps</string>
             <key>release</key>
             <array>
                 <string>MIPS32R2</string>
@@ -4313,7 +4313,7 @@
         </dict>
         <dict>
             <key>mnemonic</key>
-            <key>nmsub.ps</key>
+            <string>nmsub.ps</string>
             <key>release</key>
             <array>
                 <string>MIPS32R2</string>
