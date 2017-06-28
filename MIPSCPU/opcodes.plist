@@ -85,7 +85,7 @@
         </dict>
         <dict>
             <key>mnemonic</key>
-            <key>add.ps</key>
+            <string>add.ps</string>
             <key>release</key>
             <array>
                 <string>MIPS32R2</string>
