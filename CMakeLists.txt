@@ -118,6 +118,7 @@ else(UNIX)
         LIBRARY DESTINATION "${HOPPER_PLUGIN_CPU_DIRNAME}/${PRODUCT_NAME}.${HOPPER_PLUGIN_CPU_EXTENSION}"
     )
     configure_file(Info-gnustep.plist.in Resources/Info-gnustep.plist)
+    configure_file(MIPSCPU/opcodes.plist Resources/opcodes.plist COPYONLY)
     install(
         DIRECTORY ${CMAKE_CURRENT_BINARY_DIR}/Resources
         DESTINATION "${HOPPER_PLUGIN_CPU_DIRNAME}/${PRODUCT_NAME}.${HOPPER_PLUGIN_CPU_EXTENSION}"
@@ -126,4 +127,3 @@ else(UNIX)
 endif(APPLE)
 
 set(CMAKE_RUNTIME_OUTPUT_DIRECTORY ${CMAKE_SOURCE_DIR}/bin)
-
