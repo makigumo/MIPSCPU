@@ -4394,6 +4394,10 @@
                 <string>MIPS32</string>
                 <string>MIPS32R2</string>
                 <string>MIPS32R5</string>
+                <string>MIPSI</string>
+                <string>MIPSII</string>
+                <string>MIPSIII</string>
+                <string>MIPSIV</string>
             </array>
             <key>format</key>
             <string>31..26=0 25..21=1 20..16=0 15..11=1 10..6=0 5..0=0x25</string>
@@ -4409,6 +4413,10 @@
                 <string>MIPS32R2</string>
                 <string>MIPS32R5</string>
                 <string>MIPS32R6</string>
+                <string>MIPSI</string>
+                <string>MIPSII</string>
+                <string>MIPSIII</string>
+                <string>MIPSIV</string>
             </array>
             <key>format</key>
             <string>31..26=0 25..21:rs#2r 20..16=0 15..11:rd#1w 10..6=0 5..0=0x25</string>
