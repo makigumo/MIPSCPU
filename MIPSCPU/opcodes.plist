@@ -2437,7 +2437,7 @@
                 <string>MIPSIV</string>
             </array>
             <key>branchtype</key>
-            <string>ALWAYS</string>
+            <string>CALL</string>
             <key>format</key>
             <string>31..26=3 25..0:jmpadr#1Br</string>
         </dict>
