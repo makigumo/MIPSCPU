@@ -315,6 +315,7 @@ static inline void clear_operands_from(DisasmStruct *disasm, int index) {
         NSArray<InsOp *> *const operands = insn.insDef.operands;
         strcpy(disasm->instruction.mnemonic, [insn.mnemonic UTF8String]);
         [operands enumerateObjectsUsingBlock:^(InsOp *operand, NSUInteger idx, BOOL *stop) {
+            const uint32_t operandValue = [insn operandValue:idx].unsignedIntValue;
             switch (operand.type) {
 
                 case OTYPE_UNDEFINED:
@@ -327,19 +328,19 @@ static inline void clear_operands_from(DisasmStruct *disasm, int index) {
                 case OTYPE_REG_TEMP:
                 case OTYPE_REG_SOURCE:
                     disasm->operand[idx].type = DISASM_OPERAND_REGISTER_TYPE;
-                    disasm->operand[idx].type |= getRegMask((enum Reg) [operand valueFromBytes:bytes]);
+                    disasm->operand[idx].type |= getRegMask((enum Reg) operandValue);
                     disasm->operand[idx].accessMode = operand.accessMode;
                     break;
                 case OTYPE_HW_REG_DEST:
                     disasm->operand[idx].type = DISASM_OPERAND_REGISTER_TYPE;
-                    disasm->operand[idx].type |= getHwRegMask((uint8_t) [operand valueFromBytes:bytes]);
+                    disasm->operand[idx].type |= getHwRegMask((uint8_t) operandValue);
                     disasm->operand[idx].accessMode = operand.accessMode;
                     break;
                 case OTYPE_COP_REG_DEST:
                 case OTYPE_COP_REG_TEMP:
                 case OTYPE_COP_REG_SOURCE:
                     disasm->operand[idx].type = DISASM_OPERAND_REGISTER_TYPE;
-                    disasm->operand[idx].type |= getCopRegMask((uint8_t) [operand valueFromBytes:bytes]);
+                    disasm->operand[idx].type |= getCopRegMask((uint8_t) operandValue);
                     disasm->operand[idx].accessMode = operand.accessMode;
                     break;
                 case OTYPE_FPU_REG_DEST:
@@ -347,43 +348,43 @@ static inline void clear_operands_from(DisasmStruct *disasm, int index) {
                 case OTYPE_FPU_REG_SOURCE:
                 case OTYPE_FPU_REG_R:
                     disasm->operand[idx].type = DISASM_OPERAND_REGISTER_TYPE;
-                    disasm->operand[idx].type |= getFpuRegMask((enum FpuReg) [operand valueFromBytes:bytes]);
+                    disasm->operand[idx].type |= getFpuRegMask((enum FpuReg) operandValue);
                     disasm->operand[idx].accessMode = operand.accessMode;
                     break;
                 case OTYPE_BYTE_POS:
                     disasm->operand[idx].type = DISASM_OPERAND_CONSTANT_TYPE;
-                    disasm->operand[idx].immediateValue = [operand valueFromBytes:bytes];
+                    disasm->operand[idx].immediateValue = operandValue;
                     disasm->operand[idx].size = 2;
                     disasm->operand[idx].accessMode = operand.accessMode;
                     break;
                 case OTYPE_IMM16:
                     disasm->operand[idx].type = DISASM_OPERAND_CONSTANT_TYPE | DISASM_OPERAND_RELATIVE;
-                    disasm->operand[idx].immediateValue = [operand valueFromBytes:bytes];
+                    disasm->operand[idx].immediateValue = operandValue;
                     disasm->operand[idx].size = 16;
                     disasm->operand[idx].accessMode = operand.accessMode;
                     break;
                 case OTYPE_IMM16SL16:
                     disasm->operand[idx].type = DISASM_OPERAND_CONSTANT_TYPE | DISASM_OPERAND_RELATIVE;
-                    disasm->operand[idx].immediateValue = [operand valueFromBytes:bytes];
+                    disasm->operand[idx].immediateValue = operandValue;
                     disasm->operand[idx].size = 16;
                     disasm->operand[idx].accessMode = operand.accessMode;
                     disasm->instruction.addressValue = (Address) disasm->virtualAddr + (
-                            (int32_t) ([operand valueFromBytes:bytes] << 13) >> 11);
+                            (int32_t) (operandValue << 13) >> 11);
                     break;
                 case OTYPE_IMM19SL2:
                     disasm->operand[idx].type = DISASM_OPERAND_CONSTANT_TYPE | DISASM_OPERAND_RELATIVE;
-                    disasm->operand[idx].immediateValue = [operand valueFromBytes:bytes] << 2;
+                    disasm->operand[idx].immediateValue = operandValue << 2;
                     disasm->operand[idx].size = 19;
                     disasm->operand[idx].accessMode = operand.accessMode;
                     disasm->instruction.addressValue = (Address) disasm->virtualAddr + 4 + (
-                            (int32_t) ([operand valueFromBytes:bytes] << 13) >> 11);
+                            (int32_t) (operandValue << 13) >> 11);
                     break;
                 case OTYPE_OFF9:
                     if (idx > 0 && operands[idx - 1].type == OTYPE_MEM_BASE) {
                         disasm->operand[idx - 1].type |= DISASM_OPERAND_RELATIVE;
                         disasm->operand[idx - 1].size = 9;
                         disasm->operand[idx - 1].memory.displacement =
-                                (int16_t) ([operand valueFromBytes:bytes] << 7) >> 7;
+                                (int16_t) (operandValue << 7) >> 7;
                     }
                     break;
                 case OTYPE_OFF11:
@@ -391,24 +392,24 @@ static inline void clear_operands_from(DisasmStruct *disasm, int index) {
                         disasm->operand[idx - 1].type |= DISASM_OPERAND_RELATIVE;
                         disasm->operand[idx - 1].size = 11;
                         disasm->operand[idx - 1].memory.displacement =
-                                (int16_t) ([operand valueFromBytes:bytes] << 5) >> 5;
+                                (int16_t) (operandValue << 5) >> 5;
                     }
                     break;
                 case OTYPE_OFF16:
                     if (idx > 0 && operands[idx - 1].type == OTYPE_MEM_BASE) {
                         disasm->operand[idx - 1].type |= DISASM_OPERAND_RELATIVE;
                         disasm->operand[idx - 1].size = 16;
-                        disasm->operand[idx - 1].memory.displacement = (int16_t) [operand valueFromBytes:bytes];
+                        disasm->operand[idx - 1].memory.displacement = (int16_t) operandValue;
                     } else {
                         disasm->operand[idx].type = DISASM_OPERAND_CONSTANT_TYPE | DISASM_OPERAND_RELATIVE;
-                        disasm->operand[idx].immediateValue = [operand valueFromBytes:bytes];
+                        disasm->operand[idx].immediateValue = operandValue;
                         disasm->operand[idx].size = 16;
                         disasm->operand[idx].accessMode = operand.accessMode;
                     }
                     break;
                 case OTYPE_OFF18:
                     disasm->operand[idx].type = DISASM_OPERAND_CONSTANT_TYPE;
-                    const int16_t int16 = (int16_t) [operand valueFromBytes:bytes];
+                    const int16_t int16 = (int16_t) operandValue;
                     disasm->operand[idx].immediateValue = disasm->virtualAddr + 4 + (int16 << 2);
                     disasm->operand[idx].size = 32;
                     disasm->instruction.addressValue = disasm->virtualAddr + 4 + (int16 << 2);
@@ -420,18 +421,18 @@ static inline void clear_operands_from(DisasmStruct *disasm, int index) {
                 case OTYPE_OFF21:
                     disasm->operand[idx].type = DISASM_OPERAND_CONSTANT_TYPE;
                     disasm->operand[idx].immediateValue =
-                            disasm->virtualAddr + (((int32_t) ([operand valueFromBytes:bytes] << 13)) >> 11);
+                            disasm->virtualAddr + (((int32_t) (operandValue << 13)) >> 11);
                     disasm->operand[idx].size = 21;
                     disasm->instruction.addressValue = (Address) (disasm->virtualAddr +
-                            ((int32_t) ([operand valueFromBytes:bytes] << 13) >> 11));
+                            ((int32_t) (operandValue << 13) >> 11));
                     disasm->operand[idx].accessMode = operand.accessMode;
                     break;
                 case OTYPE_OFF23:
                     disasm->operand[idx].type = DISASM_OPERAND_CONSTANT_TYPE | DISASM_OPERAND_RELATIVE;
-                    disasm->operand[idx].immediateValue = ((int32_t) ([operand valueFromBytes:bytes] << 11)) >> 9;
+                    disasm->operand[idx].immediateValue = ((int32_t) (operandValue << 11)) >> 9;
                     disasm->operand[idx].size = 23;
                     disasm->instruction.addressValue = (Address) (disasm->virtualAddr + 4) +
-                            (((int32_t) ([operand valueFromBytes:bytes] << 11) >> 9));
+                            (((int32_t) (operandValue << 11) >> 9));
                     if (operand.isBranchDestination) {
                         disasm->operand[idx].isBranchDestination = 1;
                     }
@@ -439,10 +440,10 @@ static inline void clear_operands_from(DisasmStruct *disasm, int index) {
                     break;
                 case OTYPE_OFF28:
                     disasm->operand[idx].type = DISASM_OPERAND_CONSTANT_TYPE | DISASM_OPERAND_RELATIVE;
-                    disasm->operand[idx].immediateValue = ((int32_t) ([operand valueFromBytes:bytes] << 6)) >> 4;
+                    disasm->operand[idx].immediateValue = ((int32_t) (operandValue << 6)) >> 4;
                     disasm->operand[idx].size = 28;
                     disasm->instruction.addressValue = (Address) (disasm->virtualAddr + 4) +
-                            (((int32_t) ([operand valueFromBytes:bytes] << 6) >> 4));
+                            (((int32_t) (operandValue << 6) >> 4));
                     if (operand.isBranchDestination) {
                         disasm->operand[idx].isBranchDestination = 1;
                     }
@@ -452,17 +453,17 @@ static inline void clear_operands_from(DisasmStruct *disasm, int index) {
                     break;
                 case OTYPE_FPU_FCC:
                     disasm->operand[idx].type = DISASM_OPERAND_REGISTER_TYPE;
-                    disasm->operand[idx].type |= getFccRegMask((uint8_t) [operand valueFromBytes:bytes]);
+                    disasm->operand[idx].type |= getFccRegMask((uint8_t) operandValue);
                     disasm->operand[idx].accessMode = operand.accessMode;
                     break;
                 case OTYPE_FPU_COND: {
-                    uint32_t cond_index = [operand valueFromBytes:bytes];
+                    uint32_t cond_index = operandValue;
                     NSString *const condString = [MIPSCtx condStrings][cond_index];
                     const char *const mnemonicCString = [[NSString stringWithFormat:insn.mnemonic, condString] UTF8String];
                     strcpy(disasm->instruction.mnemonic, mnemonicCString);
                 }
                 case OTYPE_FPU_CONDN: {
-                    uint32_t cond_index = [operand valueFromBytes:bytes];
+                    uint32_t cond_index = operandValue;
                     NSString *const condString = [MIPSCtx condR6Strings][cond_index];
                     const char *const mnemonicCString = [[NSString stringWithFormat:insn.mnemonic, condString] UTF8String];
                     strcpy(disasm->instruction.mnemonic, mnemonicCString);
@@ -470,13 +471,13 @@ static inline void clear_operands_from(DisasmStruct *disasm, int index) {
                     break;
                 case OTYPE_CODE10:
                     disasm->operand[idx].type = DISASM_OPERAND_CONSTANT_TYPE;
-                    disasm->operand[idx].immediateValue = [operand valueFromBytes:bytes];
+                    disasm->operand[idx].immediateValue = operandValue;
                     disasm->operand[idx].size = 10;
                     disasm->operand[idx].accessMode = operand.accessMode;
                     break;
                 case OTYPE_CODE20:
                     disasm->operand[idx].type = DISASM_OPERAND_CONSTANT_TYPE;
-                    disasm->operand[idx].immediateValue = [operand valueFromBytes:bytes];
+                    disasm->operand[idx].immediateValue = operandValue;
                     disasm->operand[idx].size = 20;
                     disasm->operand[idx].accessMode = operand.accessMode;
                     break;
@@ -485,18 +486,18 @@ static inline void clear_operands_from(DisasmStruct *disasm, int index) {
                             (disasm->operand[idx - 1].type & DISASM_OPERAND_REGISTER_INDEX)) {
                         // index(base)
                         disasm->operand[idx].type = DISASM_OPERAND_REGISTER_TYPE | DISASM_OPERAND_REGISTER_BASE;
-                        disasm->operand[idx].type |= getRegMask((enum Reg) [operand valueFromBytes:bytes]);
+                        disasm->operand[idx].type |= getRegMask((enum Reg) operandValue);
                         disasm->operand[idx].accessMode = operand.accessMode;
                     } else {
                         // offset(base)
                         disasm->operand[idx].type = DISASM_OPERAND_MEMORY_TYPE;
-                        disasm->operand[idx].type |= getRegMask((enum Reg) [operand valueFromBytes:bytes]);
+                        disasm->operand[idx].type |= getRegMask((enum Reg) operandValue);
                         disasm->operand[idx].memory.baseRegistersMask = getRegMask((enum Reg) [operand.bits valueFromBytes:bytes]);
                     }
                     break;
                 case OTYPE_COP_MEM_BASE: // index(base)
                     disasm->operand[idx].type = DISASM_OPERAND_REGISTER_TYPE | DISASM_OPERAND_REGISTER_BASE;
-                    disasm->operand[idx].type |= getCopRegMask((uint8_t) [operand valueFromBytes:bytes]);
+                    disasm->operand[idx].type |= getCopRegMask((uint8_t) operandValue);
                     disasm->operand[idx].accessMode = operand.accessMode;
                     break;
                 case OTYPE_MEM_INDEX: // index(base)
@@ -505,25 +506,25 @@ static inline void clear_operands_from(DisasmStruct *disasm, int index) {
                     //    disasm->operand[idx - 1].memory.indexRegistersMask = getRegMask((enum Reg) [operand.bits valueFromBytes:bytes]);
                     //} else {
                     disasm->operand[idx].type = DISASM_OPERAND_REGISTER_TYPE | DISASM_OPERAND_REGISTER_INDEX;
-                    disasm->operand[idx].type |= getRegMask((enum Reg) [operand valueFromBytes:bytes]);
+                    disasm->operand[idx].type |= getRegMask((enum Reg) operandValue);
                     disasm->operand[idx].accessMode = operand.accessMode;
                     //}
                     break;
                 case OTYPE_UIMM:
                     disasm->operand[idx].type = DISASM_OPERAND_CONSTANT_TYPE;
-                    disasm->operand[idx].immediateValue = [operand valueFromBytes:bytes];
+                    disasm->operand[idx].immediateValue = operandValue;
                     disasm->operand[idx].size = [operand bitCount];
                     disasm->operand[idx].accessMode = operand.accessMode;
                     break;
                 case OTYPE_UIMM_PLUS_ONE:
                     disasm->operand[idx].type = DISASM_OPERAND_CONSTANT_TYPE;
-                    disasm->operand[idx].immediateValue = [operand valueFromBytes:bytes] + 1;
+                    disasm->operand[idx].immediateValue = operandValue + 1;
                     disasm->operand[idx].size = [operand bitCount] + 1;
                     disasm->operand[idx].accessMode = operand.accessMode;
                     break;
                 case OTYPE_SIZE:
                     disasm->operand[idx].type = DISASM_OPERAND_CONSTANT_TYPE;
-                    disasm->operand[idx].immediateValue = [operand.bits valueFromBytes:bytes] + 1;
+                    disasm->operand[idx].immediateValue = operandValue + 1;
                     disasm->operand[idx].size = [operand bitCount] + 1;
                     disasm->operand[idx].accessMode = operand.accessMode;
                     break;
@@ -531,7 +532,7 @@ static inline void clear_operands_from(DisasmStruct *disasm, int index) {
                     if (idx > 0) {
                         uint8_t pos = (uint8_t) [operands[idx - 1] valueFromBytes:bytes];
                         disasm->operand[idx].type = DISASM_OPERAND_CONSTANT_TYPE;
-                        disasm->operand[idx].immediateValue = [operand valueFromBytes:bytes] - pos + 1;
+                        disasm->operand[idx].immediateValue = operandValue - pos + 1;
                         disasm->operand[idx].size = [operand bitCount] + 1;
                         disasm->operand[idx].accessMode = operand.accessMode;
                     }
@@ -539,7 +540,7 @@ static inline void clear_operands_from(DisasmStruct *disasm, int index) {
                 case OTYPE_JMP_ADR:
                     disasm->operand[idx].type = DISASM_OPERAND_CONSTANT_TYPE | DISASM_OPERAND_RELATIVE;
                     disasm->operand[idx].immediateValue =
-                            (int32_t) ([operand valueFromBytes:bytes] << 6) >> 6;
+                            (int32_t) (operandValue << 6) >> 6;
                     disasm->operand[idx].size = [operand bitCount];
                     disasm->operand[idx].accessMode = operand.accessMode;
                     disasm->operand[idx].isBranchDestination = 1;

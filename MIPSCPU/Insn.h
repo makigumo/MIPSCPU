@@ -20,6 +20,6 @@
 
 - (NSString *)mnemonic;
 
-- (NSNumber *)operandValue:(uint8_t)index;
+- (NSNumber *)operandValue:(NSUInteger)index;
 
 @end

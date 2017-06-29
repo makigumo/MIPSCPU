@@ -34,7 +34,7 @@
     return self.insDef.mnemonic;
 }
 
-- (NSNumber *)operandValue:(uint8_t)index {
+- (NSNumber *)operandValue:(NSUInteger)index {
     NSArray<InsOp *> *const operands = [self.insDef operands];
     if (index > operands.count - 1) {
         return nil;
