@@ -558,7 +558,8 @@ static inline void clear_operands_from(DisasmStruct *disasm, int index) {
         if (insn.insDef.branchType) {
             disasm->instruction.branchType = (DisasmBranchType) insn.insDef.branchType.integerValue;
         }
-        if ([insn.mnemonic isEqualToString:@"addiu"]) {
+        if ([insn.mnemonic isEqualToString:@"addiu"] ||
+                [insn.mnemonic isEqualToString:@"lw"]) {
             [self calculateAddress:disasm withInsn:insn andOp:BUILDOP_ADD];
         }
         if ([insn.mnemonic isEqualToString:@"ori"]) {
