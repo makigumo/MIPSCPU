@@ -492,7 +492,7 @@ static inline void clear_operands_from(DisasmStruct *disasm, int index) {
                         // offset(base)
                         disasm->operand[idx].type = DISASM_OPERAND_MEMORY_TYPE;
                         disasm->operand[idx].type |= getRegMask((enum Reg) operandValue);
-                        disasm->operand[idx].memory.baseRegistersMask = getRegMask((enum Reg) [operand.bits valueFromBytes:bytes]);
+                        disasm->operand[idx].memory.baseRegistersMask = getRegMask((enum Reg) operandValue);
                     }
                     break;
                 case OTYPE_COP_MEM_BASE: // index(base)
@@ -530,7 +530,7 @@ static inline void clear_operands_from(DisasmStruct *disasm, int index) {
                     break;
                 case OTYPE_POSSIZE:
                     if (idx > 0) {
-                        uint8_t pos = (uint8_t) [operands[idx - 1] valueFromBytes:bytes];
+                        uint8_t pos = (uint8_t) [insn operandValue:idx - 1].unsignedIntValue;
                         disasm->operand[idx].type = DISASM_OPERAND_CONSTANT_TYPE;
                         disasm->operand[idx].immediateValue = operandValue - pos + 1;
                         disasm->operand[idx].size = [operand bitCount] + 1;
