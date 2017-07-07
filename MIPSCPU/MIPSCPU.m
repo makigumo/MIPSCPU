@@ -191,6 +191,10 @@
     return reg == 1;
 }
 
+- (BOOL)registerHasSideEffectForIndex:(NSUInteger)reg andClass:(RegClass)reg_class {
+    return NO;
+}
+
 - (NSString *)registerIndexToString:(NSUInteger)reg
                             ofClass:(RegClass)reg_class
                         withBitSize:(NSUInteger)size

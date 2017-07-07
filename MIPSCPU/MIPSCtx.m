@@ -730,7 +730,8 @@ static inline int regIndexFromType(const uint64_t type) {
                                        inFile:(NSObject <HPDisassembledFile> *)file {
     NSObject <HPHopperServices> *services = _cpu.hopperServices;
     NSObject <HPASMLine> *line = [services blankASMLine];
-    [line appendMnemonic:@(disasm->instruction.mnemonic)];
+    const BOOL isJump = (disasm->instruction.branchType != DISASM_BRANCH_NONE);
+    [line appendMnemonic:@(disasm->instruction.mnemonic) isJump:isJump];
     return line;
 }
 
