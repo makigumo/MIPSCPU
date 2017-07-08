@@ -12,16 +12,19 @@ branches:
 cache:
   apt: true
   directories:
-    - $HOME/GNUstep/Library/ApplicationSupport/Hopper/gnustep-x86_64/
+    - ${TRAVIS_BUILD_DIR}/HopperSDK-v4/Linux/gnustep-Linux-x86_64/
 
 addons:
   apt:
     packages:
-      - libpthread-workqueue-dev
-      - libkqueue-dev
-      - libblocksruntime-dev
       - libxml2-dev
       - libxslt1-dev
+      - libffi-dev
+      - libgnutls-dev
+      - libicu-dev
+      - libblocksruntime-dev
+      - libkqueue-dev
+      - libpthread-workqueue-dev
       - clang-4.0
     sources:
       - llvm-toolchain-trusty-4.0
@@ -34,11 +37,13 @@ before_install:
       gem install xcpretty-travis-formatter;
       xcodebuild -project MIPSCPU.xcodeproj -list;
     fi
-  - if [[ $TRAVIS_OS_NAME == 'linux' && ! -e $HOME/GNUstep/Library/ApplicationSupport/Hopper/gnustep-x86_64/bin/gnustep-config ]]; then
+  - if [[ $TRAVIS_OS_NAME == 'linux' && ! -e ${TRAVIS_BUILD_DIR}/HopperSDK-v4/Linux/gnustep-Linux-x86_64/bin/gnustep-config ]]; then
       echo "Building GNUstep.";
-      git clone https://github.com/ckuethe/HopperSDK-Linux.git;
-      cd HopperSDK-Linux;
-      sed -i -e '27,34d' install.sh;
+      cd HopperSDK-v4;
+      git init;
+      git remote add origin https://github.com/makigumo/HopperSDK-v4.git;
+      git pull origin master;
+      cd Linux;
       ./install.sh;
     else
       echo "Skipping GNUstep build.";
@@ -59,7 +64,7 @@ matrix:
 
 before_script:
   - cd "${TRAVIS_BUILD_DIR}"
-  - if [[ "$BUILD_TYPE" == "cmake" ]]; then export PATH=$HOME/GNUstep/Library/ApplicationSupport/Hopper/gnustep-x86_64/bin/:$PATH ; fi
+  - if [[ "$BUILD_TYPE" == "cmake" ]]; then export PATH=${TRAVIS_BUILD_DIR}/HopperSDK-v4/Linux/gnustep-Linux-x86_64/bin/:$PATH ; fi
 
 script:
   - if [[ "$BUILD_TYPE" == "xcode" ]]; then xcodebuild -project MIPSCPU.xcodeproj -scheme MIPSCPUTests test | xcpretty -f `xcpretty-travis-formatter`; fi
