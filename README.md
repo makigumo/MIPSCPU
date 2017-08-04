@@ -4,6 +4,10 @@
 
 This is an experimental, unsophisticated plugin prototype using a custom disassembler and the [capstone](https://github.com/aquynh/capstone) (http://www.capstone-engine.org/) engine for the MIPS architecture (currently 32 bit EL only) whose main purpose is to provide a play and learning ground for the Hopper plugin system and the MIPS architecture and some assembly language in general.
 
+There are currently two disassembler engines:
+* capstone based engine for MIPS32
+* custom engine for MIPS I, II, III, IV and MIPS32
+
 ## Requirements
 
 * Hopper Disassembler v4+ (https://www.hopperapp.com/)
@@ -23,8 +27,10 @@ This is an experimental, unsophisticated plugin prototype using a custom disasse
     ```
 ### Linux
 
-Install [GNUstep](https://github.com/gnustep/base), [libobjc2](https://github.com/gnustep/libobjc2) and [libdispatch](https://github.com/nickhutchinson/libdispatch), e.g. by using the script in https://github.com/ckuethe/HopperSDK-Linux.
-Then adjust your `PATH` to include `~/GNUstep/Library/ApplicationSupport/Hopper/gnustep-x86_64/bin/`.
+Run `install.sh` from the Hopper-SDK.
+Then adjust your `PATH` to include the created `gnustep-Linux-x86_64/bin/` path.
+
+*Linux build is currently broken* (see https://github.com/makigumo/MIPSCPU/issues/3)
 
 ## Status
 
@@ -42,7 +48,6 @@ Then adjust your `PATH` to include `~/GNUstep/Library/ApplicationSupport/Hopper/
 
 ## TODO
 
-* [ ] Big endian support
 * [ ] Extend instruction analysis for Hopper to do its magic
 * [ ] Handle branch delay slots
 * [ ] Disassemble into pseudo instructions (ideally as a second syntax option)
@@ -50,7 +55,6 @@ Then adjust your `PATH` to include `~/GNUstep/Library/ApplicationSupport/Hopper/
 * [ ] Add support for assembling instructions (using keystone)
 * [ ] Support for EB (big endian), 64 bit
 * [ ] Find ways to utilize some of `performBranchesAnalysis:`, `performInstructionSpecificAnalysis:`, `performProcedureAnalysis:`, `hasProcedurePrologAt:` etc.
-* [ ] Use compact capstone engine for smaller footprint
 
 ## Resources
 
