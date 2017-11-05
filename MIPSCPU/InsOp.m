@@ -60,7 +60,8 @@
         return OTYPE_UNDEFINED;
     }
     NSString *const value = [opTypeString substringFromIndex:1];
-    return [self typeLookup:value];
+    NSString *typeValue = [value substringWithRange:[value rangeOfTypeString]];
+    return [self typeLookup:typeValue];
 }
 
 + (InsOpType)typeLookup:(NSString *)string {

@@ -9,6 +9,9 @@
 
 - (BOOL)isDigitAtIndex:(NSUInteger)index;
 - (BOOL)isHexAtIndex:(NSUInteger)index;
+- (BOOL)isLowercaseLetterAtIndex:(NSUInteger)index;
 - (BOOL)isOpIndexAtIndex:(NSUInteger)index;
+
+- (NSRange)rangeOfTypeString;
 
 @end

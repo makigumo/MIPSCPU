@@ -25,5 +25,27 @@
             [self characterAtIndex:index] == '#' && [self isDigitAtIndex:index + 1];
 }
 
+- (BOOL)isLowercaseLetterAtIndex:(NSUInteger)index {
+    unichar i = [self characterAtIndex:index];
+    return i >= 'a' && i <= 'z';
+}
+
+- (NSRange)rangeOfTypeString {
+    if ([self length] <= 0 ||
+            ![self isLowercaseLetterAtIndex:0]) {
+        return NSMakeRange(NSNotFound, 0);
+    }
+    unsigned int i = 1;
+    for (NSUInteger j = 1; j < [self length]; ++j) {
+        if ([self isLowercaseLetterAtIndex:j] ||
+                [self isDigitAtIndex:j]) {
+            i++;
+        } else {
+            break;
+        }
+    }
+    return NSMakeRange(0, i);
+}
+
 
 @end
