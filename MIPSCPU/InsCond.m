@@ -5,6 +5,7 @@
 
 #import "InsCond.h"
 #import "InsOp.h"
+#import "NSString+MIPSHelper.h"
 
 @interface InsCondOpOp : InsCond
 
@@ -26,66 +27,54 @@
 
 }
 
-NSString *const condition_pattern = @"^#(\\d+)(?:(!=)?+(==)?+(\\<)?+(\\>=)?+)(?:(?:#(\\d+))?(\\d+)?)$";
-
 + (instancetype)condWith:(NSString *const)condition
                   andOps:(NSArray<InsOp *> *const)ops {
     NSAssert(condition, @"condition string required.");
     NSAssert(ops, @"InsOp array required.");
-    NSError *error = nil;
-    NSRegularExpression *condition_regex = [NSRegularExpression regularExpressionWithPattern:condition_pattern
-                                                                                     options:0
-                                                                                       error:&error];
-    NSTextCheckingResult *match = [condition_regex firstMatchInString:condition
-                                                              options:0
-                                                                range:NSMakeRange(0, [condition length])];
-    NSAssert1(match != nil, @"invalid condition format: %@", condition);
+
+    NSAssert1(condition.length >= 4, @"condition string too small: %d < 5", (unsigned int) condition.length);
 
     // left op index
-    NSRange range = [match rangeAtIndex:1];
-    NSAssert1(range.location != NSNotFound, @"left operand index required: %@", condition);
-    unsigned int left_op_idx = (unsigned int) [condition substringWithRange:range].intValue;
+    NSAssert1([condition isOpIndexAtIndex:0], @"left operand index required: %@", condition);
+    unsigned int left_op_idx = (unsigned int) [condition substringFromIndex:1].intValue;
     NSAssert3(left_op_idx < ops.count, @"left operand index %d not in op[%lu]: %@", left_op_idx, (unsigned long) ops.count, condition);
-
+    NSUInteger pos_in_cond = [[@(left_op_idx) stringValue] length] + 1; // place count + '#' length
+    
     // comparison operators
-    // not equal '!='
-    NSRange notEqualRange = [match rangeAtIndex:2];
-    // equal '=='
-    NSRange equalRange = [match rangeAtIndex:3];
-    // less '<'
-    NSRange lessRange = [match rangeAtIndex:4];
-    // greater equal '>='
-    NSRange greaterEqualRange = [match rangeAtIndex:5];
-    NSAssert1(equalRange.location != NSNotFound ^
-            notEqualRange.location != NSNotFound ^
-            lessRange.location != NSNotFound ^
-            greaterEqualRange.location != NSNotFound, @"invalid comparison operator: %@", condition);
     CondType condType = COND_FALSE;
-    if (notEqualRange.location != NSNotFound) {
-        condType = COND_NOT_EQUAL;
-    } else if (equalRange.location != NSNotFound) {
-        condType = COND_EQUAL;
-    } else if (lessRange.location != NSNotFound) {
-        condType = COND_LESS;
-    } else if (greaterEqualRange.location != NSNotFound) {
-        condType = COND_GREATER_EQUAL;
+    // equal '=='
+    if ([condition characterAtIndex:pos_in_cond] == '=') {
+        if ([condition characterAtIndex:++pos_in_cond] == '=') {
+            condType = COND_EQUAL;
+        }
     }
-
-    // right operand
-    NSRange right_op = [match rangeAtIndex:6];
-
-    // right value
-    NSRange right_value = [match rangeAtIndex:7];
-    NSAssert1(right_op.location != NSNotFound ^ right_value.location != NSNotFound, @"invalid right operand/value: %@", condition);
-
-    if (right_op.location != NSNotFound) {
-        unsigned int right_op_idx = (unsigned int) [condition substringWithRange:right_op].intValue;
+    // not equal '!='
+    else if ([condition characterAtIndex:pos_in_cond] == '!') {
+        if ([condition characterAtIndex:++pos_in_cond] == '=') {
+            condType = COND_NOT_EQUAL;
+        }
+    }
+    // less '<'
+    else if ([condition characterAtIndex:pos_in_cond] == '<') {
+        condType = COND_LESS;
+    }
+    // greater equal '>='
+    else if ([condition characterAtIndex:pos_in_cond] == '>') {
+        if ([condition characterAtIndex:++pos_in_cond] == '=') {
+            condType = COND_GREATER_EQUAL;
+        }
+    }
+    NSAssert1(condType != COND_FALSE, @"invalid comparison operator: %@", condition);
+    pos_in_cond++;
+    if ([condition isOpIndexAtIndex:pos_in_cond]) {
+        unsigned int right_op_idx = (unsigned int) [condition substringFromIndex:pos_in_cond+1].intValue;
         NSAssert3(right_op_idx < ops.count, @"right operand index %d not in op[%lu]: %@", right_op_idx, (unsigned long) ops.count, condition);
         return [self condWithLeftOp:ops[left_op_idx] rightOp:ops[right_op_idx] condType:condType];
-    } else if (right_value.location != NSNotFound) {
-        unsigned int right_val = (unsigned int) [condition substringWithRange:right_value].intValue;
+    } else if ([condition isDigitAtIndex:pos_in_cond]) {
+        unsigned int right_val = (unsigned int) [condition substringFromIndex:pos_in_cond].intValue;
         return [self condWithLeftOp:ops[left_op_idx] rightValue:@(right_val) condType:condType];
     }
+    NSAssert1(false, @"right operand index or value required: %@", condition);
     return nil;
 }
 

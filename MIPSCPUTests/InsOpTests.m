@@ -64,6 +64,9 @@
 }
 
 - (void)testInvalidBitrange {
+    XCTAssertThrowsSpecificNamed([InsOp bitrangesFromString:@"20.19"], NSException, NSInternalInconsistencyException);
+    XCTAssertThrowsSpecificNamed([InsOp bitrangesFromString:@"..19"], NSException, NSInternalInconsistencyException);
+    XCTAssertThrowsSpecificNamed([InsOp bitrangesFromString:@"20.."], NSException, NSInternalInconsistencyException);
     XCTAssertThrowsSpecificNamed([InsOp bitrangesFromString:@"16..20"], NSException, NSInternalInconsistencyException);
     XCTAssertThrowsSpecificNamed([InsOp bitrangesFromString:@"31..26,16..20"], NSException, NSInternalInconsistencyException);
     XCTAssertThrowsSpecificNamed([InsOp bitrangesFromString:@"32..26"], NSException, NSInternalInconsistencyException);
@@ -91,7 +94,7 @@
     XCTAssertEqual([InsOp getOperandTypeFromString:@"16..20:ffmt"], OTYPE_FPU_FMT);
 
     XCTAssertEqual([InsOp getOperandTypeFromString:@"16..20:x"], OTYPE_INVALID);
-    XCTAssertEqual([InsOp getOperandTypeFromString:@"16..20:"], OTYPE_UNDEFINED);
+    XCTAssertEqual([InsOp getOperandTypeFromString:@"16..20:"], OTYPE_INVALID);
 }
 
 - (void)testOperandPosition {
@@ -107,6 +110,7 @@
     XCTAssertEqual([[InsOp getValueFromString:@"16..20=0x1"] unsignedIntValue], 0x1);
     XCTAssertEqual([[InsOp getValueFromString:@"16..20=0x20"] unsignedIntValue], 0x20);
     XCTAssertEqual([[InsOp getValueFromString:@"5..0=0x1e"] unsignedIntValue], 0x1e);
+    XCTAssertNil([InsOp getValueFromString:@"16..20=0x"]);
     XCTAssertNil([InsOp getValueFromString:@"16..20="]);
 }
 

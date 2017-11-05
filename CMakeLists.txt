@@ -75,6 +75,7 @@ add_library(
     MIPSCPU/InsOp.m
     MIPSCPU/NSArray+BitRange.m
     MIPSCPU/NSArray+InsCond.m
+    MIPSCPU/NSString+MIPSHelper.m
 )
 
 target_compile_options(

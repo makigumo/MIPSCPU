@@ -6,6 +6,7 @@
 #import "InsOp.h"
 #import "NSArray+BitRange.h"
 #import "BitRange.h"
+#import "NSString+MIPSHelper.h"
 
 #if defined(__linux__)
 #include <dispatch/dispatch.h>
@@ -13,10 +14,6 @@
 
 @implementation InsOp {
 }
-
-static NSString *const bit_range_pattern = @"(\\d+\\.\\.\\d+(?:=(?:0x)?[a-fA-F\\d]+)?)";
-static NSString *const bit_value_pattern = @"=(?:(0x)([a-fA-F\\d]+)|(\\d+))";
-static NSString *const type_pattern = @":([a-z0-9+]+)";
 
 + (instancetype)insOpFromString:(NSString *)string {
     InsOp *const insOp = [[self alloc] init];
@@ -30,29 +27,20 @@ static NSString *const type_pattern = @":([a-z0-9+]+)";
 }
 
 + (NSArray<BitRange *> *)bitrangesFromString:(NSString *)string {
-    NSArray<NSString *> *bitrangeArray = [string componentsSeparatedByString:@","];
-    NSMutableArray<BitRange *> *bitRanges = [[NSMutableArray alloc] init];
-    for (NSString *bitrangeString in bitrangeArray) {
-
-        NSError *error = nil;
-        NSRegularExpression *bit_range_regex = [NSRegularExpression regularExpressionWithPattern:bit_range_pattern
-                                                                                         options:0
-                                                                                           error:&error];
-        NSTextCheckingResult *match = [bit_range_regex firstMatchInString:bitrangeString
-                                                                  options:0
-                                                                    range:NSMakeRange(0, [bitrangeString length])];
-        NSAssert1(match != nil, @"invalid BitRange format: %@", bitrangeString);
-        NSRange range = [match rangeAtIndex:1];
-        if (range.location == NSNotFound) {
-            continue;
-        }
-        NSString *substring = [bitrangeString substringWithRange:range];
-        NSArray<NSString *> *bits = [substring componentsSeparatedByString:@".."];
-        uint8_t first = (uint8_t) bits[0].intValue;
-        uint8_t last = (uint8_t) bits[1].intValue;
-        NSNumber *number = [self getValueFromString:substring];
-        BitRange *bitRange = [BitRange range32WithFirst:first last:last value:number];
-        NSAssert1(bitRange != nil, @"invalid BitRange format: %@", substring);
+    const NSArray<NSString *> *bitrangeArray = [string componentsSeparatedByString:@","];
+    const NSMutableArray<BitRange *> *bitRanges = [[NSMutableArray alloc] init];
+    for (NSString *const bitrangeString in bitrangeArray) {
+        const NSArray<NSString *> *bits = [bitrangeString componentsSeparatedByString:@".."];
+        NSAssert1([bits count] == 2, @"invalid bitrange: %@", bitrangeString);
+        NSAssert2([bits[0] length] > 0, @"invalid bitrange start: %@ in %@", bits[0], bitrangeString);
+        NSAssert2([bits[0] isDigitAtIndex:0], @"invalid bitrange start: %@ in %@", bits[0], bitrangeString);
+        const uint8_t first = (uint8_t) bits[0].intValue;
+        NSAssert2([bits[1] length] > 0, @"invalid bitrange end: %@ in %@", bits[1], bitrangeString);
+        NSAssert2([bits[1] isDigitAtIndex:0], @"invalid bitrange end: %@ in %@", bits[1], bitrangeString);
+        const uint8_t last = (uint8_t) bits[1].intValue;
+        NSNumber *const number = [self getValueFromString:bitrangeString];
+        BitRange *const bitRange = [BitRange range32WithFirst:first last:last value:number];
+        NSAssert1(bitRange != nil, @"invalid BitRange format: %@", bitrangeString);
         if (bitRange != nil) {
             [bitRanges addObject:bitRange];
         }
@@ -61,17 +49,17 @@ static NSString *const type_pattern = @":([a-z0-9+]+)";
 }
 
 + (InsOpType)getOperandTypeFromString:(NSString *)string {
-    NSError *error = nil;
-    NSRegularExpression *value_regex = [NSRegularExpression regularExpressionWithPattern:type_pattern
-                                                                                 options:0
-                                                                                   error:&error];
-    NSTextCheckingResult *match = [value_regex firstMatchInString:string
-                                                          options:0
-                                                            range:NSMakeRange(0, [string length])];
-    if (match == nil) {
+    NSRange range = [string rangeOfString:@":"];
+    if (range.location == NSNotFound) {
         return OTYPE_UNDEFINED;
     }
-    NSString *value = [string substringWithRange:[match rangeAtIndex:1]];
+    NSString *const opTypeString = [string substringFromIndex:range.location];
+    if ([opTypeString length] == 0) {
+        return OTYPE_UNDEFINED;
+    } else if ([opTypeString characterAtIndex:0] != ':') {
+        return OTYPE_UNDEFINED;
+    }
+    NSString *const value = [opTypeString substringFromIndex:1];
     return [self typeLookup:value];
 }
 
@@ -130,62 +118,55 @@ static NSString *const type_pattern = @":([a-z0-9+]+)";
 }
 
 + (NSNumber *)getValueFromString:(NSString *)string {
-    NSError *error = nil;
-    NSRegularExpression *value_regex = [NSRegularExpression regularExpressionWithPattern:bit_value_pattern
-                                                                                 options:0
-                                                                                   error:&error];
-    NSTextCheckingResult *match = [value_regex firstMatchInString:string
-                                                          options:0
-                                                            range:NSMakeRange(0, [string length])];
-    if (match == nil) {
+    NSRange range = [string rangeOfString:@"="];
+    if (range.location == NSNotFound) {
         return nil;
     }
-    if (/* 0x */ [match rangeAtIndex:1].location != NSNotFound &&
-            /* hex value */ [match rangeAtIndex:2].location != NSNotFound) {
-        NSString *range = [string substringWithRange:[match rangeAtIndex:2]];
-        return @(strtoul([range UTF8String], NULL, 16));
+    NSString *const valueString = [string substringFromIndex:range.location];
+    if (/* hex value */ [valueString hasPrefix:@"=0x"]) {
+        if ([valueString length] > 3 && [valueString isHexAtIndex:3]) {
+            NSString *const hexString = [valueString substringFromIndex:3];
+            return @(strtoul([hexString UTF8String], NULL, 16));
+        } else {
+            return nil;
+        }
     }
-    return @(/* decimal value */[string substringWithRange:[match rangeAtIndex:3]].integerValue);
+    if ([valueString length] > 1) {
+        return @(/* decimal value */[valueString substringFromIndex:1].integerValue);
+    }
+    return nil;
 }
 
 + (DisasmAccessMode)getAccessModeFromString:(NSString *)string {
-    NSError *error = nil;
-    NSRegularExpression *value_regex = [NSRegularExpression regularExpressionWithPattern:@"(rw|wr|r|w)$"
-                                                                                 options:0
-                                                                                   error:&error];
-    NSTextCheckingResult *match = [value_regex firstMatchInString:string
-                                                          options:0
-                                                            range:NSMakeRange(0, [string length])];
-    if (match == nil) {
-        return DISASM_ACCESS_NONE;
+    DisasmAccessMode accessMode = DISASM_ACCESS_NONE;
+    if ([string length] == 0) {
+        return accessMode;
     }
-    NSString *value = [string substringWithRange:[match rangeAtIndex:1]];
-    if ([value isEqualToString:@"rw"] || [value isEqualToString:@"wr"]) {
-        return DISASM_ACCESS_READ | DISASM_ACCESS_WRITE;
+    if ([string characterAtIndex:[string length] - 1] == 'r') {
+        accessMode = DISASM_ACCESS_READ;
+        if ([string length] > 1 && [string characterAtIndex:[string length] - 2] == 'w') {
+            accessMode |= DISASM_ACCESS_WRITE;
+        }
     }
-    if ([value isEqualToString:@"r"]) {
-        return DISASM_ACCESS_READ;
+    if ([string characterAtIndex:[string length] - 1] == 'w') {
+        accessMode = DISASM_ACCESS_WRITE;
+        if ([string length] > 1 && [string characterAtIndex:[string length] - 2] == 'r') {
+            accessMode |= DISASM_ACCESS_READ;
+        }
     }
-    if ([value isEqualToString:@"w"]) {
-        return DISASM_ACCESS_WRITE;
-    }
-    return DISASM_ACCESS_NONE;
+    return accessMode;
 }
 
 + (NSNumber *)getOperandPositionFromString:(NSString *)string {
-    NSError *error = nil;
-    NSRegularExpression *value_regex = [NSRegularExpression regularExpressionWithPattern:@"#(\\d+)"
-                                                                                 options:0
-                                                                                   error:&error];
-    NSTextCheckingResult *match = [value_regex firstMatchInString:string
-                                                          options:0
-                                                            range:NSMakeRange(0, [string length])];
-    if (match == nil) {
+    NSRange range = [string rangeOfString:@"#"];
+    if (range.location == NSNotFound) {
         return nil;
     }
-    NSString *value = [string substringWithRange:[match rangeAtIndex:1]];
-
-    return @([value intValue]);
+    NSString *opPosString = [string substringFromIndex:range.location];
+    if (![opPosString isOpIndexAtIndex:0]) {
+        return nil;
+    }
+    return @([[opPosString substringFromIndex:1] intValue]);
 }
 
 + (BOOL)getIsBranchDestinationFromString:(NSString *)string {

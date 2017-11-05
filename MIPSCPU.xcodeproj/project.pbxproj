@@ -16,8 +16,10 @@
 		183913B08A195E5DC1F04989 /* Insn.m in Sources */ = {isa = PBXBuildFile; fileRef = 18391F75EEBCFE687066EDF7 /* Insn.m */; };
 		183913B94CE0E68A9C1F43CD /* NSArray+InsCond.m in Sources */ = {isa = PBXBuildFile; fileRef = 18391BC5C27423AF373B975D /* NSArray+InsCond.m */; };
 		183914DE08D70EAF6963BE5A /* InsOpTests.m in Sources */ = {isa = PBXBuildFile; fileRef = 18391B769A7E7CA7C2C16427 /* InsOpTests.m */; };
+		1839156AB005FABD4B673D79 /* NSString+MIPSHelper.m in Sources */ = {isa = PBXBuildFile; fileRef = 1839193520A406A0611E4600 /* NSString+MIPSHelper.m */; };
 		183915AE3270FEB5F5F2E6B1 /* InsDef.m in Sources */ = {isa = PBXBuildFile; fileRef = 1839137DF86660D18F41C656 /* InsDef.m */; };
 		1839160EB1DD24924F5342D0 /* BitRangeTests.m in Sources */ = {isa = PBXBuildFile; fileRef = 183912E024821EA282C14F08 /* BitRangeTests.m */; };
+		183916212366E9371A64F64E /* NSString+MIPSHelper.m in Sources */ = {isa = PBXBuildFile; fileRef = 1839193520A406A0611E4600 /* NSString+MIPSHelper.m */; };
 		1839187294BC6F56FF368ED1 /* NSArray+BitRange.m in Sources */ = {isa = PBXBuildFile; fileRef = 183918592BF5CA80FC8F499B /* NSArray+BitRange.m */; };
 		18391A9A053B7A534D23557A /* Insn.m in Sources */ = {isa = PBXBuildFile; fileRef = 18391F75EEBCFE687066EDF7 /* Insn.m */; };
 		18391A9A17D73EBB9E02F93D /* opcodes.plist in Resources */ = {isa = PBXBuildFile; fileRef = 18391D5A9937E25DDFD1EF3F /* opcodes.plist */; };
@@ -71,10 +73,12 @@
 		183915DCACF3D8394061724D /* NSArray+BitRangeTests.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = "NSArray+BitRangeTests.m"; sourceTree = "<group>"; };
 		183918592BF5CA80FC8F499B /* NSArray+BitRange.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = "NSArray+BitRange.m"; sourceTree = "<group>"; };
 		1839190E805CA62D9338FD36 /* BitRange.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = BitRange.m; sourceTree = "<group>"; };
+		1839193520A406A0611E4600 /* NSString+MIPSHelper.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = "NSString+MIPSHelper.m"; sourceTree = "<group>"; };
 		183919A91BD2E9D9B68765D1 /* InsOp.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = InsOp.m; sourceTree = "<group>"; };
 		18391A1169FEA58729311F60 /* BitRange.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = BitRange.h; sourceTree = "<group>"; };
 		18391B769A7E7CA7C2C16427 /* InsOpTests.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = InsOpTests.m; sourceTree = "<group>"; };
 		18391BC5C27423AF373B975D /* NSArray+InsCond.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = "NSArray+InsCond.m"; sourceTree = "<group>"; };
+		18391BD04F2B1E5A47296768 /* NSString+MIPSHelper.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = "NSString+MIPSHelper.h"; sourceTree = "<group>"; };
 		18391D2AEDD01111ADCEAFA1 /* Insn.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = Insn.h; sourceTree = "<group>"; };
 		18391D5A9937E25DDFD1EF3F /* opcodes.plist */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.plist; path = opcodes.plist; sourceTree = "<group>"; };
 		18391F2B2AD679DF42832709 /* NSArray+BitRange.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = "NSArray+BitRange.h"; sourceTree = "<group>"; };
@@ -194,6 +198,8 @@
 				183914D56D73DCF4603FD137 /* InsCond.h */,
 				18391BC5C27423AF373B975D /* NSArray+InsCond.m */,
 				183913EB48EC00951193D3DC /* NSArray+InsCond.h */,
+				1839193520A406A0611E4600 /* NSString+MIPSHelper.m */,
+				18391BD04F2B1E5A47296768 /* NSString+MIPSHelper.h */,
 			);
 			path = MIPSCPU;
 			sourceTree = "<group>";
@@ -429,6 +435,7 @@
 				18391A9A053B7A534D23557A /* Insn.m in Sources */,
 				18391BFFFC3A41E7A5AAFAD5 /* InsCond.m in Sources */,
 				18391054057476597C135B4F /* NSArray+InsCond.m in Sources */,
+				183916212366E9371A64F64E /* NSString+MIPSHelper.m in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -448,6 +455,7 @@
 				183913B94CE0E68A9C1F43CD /* NSArray+InsCond.m in Sources */,
 				18391C3D18A66EC0F88A4319 /* InsCondTests.m in Sources */,
 				183914DE08D70EAF6963BE5A /* InsOpTests.m in Sources */,
+				1839156AB005FABD4B673D79 /* NSString+MIPSHelper.m in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
