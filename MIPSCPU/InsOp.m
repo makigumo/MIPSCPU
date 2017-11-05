@@ -49,7 +49,7 @@
 }
 
 + (InsOpType)getOperandTypeFromString:(NSString *)string {
-    NSRange range = [string rangeOfString:@":"];
+    const NSRange range = [string rangeOfString:@":"];
     if (range.location == NSNotFound) {
         return OTYPE_UNDEFINED;
     }
@@ -60,7 +60,11 @@
         return OTYPE_UNDEFINED;
     }
     NSString *const value = [opTypeString substringFromIndex:1];
-    NSString *typeValue = [value substringWithRange:[value rangeOfTypeString]];
+    const NSRange opTypeRange = [value rangeOfTypeString];
+    if (opTypeRange.location == NSNotFound) {
+        return OTYPE_INVALID;
+    }
+    NSString *typeValue = [value substringWithRange:opTypeRange];
     return [self typeLookup:typeValue];
 }
 
@@ -119,7 +123,7 @@
 }
 
 + (NSNumber *)getValueFromString:(NSString *)string {
-    NSRange range = [string rangeOfString:@"="];
+    const NSRange range = [string rangeOfString:@"="];
     if (range.location == NSNotFound) {
         return nil;
     }
@@ -159,11 +163,11 @@
 }
 
 + (NSNumber *)getOperandPositionFromString:(NSString *)string {
-    NSRange range = [string rangeOfString:@"#"];
+    const NSRange range = [string rangeOfString:@"#"];
     if (range.location == NSNotFound) {
         return nil;
     }
-    NSString *opPosString = [string substringFromIndex:range.location];
+    NSString *const opPosString = [string substringFromIndex:range.location];
     if (![opPosString isOpIndexAtIndex:0]) {
         return nil;
     }
