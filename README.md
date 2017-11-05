@@ -29,8 +29,7 @@ There are currently two disassembler engines:
 
 Run `install.sh` from the Hopper-SDK.
 Then adjust your `PATH` to include the created `gnustep-Linux-x86_64/bin/` path.
-
-*Linux build is currently broken* (see https://github.com/makigumo/MIPSCPU/issues/3)
+Follow above instructions for building with *cmake*.
 
 ## Status
 
