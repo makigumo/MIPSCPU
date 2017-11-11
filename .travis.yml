@@ -1,33 +1,8 @@
 language: c
-dist: trusty
-sudo: false
-
-git:
-  depth: 3
 
 branches:
   only:
     - master
-
-cache:
-  apt: true
-  directories:
-    - ${TRAVIS_BUILD_DIR}/HopperSDK-v4/Linux/gnustep-Linux-x86_64/
-
-addons:
-  apt:
-    packages:
-      - libxml2-dev
-      - libxslt1-dev
-      - libffi-dev
-      - libgnutls-dev
-      - libicu-dev
-      - libblocksruntime-dev
-      - libkqueue-dev
-      - libpthread-workqueue-dev
-      - clang-4.0
-    sources:
-      - llvm-toolchain-trusty-4.0
 
 before_install:
   - if [[ $TRAVIS_OS_NAME == 'osx' ]]; then brew update; fi
@@ -35,18 +10,6 @@ before_install:
   - if [[ $TRAVIS_OS_NAME == 'osx' ]]; then
       gem install xcpretty;
       gem install xcpretty-travis-formatter;
-      xcodebuild -project MIPSCPU.xcodeproj -list;
-    fi
-  - if [[ $TRAVIS_OS_NAME == 'linux' && ! -e ${TRAVIS_BUILD_DIR}/HopperSDK-v4/Linux/gnustep-Linux-x86_64/bin/gnustep-config ]]; then
-      echo "Building GNUstep.";
-      cd HopperSDK-v4;
-      git init;
-      git remote add origin https://github.com/makigumo/HopperSDK-v4.git;
-      git pull origin master;
-      cd Linux;
-      ./install.sh;
-    else
-      echo "Skipping GNUstep build.";
     fi
 
 matrix:
@@ -59,8 +22,11 @@ matrix:
       compiler: clang
       env: BUILD_TYPE=cmake COMPILER=clang++ C_COMPILER=clang
     - os: linux
-      compiler: clang-4.0
-      env: BUILD_TYPE=cmake COMPILER=clang++-4.0 C_COMPILER=clang-4.0
+      dist: trusty
+      sudo: required
+      services:
+        - docker
+      env: BUILD_TYPE=docker
 
 before_script:
   - cd "${TRAVIS_BUILD_DIR}"
@@ -69,5 +35,5 @@ before_script:
 script:
   - if [[ "$BUILD_TYPE" == "xcode" ]]; then xcodebuild -project MIPSCPU.xcodeproj -scheme MIPSCPUTests test | xcpretty -f `xcpretty-travis-formatter`; fi
   - if [[ "$BUILD_TYPE" == "xcode" ]]; then xcodebuild -project MIPSCPU.xcodeproj -scheme MIPSCPU build | xcpretty -f `xcpretty-travis-formatter`; fi
-  - if [[ "$BUILD_TYPE" == "cmake" ]]; then cmake . -Bbuild -DCMAKE_C_COMPILER=${C_COMPILER} -DCMAKE_CXX_COMPILER=${COMPILER}; fi
-  - if [[ "$BUILD_TYPE" == "cmake" ]]; then cmake --build build -- ; fi
+  - if [[ "$BUILD_TYPE" == "cmake" ]]; then ./build.sh; fi
+  - if [[ "$BUILD_TYPE" == "docker" ]]; then ./docker/linux-build.sh; fi
