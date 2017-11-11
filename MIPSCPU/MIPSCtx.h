@@ -56,10 +56,6 @@ static inline DisasmOperandType getFccRegMask(uint8_t reg) {
     return REG_MASK(RegClass_MIPS_FCC, reg);
 }
 
-static inline uint32_t _MyOSReadInt32(const volatile void *base, uintptr_t byteOffset) {
-    return *(volatile uint32_t *) ((uintptr_t) base + byteOffset);
-}
-
 @interface MIPSCtx : NSObject <CPUContext>
 
 typedef enum BuildOp {
@@ -68,6 +64,7 @@ typedef enum BuildOp {
 } BuildOpEnum;
 
 @property isa_release isaRelease;
+@property CPUEndianess cpuEndianess;
 
 - (instancetype)initWithCPU:(MIPSCPU *)cpu andFile:(NSObject <HPDisassembledFile> *)file;
 

@@ -33,7 +33,7 @@ Follow above instructions for building with *cmake*.
 
 ## Status
 
-* Disassembly should mostly work (with mnemonic and operand formatting)
+* Little and big endianess
     * support for MIPS I
     * support for MIPS II
     * support for MIPS III
@@ -42,6 +42,7 @@ Follow above instructions for building with *cmake*.
     * support for MIPS32 release 2
     * support for MIPS32 release 5
     * support for MIPS32 release 6
+    * support for MIPS64 (release 1)
 * Branch typing is incomplete (still need to figure out the different `DISASM_BRANCH_*` types)
 * NOPping should work
 
@@ -52,7 +53,6 @@ Follow above instructions for building with *cmake*.
 * [ ] Disassemble into pseudo instructions (ideally as a second syntax option)
     * Find a way to make syntax variant work
 * [ ] Add support for assembling instructions (using keystone)
-* [ ] Support for EB (big endian), 64 bit
 * [ ] Find ways to utilize some of `performBranchesAnalysis:`, `performInstructionSpecificAnalysis:`, `performProcedureAnalysis:`, `hasProcedurePrologAt:` etc.
 
 ## Resources

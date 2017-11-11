@@ -30,7 +30,8 @@
 }
 
 - (NSObject <CPUContext> *)buildCPUContextForFile:(NSObject <HPDisassembledFile> *)file {
-    if ([file.cpuFamily isEqualToString:@"mips"]) {
+    if ([file.cpuFamily isEqualToString:@"mipsel"] ||
+            [file.cpuFamily isEqualToString:@"mipseb"]) {
         if ([file.cpuSubFamily isEqualToString:@"mips32"] ||
                 [file.cpuSubFamily isEqualToString:@"mips32r2"] ||
                 [file.cpuSubFamily isEqualToString:@"mips32r5"] ||
@@ -38,7 +39,8 @@
                 [file.cpuSubFamily isEqualToString:@"mips I"] ||
                 [file.cpuSubFamily isEqualToString:@"mips II"] ||
                 [file.cpuSubFamily isEqualToString:@"mips III"] ||
-                [file.cpuSubFamily isEqualToString:@"mips IV"]
+                [file.cpuSubFamily isEqualToString:@"mips IV"] ||
+                [file.cpuSubFamily isEqualToString:@"mips64"]
                 ) {
             MIPSCtx *mipsCtx = [[MIPSCtx alloc] initWithCPU:self andFile:file];
             return mipsCtx;
@@ -73,13 +75,14 @@
 
 - (NSArray<NSString *> *)cpuFamilies {
     return @[
-            @"mips",
+            @"mipsel",
+            @"mipseb",
             @"mips (capstone)",
     ];
 }
 
 - (NSString *)pluginVersion {
-    return @"0.1.1";
+    return @"0.2.0";
 }
 
 - (NSArray<NSString *> *)cpuSubFamiliesForFamily:(NSString *)family {
@@ -91,7 +94,8 @@
                 //@"micro32r6",
                 //@"mips64"
         ];
-    if ([family isEqualToString:@"mips"]) {
+    if ([family isEqualToString:@"mipsel"] ||
+            [family isEqualToString:@"mipseb"]) {
         return @[
                 @"mips32",
                 @"mips32r2",
@@ -101,6 +105,7 @@
                 @"mips II",
                 @"mips III",
                 @"mips IV",
+                @"mips64",
         ];
     }
     return nil;
@@ -114,7 +119,8 @@
         if ([subFamily isEqualToString:@"micro32r6"]) return 32;
         //if ([subFamily isEqualToString:@"mips64"]) return 64;
     }
-    if ([family isEqualToString:@"mips"]) {
+    if ([family isEqualToString:@"mipsel"] ||
+            [family isEqualToString:@"mipseb"]) {
         if ([subFamily isEqualToString:@"mips32"]) return 32;
         if ([subFamily isEqualToString:@"mips32r2"]) return 32;
         if ([subFamily isEqualToString:@"mips32r5"]) return 32;
@@ -123,6 +129,7 @@
         if ([subFamily isEqualToString:@"mips II"]) return 32;
         if ([subFamily isEqualToString:@"mips III"]) return 32;
         if ([subFamily isEqualToString:@"mips IV"]) return 32;
+        if ([subFamily isEqualToString:@"mips64"]) return 64;
     }
     return 0;
 }

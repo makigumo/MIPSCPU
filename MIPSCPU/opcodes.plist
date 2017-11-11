@@ -11,6 +11,7 @@
                 <string>MIPS32R2</string>
                 <string>MIPS32R5</string>
                 <string>MIPS32R6</string>
+                <string>MIPS64</string>
             </array>
             <key>format</key>
             <string>31..26=0x11 25..21=0x10 20..16=0 15..11:fs#2r 10..6:fd#1w 5..0=5</string>
@@ -24,6 +25,7 @@
                 <string>MIPS32R2</string>
                 <string>MIPS32R5</string>
                 <string>MIPS32R6</string>
+                <string>MIPS64</string>
             </array>
             <key>format</key>
             <string>31..26=0x11 25..21=0x11 20..16=0 15..11:fs#2r 10..6:fd#1w 5..0=5</string>
@@ -53,6 +55,7 @@
                 <string>MIPSII</string>
                 <string>MIPSIII</string>
                 <string>MIPSIV</string>
+                <string>MIPS64</string>
             </array>
             <key>format</key>
             <string>31..26=0 25..21:rs#2r 20..16:rt#3r 15..11:rd#1w 10..6=0 5..0=0x20</string>
@@ -66,6 +69,7 @@
                 <string>MIPS32R2</string>
                 <string>MIPS32R5</string>
                 <string>MIPS32R6</string>
+                <string>MIPS64</string>
             </array>
             <key>format</key>
             <string>31..26=0x11 25..21=0x10 20..16:ft#3r 15..11:fs#2r 10..6:fd#1w 5..0=0</string>
@@ -79,6 +83,7 @@
                 <string>MIPS32R2</string>
                 <string>MIPS32R5</string>
                 <string>MIPS32R6</string>
+                <string>MIPS64</string>
             </array>
             <key>format</key>
             <string>31..26=0x11 25..21=0x11 20..16:ft#3r 15..11:fs#2r 10..6:fd#1w 5..0=0</string>
@@ -107,6 +112,7 @@
                 <string>MIPSII</string>
                 <string>MIPSIII</string>
                 <string>MIPSIV</string>
+                <string>MIPS64</string>
             </array>
             <key>format</key>
             <string>31..26=8 25..21:rs#2r 20..16:rt#1w 15..0:imm16</string>
@@ -128,6 +134,21 @@
                 <string>MIPSII</string>
                 <string>MIPSIII</string>
                 <string>MIPSIV</string>
+                <string>MIPS64</string>
+            </array>
+            <key>format</key>
+            <string>31..26=9 25..21=0 20..16:rt#1w 15..0:imm16#2r</string>
+        </dict>
+        <dict>
+            <key>mnemonic</key>
+            <string>dli</string>
+            <key>comment</key>
+            <string>pseudo instruction for addiu rt, rs=zero, imm16</string>
+            <key>idiom</key>
+            <true/>
+            <key>release</key>
+            <array>
+                <string>MIPS64</string>
             </array>
             <key>format</key>
             <string>31..26=9 25..21=0 20..16:rt#1w 15..0:imm16#2r</string>
@@ -145,6 +166,7 @@
                 <string>MIPSII</string>
                 <string>MIPSIII</string>
                 <string>MIPSIV</string>
+                <string>MIPS64</string>
             </array>
             <key>format</key>
             <string>31..26=9 25..21:rs#2r 20..16:rt#1w 15..0:imm16#3r</string>
@@ -176,6 +198,7 @@
                 <string>MIPSII</string>
                 <string>MIPSIII</string>
                 <string>MIPSIV</string>
+                <string>MIPS64</string>
             </array>
             <key>format</key>
             <string>31..26=0 25..21:rs#2r 20..16=0 15..11:rd#1w 10..6=0 5..0=0x21</string>
@@ -193,6 +216,7 @@
                 <string>MIPSII</string>
                 <string>MIPSIII</string>
                 <string>MIPSIV</string>
+                <string>MIPS64</string>
             </array>
             <key>format</key>
             <string>31..26=0 25..21:rs#2r 20..16:rt#3r 15..11:rd#1w 10..6=0 5..0=0x21</string>
@@ -215,6 +239,7 @@
                 <string>MIPS64</string>
                 <string>MIPS32R2</string>
                 <string>MIPS32R5</string>
+                <string>MIPS64</string>
             </array>
             <key>format</key>
             <string>31..26=0x13 25..21:rs#4r 20..16:ft#3r 15..11:fs#2r 10..6:fd#1w 5..0=0x1e</string>
@@ -232,6 +257,8 @@
         <dict>
             <key>mnemonic</key>
             <string>and</string>
+            <key>comment</key>
+            <string>special case rs=rt</string>
             <key>release</key>
             <array>
                 <string>MIPS32</string>
@@ -242,6 +269,33 @@
                 <string>MIPSII</string>
                 <string>MIPSIII</string>
                 <string>MIPSIV</string>
+                <string>MIPS64</string>
+            </array>
+            <key>condition</key>
+            <array>
+                <string>#1==#3</string>
+            </array>
+            <key>format</key>
+            <string>31..26=0 25..21:rs 20..16:rt#2r 15..11:rd#1w 10..6=0 5..0=0x24#3r</string>
+        </dict>
+        <dict>
+            <key>mnemonic</key>
+            <string>and</string>
+            <key>release</key>
+            <array>
+                <string>MIPS32</string>
+                <string>MIPS32R2</string>
+                <string>MIPS32R5</string>
+                <string>MIPS32R6</string>
+                <string>MIPSI</string>
+                <string>MIPSII</string>
+                <string>MIPSIII</string>
+                <string>MIPSIV</string>
+                <string>MIPS64</string>
+            </array>
+            <key>condition</key>
+            <array>
+                <string>#1!=#3</string>
             </array>
             <key>format</key>
             <string>31..26=0 25..21:rs#2r 20..16:rt#3r 15..11:rd#1w 10..6=0 5..0=0x24#3r</string>
@@ -259,6 +313,7 @@
                 <string>MIPSII</string>
                 <string>MIPSIII</string>
                 <string>MIPSIV</string>
+                <string>MIPS64</string>
             </array>
             <key>format</key>
             <string>31..26=0xc 25..21:rs#2r 20..16:rt#1w 15..0:imm16#3r</string>
@@ -300,6 +355,7 @@
                 <string>MIPSII</string>
                 <string>MIPSIII</string>
                 <string>MIPSIV</string>
+                <string>MIPS64</string>
             </array>
             <key>branchtype</key>
             <string>ALWAYS</string>
@@ -322,6 +378,7 @@
                 <string>MIPSII</string>
                 <string>MIPSIII</string>
                 <string>MIPSIV</string>
+                <string>MIPS64</string>
             </array>
             <key>branchtype</key>
             <string>CALL</string>
@@ -398,6 +455,7 @@
                 <string>MIPS32</string>
                 <string>MIPS32R2</string>
                 <string>MIPS32R5</string>
+                <string>MIPS64</string>
             </array>
             <key>branchtype</key>
             <string>FALSE</string>
@@ -412,6 +470,7 @@
                 <string>MIPS32</string>
                 <string>MIPS32R2</string>
                 <string>MIPS32R5</string>
+                <string>MIPS64</string>
             </array>
             <key>branchtype</key>
             <string>FALSE</string>
@@ -428,6 +487,7 @@
                 <string>MIPS32</string>
                 <string>MIPS32R2</string>
                 <string>MIPS32R5</string>
+                <string>MIPS64</string>
             </array>
             <key>branchtype</key>
             <string>FALSE</string>
@@ -442,6 +502,7 @@
                 <string>MIPS32</string>
                 <string>MIPS32R2</string>
                 <string>MIPS32R5</string>
+                <string>MIPS64</string>
             </array>
             <key>branchtype</key>
             <string>FALSE</string>
@@ -458,6 +519,7 @@
                 <string>MIPS32</string>
                 <string>MIPS32R2</string>
                 <string>MIPS32R5</string>
+                <string>MIPS64</string>
             </array>
             <key>branchtype</key>
             <string>TRUE</string>
@@ -472,6 +534,7 @@
                 <string>MIPS32</string>
                 <string>MIPS32R2</string>
                 <string>MIPS32R5</string>
+                <string>MIPS64</string>
             </array>
             <key>branchtype</key>
             <string>TRUE</string>
@@ -488,6 +551,7 @@
                 <string>MIPS32</string>
                 <string>MIPS32R2</string>
                 <string>MIPS32R5</string>
+                <string>MIPS64</string>
             </array>
             <key>branchtype</key>
             <string>TRUE</string>
@@ -502,6 +566,7 @@
                 <string>MIPS32</string>
                 <string>MIPS32R2</string>
                 <string>MIPS32R5</string>
+                <string>MIPS64</string>
             </array>
             <key>branchtype</key>
             <string>TRUE</string>
@@ -542,6 +607,7 @@
                 <string>MIPS32</string>
                 <string>MIPS32R2</string>
                 <string>MIPS32R5</string>
+                <string>MIPS64</string>
             </array>
             <key>branchtype</key>
             <string>FALSE</string>
@@ -556,6 +622,7 @@
                 <string>MIPS32</string>
                 <string>MIPS32R2</string>
                 <string>MIPS32R5</string>
+                <string>MIPS64</string>
             </array>
             <key>branchtype</key>
             <string>FALSE</string>
@@ -572,6 +639,7 @@
                 <string>MIPS32</string>
                 <string>MIPS32R2</string>
                 <string>MIPS32R5</string>
+                <string>MIPS64</string>
             </array>
             <key>branchtype</key>
             <string>FALSE</string>
@@ -586,6 +654,7 @@
                 <string>MIPS32</string>
                 <string>MIPS32R2</string>
                 <string>MIPS32R5</string>
+                <string>MIPS64</string>
             </array>
             <key>branchtype</key>
             <string>FALSE</string>
@@ -602,6 +671,7 @@
                 <string>MIPS32</string>
                 <string>MIPS32R2</string>
                 <string>MIPS32R5</string>
+                <string>MIPS64</string>
             </array>
             <key>branchtype</key>
             <string>TRUE</string>
@@ -616,6 +686,7 @@
                 <string>MIPS32</string>
                 <string>MIPS32R2</string>
                 <string>MIPS32R5</string>
+                <string>MIPS64</string>
             </array>
             <key>branchtype</key>
             <string>TRUE</string>
@@ -632,6 +703,7 @@
                 <string>MIPS32</string>
                 <string>MIPS32R2</string>
                 <string>MIPS32R5</string>
+                <string>MIPS64</string>
             </array>
             <key>branchtype</key>
             <string>TRUE</string>
@@ -646,6 +718,7 @@
                 <string>MIPS32</string>
                 <string>MIPS32R2</string>
                 <string>MIPS32R5</string>
+                <string>MIPS64</string>
             </array>
             <key>branchtype</key>
             <string>TRUE</string>
@@ -665,6 +738,7 @@
                 <string>MIPSII</string>
                 <string>MIPSIII</string>
                 <string>MIPSIV</string>
+                <string>MIPS64</string>
             </array>
             <key>branchtype</key>
             <string>EQUAL</string>
@@ -700,6 +774,7 @@
                 <string>MIPSII</string>
                 <string>MIPSIII</string>
                 <string>MIPSIV</string>
+                <string>MIPS64</string>
             </array>
             <key>branchtype</key>
             <string>EQUAL</string>
@@ -718,6 +793,7 @@
                 <string>MIPS32</string>
                 <string>MIPS32R2</string>
                 <string>MIPS32R5</string>
+                <string>MIPS64</string>
             </array>
             <key>branchtype</key>
             <string>EQUAL_ZERO</string>
@@ -823,6 +899,7 @@
                 <string>MIPSII</string>
                 <string>MIPSIII</string>
                 <string>MIPSIV</string>
+                <string>MIPS64</string>
             </array>
             <key>branchtype</key>
             <string>GREATER_EQUAL_ZERO</string>
@@ -858,6 +935,7 @@
                 <string>MIPSII</string>
                 <string>MIPSIII</string>
                 <string>MIPSIV</string>
+                <string>MIPS64</string>
             </array>
             <key>branchtype</key>
             <string>CALL</string>
@@ -892,6 +970,7 @@
                 <string>MIPSII</string>
                 <string>MIPSIII</string>
                 <string>MIPSIV</string>
+                <string>MIPS64</string>
             </array>
             <key>branchtype</key>
             <string>CALL</string>
@@ -909,6 +988,7 @@
                 <string>MIPSII</string>
                 <string>MIPSIII</string>
                 <string>MIPSIV</string>
+                <string>MIPS64</string>
             </array>
             <key>branchtype</key>
             <string>GREATER_EQUAL_ZERO</string>
@@ -928,6 +1008,7 @@
                 <string>MIPSII</string>
                 <string>MIPSIII</string>
                 <string>MIPSIV</string>
+                <string>MIPS64</string>
             </array>
             <key>branchtype</key>
             <string>GREATER_ZERO</string>
@@ -977,6 +1058,7 @@
                 <string>MIPSII</string>
                 <string>MIPSIII</string>
                 <string>MIPSIV</string>
+                <string>MIPS64</string>
             </array>
             <key>branchtype</key>
             <string>GREATER_ZERO</string>
@@ -1008,6 +1090,7 @@
                 <string>MIPSII</string>
                 <string>MIPSIII</string>
                 <string>MIPSIV</string>
+                <string>MIPS64</string>
             </array>
             <key>branchtype</key>
             <string>LESS_EQUAL_ZERO</string>
@@ -1057,6 +1140,7 @@
                 <string>MIPSII</string>
                 <string>MIPSIII</string>
                 <string>MIPSIV</string>
+                <string>MIPS64</string>
             </array>
             <key>branchtype</key>
             <string>LESS_EQUAL_ZERO</string>
@@ -1112,6 +1196,7 @@
                 <string>MIPSII</string>
                 <string>MIPSIII</string>
                 <string>MIPSIV</string>
+                <string>MIPS64</string>
             </array>
             <key>branchtype</key>
             <string>LESS_ZERO</string>
@@ -1147,6 +1232,7 @@
                 <string>MIPSII</string>
                 <string>MIPSIII</string>
                 <string>MIPSIV</string>
+                <string>MIPS64</string>
             </array>
             <key>branchtype</key>
             <string>LESS_ZERO</string>
@@ -1181,6 +1267,7 @@
                 <string>MIPSII</string>
                 <string>MIPSIII</string>
                 <string>MIPSIV</string>
+                <string>MIPS64</string>
             </array>
             <key>branchtype</key>
             <string>LESS_ZERO</string>
@@ -1198,6 +1285,7 @@
                 <string>MIPSII</string>
                 <string>MIPSIII</string>
                 <string>MIPSIV</string>
+                <string>MIPS64</string>
             </array>
             <key>branchtype</key>
             <string>LESS_ZERO</string>
@@ -1217,6 +1305,7 @@
                 <string>MIPSII</string>
                 <string>MIPSIII</string>
                 <string>MIPSIV</string>
+                <string>MIPS64</string>
             </array>
             <key>branchtype</key>
             <string>NOT_EQUAL</string>
@@ -1252,6 +1341,7 @@
                 <string>MIPSII</string>
                 <string>MIPSIII</string>
                 <string>MIPSIV</string>
+                <string>MIPS64</string>
             </array>
             <key>branchtype</key>
             <string>NOT_EQUAL</string>
@@ -1268,6 +1358,7 @@
                 <string>MIPS32</string>
                 <string>MIPS32R2</string>
                 <string>MIPS32R5</string>
+                <string>MIPS64</string>
             </array>
             <key>branchtype</key>
             <string>NOT_EQUAL_ZERO</string>
@@ -1353,6 +1444,7 @@
                 <string>MIPSII</string>
                 <string>MIPSIII</string>
                 <string>MIPSIV</string>
+                <string>MIPS64</string>
             </array>
             <key>format</key>
             <string>31..26=0 25..6=0 5..0=0xd</string>
@@ -1379,6 +1471,7 @@
                 <string>MIPS32</string>
                 <string>MIPS32R2</string>
                 <string>MIPS32R5</string>
+                <string>MIPS64</string>
             </array>
             <key>format</key>
             <string>31..26=0x11 25..21=0x10 20..16:ft#2r 15..11:fs#1r 10..8=0 7..7=0 6..6=0 5..4=3 3..0:fcond#3r</string>
@@ -1391,6 +1484,7 @@
                 <string>MIPS32</string>
                 <string>MIPS32R2</string>
                 <string>MIPS32R5</string>
+                <string>MIPS64</string>
             </array>
             <key>format</key>
             <string>31..26=0x11 25..21=0x10 20..16:ft#3r 15..11:fs#2r 10..8:fcc#1r 7..7=0 6..6=0 5..4=3 3..0:fcond#4r</string>
@@ -1403,6 +1497,7 @@
                 <string>MIPS32</string>
                 <string>MIPS32R2</string>
                 <string>MIPS32R5</string>
+                <string>MIPS64</string>
             </array>
             <key>format</key>
             <string>31..26=0x11 25..21=0x11 20..16:ft#2r 15..11:fs#1r 10..8=0 7..7=0 6..6=0 5..4=3 3..0:fcond#3r</string>
@@ -1415,6 +1510,7 @@
                 <string>MIPS32</string>
                 <string>MIPS32R2</string>
                 <string>MIPS32R5</string>
+                <string>MIPS64</string>
             </array>
             <key>format</key>
             <string>31..26=0x11 25..21=0x11 20..16:ft#3r 15..11:fs#2r 10..8:fcc#1r 7..7=0 6..6=0 5..4=3 3..0:fcond#4r</string>
@@ -1451,6 +1547,7 @@
                 <string>MIPS32</string>
                 <string>MIPS32R2</string>
                 <string>MIPS32R5</string>
+                <string>MIPS64</string>
             </array>
             <key>format</key>
             <string>31..26=0x2f 25..21:base#2r 20..16:op#1r 15..0:off16#3r</string>
@@ -1512,6 +1609,7 @@
                 <string>MIPS32R2</string>
                 <string>MIPS32R5</string>
                 <string>MIPS32R6</string>
+                <string>MIPS64</string>
             </array>
             <key>format</key>
             <string>31..26=0x11 25..21=0x10 20..16=0 15..11:fs#2r 10..6:fd#1w 5..0=0xe</string>
@@ -1525,6 +1623,7 @@
                 <string>MIPS32R2</string>
                 <string>MIPS32R5</string>
                 <string>MIPS32R6</string>
+                <string>MIPS64</string>
             </array>
             <key>format</key>
             <string>31..26=0x11 25..21=0x11 20..16=0 15..11:fs#2r 10..6:fd#1w 5..0=0xe</string>
@@ -1538,9 +1637,20 @@
                 <string>MIPS32R2</string>
                 <string>MIPS32R5</string>
                 <string>MIPS32R6</string>
+                <string>MIPS64</string>
             </array>
             <key>format</key>
             <string>31..26=0x11 25..21=2 20..16:rt#1w 15..11:fs#2r 10..0=0</string>
+        </dict>
+        <dict>
+            <key>mnemonic</key>
+            <string>cfc2</string>
+            <key>release</key>
+            <array>
+                <string>MIPS64</string>
+            </array>
+            <key>format</key>
+            <string>31..26=0x12 25..21=2 20..16:rt#1w 15..11:coprd#2r 10..0=0</string>
         </dict>
         <dict>
             <key>mnemonic</key>
@@ -1585,6 +1695,7 @@
                 <string>MIPS32</string>
                 <string>MIPS32R2</string>
                 <string>MIPS32R5</string>
+                <string>MIPS64</string>
             </array>
             <key>condition</key>
             <array>
@@ -1611,6 +1722,7 @@
                 <string>MIPS32</string>
                 <string>MIPS32R2</string>
                 <string>MIPS32R5</string>
+                <string>MIPS64</string>
             </array>
             <key>condition</key>
             <array>
@@ -1694,6 +1806,7 @@
                 <string>MIPSII</string>
                 <string>MIPSIII</string>
                 <string>MIPSIV</string>
+                <string>MIPS64</string>
             </array>
             <key>format</key>
             <string>31..26=0x12 25..25=1 24..0:uimm#1r</string>
@@ -1722,9 +1835,20 @@
                 <string>MIPS32R2</string>
                 <string>MIPS32R5</string>
                 <string>MIPS32R6</string>
+                <string>MIPS64</string>
             </array>
             <key>format</key>
             <string>31..26=0x11 25..21=6 20..16:rt#1r 15..11:fs#2w 10..0=0</string>
+        </dict>
+        <dict>
+            <key>mnemonic</key>
+            <string>ctc2</string>
+            <key>release</key>
+            <array>
+                <string>MIPS64</string>
+            </array>
+            <key>format</key>
+            <string>31..26=0x12 25..21=6 20..16:rt#1r 15..11:coprd#2w 10..0=0</string>
         </dict>
         <dict>
             <key>mnemonic</key>
@@ -1750,6 +1874,7 @@
                 <string>MIPS32R2</string>
                 <string>MIPS32R5</string>
                 <string>MIPS32R6</string>
+                <string>MIPS64</string>
             </array>
             <key>format</key>
             <string>31..26=0x11 25..21=0x10 20..16=0 15..11:fs#2r 10..6:fd#1w 5..0=0x21</string>
@@ -1763,6 +1888,7 @@
                 <string>MIPS32R2</string>
                 <string>MIPS32R5</string>
                 <string>MIPS32R6</string>
+                <string>MIPS64</string>
             </array>
             <key>format</key>
             <string>31..26=0x11 25..21=0x14 20..16=0 15..11:fs#2r 10..6:fd#1w 5..0=0x21</string>
@@ -1827,6 +1953,7 @@
                 <string>MIPS32R2</string>
                 <string>MIPS32R5</string>
                 <string>MIPS32R6</string>
+                <string>MIPS64</string>
             </array>
             <key>format</key>
             <string>31..26=0x11 25..21=0x11 20..16=0 15..11:fs#2r 10..6:fd#1w 5..0=0x20</string>
@@ -1840,6 +1967,7 @@
                 <string>MIPS32R2</string>
                 <string>MIPS32R5</string>
                 <string>MIPS32R6</string>
+                <string>MIPS64</string>
             </array>
             <key>format</key>
             <string>31..26=0x11 25..21=0x14 20..16=0 15..11:fs#2r 10..6:fd#1w 5..0=0x20</string>
@@ -1890,6 +2018,7 @@
                 <string>MIPS32R2</string>
                 <string>MIPS32R5</string>
                 <string>MIPS32R6</string>
+                <string>MIPS64</string>
             </array>
             <key>format</key>
             <string>31..26=0x11 25..21=0x10 20..16=0 15..11:fs#2r 10..6:fd#1w 5..0=0x24</string>
@@ -1903,6 +2032,7 @@
                 <string>MIPS32R2</string>
                 <string>MIPS32R5</string>
                 <string>MIPS32R6</string>
+                <string>MIPS64</string>
             </array>
             <key>format</key>
             <string>31..26=0x11 25..21=0x11 20..16=0 15..11:fs#2r 10..6:fd#1w 5..0=0x24</string>
@@ -1914,6 +2044,7 @@
             <array>
                 <string>MIPSIII</string>
                 <string>MIPSIV</string>
+                <string>MIPS64</string>
             </array>
             <key>format</key>
             <string>31..26=0 25..21:rs#2r 20..16:rt#3r 15..11:rd#1w 10..6=0 5..0=0x2c</string>
@@ -1925,6 +2056,7 @@
             <array>
                 <string>MIPSIII</string>
                 <string>MIPSIV</string>
+                <string>MIPS64</string>
             </array>
             <key>format</key>
             <string>31..26=0x18 25..21:rs#2r 20..16:rt#1w 15..0:imm16#3r</string>
@@ -1936,9 +2068,24 @@
             <array>
                 <string>MIPSIII</string>
                 <string>MIPSIV</string>
+                <string>MIPS64</string>
             </array>
             <key>format</key>
             <string>31..26=0x19 25..21:rs#2r 20..16:rt#1w 15..0:imm16#3r</string>
+        </dict>
+        <dict>
+            <key>mnemonic</key>
+            <string>move</string>
+            <key>comment</key>
+            <string>pseudo instruction for daddu rd, rs, rt=zero</string>
+            <key>idiom</key>
+            <true/>
+            <key>release</key>
+            <array>
+                <string>MIPS64</string>
+            </array>
+            <key>format</key>
+            <string>31..26=0 25..21:rs#2r 20..16=0 15..11:rd#1w 10..6=0 5..0=0x2d</string>
         </dict>
         <dict>
             <key>mnemonic</key>
@@ -1947,9 +2094,38 @@
             <array>
                 <string>MIPSIII</string>
                 <string>MIPSIV</string>
+                <string>MIPS64</string>
             </array>
             <key>format</key>
             <string>31..26=0 25..21:rs#2r 20..16:rt#3r 15..11:rd#1w 10..6=0 5..0=0x2d</string>
+        </dict>
+        <dict>
+            <key>mnemonic</key>
+            <string>dclo</string>
+            <key>release</key>
+            <array>
+                <string>MIPS64</string>
+            </array>
+            <key>condition</key>
+            <array>
+                <string>#1==#2</string>
+            </array>
+            <key>format</key>
+            <string>31..26=0x1c 25..21:rs#2r 20..16:rt 15..11:rd#1w 10..6=0 5..0=0x25</string>
+        </dict>
+        <dict>
+            <key>mnemonic</key>
+            <string>dclz</string>
+            <key>release</key>
+            <array>
+                <string>MIPS64</string>
+            </array>
+            <key>condition</key>
+            <array>
+                <string>#1==#2</string>
+            </array>
+            <key>format</key>
+            <string>31..26=0x1c 25..21:rs#2r 20..16:rt 15..11:rd#1w 10..6=0 5..0=0x24</string>
         </dict>
         <dict>
             <key>mnemonic</key>
@@ -1962,6 +2138,7 @@
                 <string>MIPS64R2</string>
                 <string>MIPS64R3</string>
                 <string>MIPS64R5</string>
+                <string>MIPS64</string>
             </array>
             <key>format</key>
             <string>31..26=0 25..21:rs#1r 20..16:rt#2r 15..11=0 5..0=0x1e</string>
@@ -1977,6 +2154,7 @@
                 <string>MIPS64R2</string>
                 <string>MIPS64R3</string>
                 <string>MIPS64R5</string>
+                <string>MIPS64</string>
             </array>
             <key>format</key>
             <string>31..26=0 25..21:rs#1r 20..16:rt#2r 15..11=0 5..0=0x1f</string>
@@ -1990,6 +2168,7 @@
                 <string>MIPS32R2</string>
                 <string>MIPS32R5</string>
                 <string>MIPS32R6</string>
+                <string>MIPS64</string>
                 <string>EJTAG</string>
             </array>
             <key>format</key>
@@ -2033,6 +2212,7 @@
                 <string>MIPSII</string>
                 <string>MIPSIII</string>
                 <string>MIPSIV</string>
+                <string>MIPS64</string>
             </array>
             <key>format</key>
             <string>31..26=0 25..21:rs#1r 20..16:rt#2r 15..6=0 5..0=0x1a</string>
@@ -2056,6 +2236,7 @@
                 <string>MIPS32R2</string>
                 <string>MIPS32R5</string>
                 <string>MIPS32R6</string>
+                <string>MIPS64</string>
             </array>
             <key>format</key>
             <string>31..26=0x11 25..21=0x10 20..16:ft#3r 15..11:fs#2r 10..6:fd#1w 5..0=3</string>
@@ -2069,6 +2250,7 @@
                 <string>MIPS32R2</string>
                 <string>MIPS32R5</string>
                 <string>MIPS32R6</string>
+                <string>MIPS64</string>
             </array>
             <key>format</key>
             <string>31..26=0x11 25..21=0x11 20..16:ft#3r 15..11:fs#2r 10..6:fd#1w 5..0=3</string>
@@ -2085,6 +2267,7 @@
                 <string>MIPS32</string>
                 <string>MIPS32R2</string>
                 <string>MIPS32R5</string>
+                <string>MIPS64</string>
             </array>
             <key>format</key>
             <string>31..26=0 25..21:rs#1r 20..16:rt#2r 15..6=0 5..0=0x1b</string>
@@ -2101,11 +2284,120 @@
         </dict>
         <dict>
             <key>mnemonic</key>
+            <string>dmfc0</string>
+            <key>comment</key>
+            <string>special case of dmfc0 rt, rd, sel=0</string>
+            <key>release</key>
+            <array>
+                <string>MIPS64</string>
+            </array>
+            <key>format</key>
+            <string>31..26=0x10 25..21=1 20..16:coprt#1w 15..11:coprd#2r 10..0=0</string>
+        </dict>
+        <dict>
+            <key>mnemonic</key>
+            <string>dmfc0</string>
+            <key>release</key>
+            <array>
+                <string>MIPS64</string>
+            </array>
+            <key>format</key>
+            <string>31..26=0x10 25..21=1 20..16:coprt#1w 15..11:coprd#2r 10..3=0 2..0:uimm</string>
+        </dict>
+        <dict>
+            <key>mnemonic</key>
+            <string>dmfc1</string>
+            <key>release</key>
+            <array>
+                <string>MIPS64</string>
+            </array>
+            <key>format</key>
+            <string>31..26=0x11 25..21=1 20..16:rt#1w 15..11:fs#2r 10..0=0</string>
+        </dict>
+        <dict>
+            <key>mnemonic</key>
+            <string>dmfc2</string>
+            <key>comment</key>
+            <string>special case of dmfc2 rt, rd, sel=0</string>
+            <key>release</key>
+            <array>
+                <string>MIPS64</string>
+            </array>
+            <key>format</key>
+            <string>31..26=0x12 25..21=1 20..16:coprt#1w 15..11:coprd#2r 10..0=0</string>
+        </dict>
+        <dict>
+            <key>mnemonic</key>
+            <string>dmfc2</string>
+            <key>release</key>
+            <array>
+                <string>MIPS64</string>
+            </array>
+            <key>format</key>
+            <string>31..26=0x12 25..21=1 20..16:coprt#1w 15..11:coprd#2r 10..3=0 2..0:uimm</string>
+        </dict>
+        <dict>
+            <key>mnemonic</key>
+            <string>dmtc0</string>
+            <key>comment</key>
+            <string>special case of dmtc0 rt, rd, sel=0</string>
+            <key>release</key>
+            <array>
+                <string>MIPS64</string>
+            </array>
+            <key>format</key>
+            <string>31..26=0x10 25..21=5 20..16:rt#1r 15..11:coprd#2w 10..0=0</string>
+        </dict>
+        <dict>
+            <key>mnemonic</key>
+            <string>dmtc0</string>
+            <key>release</key>
+            <array>
+                <string>MIPS64</string>
+            </array>
+            <key>format</key>
+            <string>31..26=0x10 25..21=5 20..16:rt#1r 15..11:coprd#2w 10..3 2..0:uimm#3r</string>
+        </dict>
+        <dict>
+            <key>mnemonic</key>
+            <string>dmtc1</string>
+            <key>release</key>
+            <array>
+                <string>MIPS64</string>
+            </array>
+            <key>format</key>
+            <string>31..26=0x11 25..21=5 20..16:rt#1r 15..11:fs#2w 10..0=0</string>
+        </dict>
+        <dict>
+            <key>mnemonic</key>
+            <string>dmtc2</string>
+            <key>comment</key>
+            <string>special case of dmtc2 rt, rd, sel=0</string>
+            <key>release</key>
+            <array>
+                <string>MIPS64</string>
+            </array>
+            <key>format</key>
+            <string>31..26=0x12 25..21=5 20..16:rt#1r 15..11:coprd#2w 10..0=0</string>
+        </dict>
+        <dict>
+            <key>mnemonic</key>
+            <string>dmtc2</string>
+            <key>release</key>
+            <array>
+                <string>MIPS64</string>
+            </array>
+            <key>format</key>
+            <string>31..26=0x12 25..21=5 20..16:rt#1r 15..11:coprd#2w 10..3 2..0:uimm#3r</string>
+        </dict>
+        <dict>
+            <key>mnemonic</key>
             <string>dmult</string>
             <key>release</key>
             <array>
                 <string>MIPSIII</string>
                 <string>MIPSIV</string>
+                <string>MIPS64</string>
             </array>
             <key>format</key>
             <string>31..26=0 25..21:rs#1r 20..16:rt#2r 15..6=0 5..0=0x1c</string>
@@ -2117,6 +2409,7 @@
             <array>
                 <string>MIPSIII</string>
                 <string>MIPSIV</string>
+                <string>MIPS64</string>
             </array>
             <key>format</key>
             <string>31..26=0 25..21:rs#1r 20..16:rt#2r 15..6=0 5..0=0x1d</string>
@@ -2128,6 +2421,7 @@
             <array>
                 <string>MIPSIII</string>
                 <string>MIPSIV</string>
+                <string>MIPS64</string>
             </array>
             <key>format</key>
             <string>31..26=0 25..21=0 20..16:rt#2r 15..11:rd#1w 10..6:sa#3r 5..0=0x38</string>
@@ -2139,6 +2433,7 @@
             <array>
                 <string>MIPSIII</string>
                 <string>MIPSIV</string>
+                <string>MIPS64</string>
             </array>
             <key>format</key>
             <string>31..26=0 25..21=0 20..16:rt#2r 15..11:rd#1w 10..6:sa#3r 5..0=0x3c</string>
@@ -2150,6 +2445,7 @@
             <array>
                 <string>MIPSIII</string>
                 <string>MIPSIV</string>
+                <string>MIPS64</string>
             </array>
             <key>format</key>
             <string>31..26=0 25..21:rs#3r 20..16:rt#2r 15..11:rd#1w 10..6=0 5..0=0x14</string>
@@ -2161,6 +2457,7 @@
             <array>
                 <string>MIPSIII</string>
                 <string>MIPSIV</string>
+                <string>MIPS64</string>
             </array>
             <key>format</key>
             <string>31..26=0 25..21=0 20..16:rt#2r 15..11:rd#1w 10..6:sa#3r 5..0=0x3b</string>
@@ -2172,6 +2469,7 @@
             <array>
                 <string>MIPSIII</string>
                 <string>MIPSIV</string>
+                <string>MIPS64</string>
             </array>
             <key>format</key>
             <string>31..26=0 25..21=0 20..16:rt#2r 15..11:rd#1w 10..6:sa#3r 5..0=0x3f</string>
@@ -2183,6 +2481,7 @@
             <array>
                 <string>MIPSIII</string>
                 <string>MIPSIV</string>
+                <string>MIPS64</string>
             </array>
             <key>format</key>
             <string>31..26=0 25..21:rs#3r 20..16:rt#2r 15..11:rd#1w 10..6=0 5..0=0x17</string>
@@ -2194,6 +2493,7 @@
             <array>
                 <string>MIPSIII</string>
                 <string>MIPSIV</string>
+                <string>MIPS64</string>
             </array>
             <key>format</key>
             <string>31..26=0 25..21=0 20..16:rt#2r 15..11:rd#1w 10..6:sa#3r 5..0=0x3a</string>
@@ -2205,6 +2505,7 @@
             <array>
                 <string>MIPSIII</string>
                 <string>MIPSIV</string>
+                <string>MIPS64</string>
             </array>
             <key>format</key>
             <string>31..26=0 25..21=0 20..16:rt#2r 15..11:rd#1w 10..6:sa#3r 5..0=0x3e</string>
@@ -2216,6 +2517,7 @@
             <array>
                 <string>MIPSIII</string>
                 <string>MIPSIV</string>
+                <string>MIPS64</string>
             </array>
             <key>format</key>
             <string>31..26=0 25..21:rs#3r 20..16:rt#2r 15..11:rd#1w 10..6=0 5..0=0x16</string>
@@ -2227,6 +2529,7 @@
             <array>
                 <string>MIPSIII</string>
                 <string>MIPSIV</string>
+                <string>MIPS64</string>
             </array>
             <key>format</key>
             <string>31..26=0 25..21:rs#2r 20..16:rt#3r 15..11:rd#1w 10..6=0 5..0=0x2e</string>
@@ -2238,6 +2541,7 @@
             <array>
                 <string>MIPSIII</string>
                 <string>MIPSIV</string>
+                <string>MIPS64</string>
             </array>
             <key>format</key>
             <string>31..26=0 25..21:rs#2r 20..16:rt#3r 15..11:rd#1w 10..6=0 5..0=0x2f</string>
@@ -2302,6 +2606,7 @@
                 <string>MIPS32R2</string>
                 <string>MIPS32R5</string>
                 <string>MIPS32R6</string>
+                <string>MIPS64</string>
             </array>
             <key>format</key>
             <string>31..26=0x10 25..25=1 24..6=0 5..0=0x18</string>
@@ -2416,6 +2721,7 @@
                 <string>MIPSII</string>
                 <string>MIPSIII</string>
                 <string>MIPSIV</string>
+                <string>MIPS64</string>
             </array>
             <key>branchtype</key>
             <string>ALWAYS</string>
@@ -2435,6 +2741,7 @@
                 <string>MIPSII</string>
                 <string>MIPSIII</string>
                 <string>MIPSIV</string>
+                <string>MIPS64</string>
             </array>
             <key>branchtype</key>
             <string>CALL</string>
@@ -2455,6 +2762,7 @@
                 <string>MIPSII</string>
                 <string>MIPSIII</string>
                 <string>MIPSIV</string>
+                <string>MIPS64</string>
             </array>
             <key>branchtype</key>
             <string>CALL</string>
@@ -2473,6 +2781,7 @@
                 <string>MIPSII</string>
                 <string>MIPSIII</string>
                 <string>MIPSIV</string>
+                <string>MIPS64</string>
             </array>
             <key>branchtype</key>
             <string>CALL</string>
@@ -2618,6 +2927,7 @@
                 <string>MIPSII</string>
                 <string>MIPSIII</string>
                 <string>MIPSIV</string>
+                <string>MIPS64</string>
             </array>
             <key>branchtype</key>
             <string>RET</string>
@@ -2636,6 +2946,7 @@
                 <string>MIPSII</string>
                 <string>MIPSIII</string>
                 <string>MIPSIV</string>
+                <string>MIPS64</string>
             </array>
             <key>branchtype</key>
             <string>ALWAYS</string>
@@ -2743,6 +3054,7 @@
                 <string>MIPSII</string>
                 <string>MIPSIII</string>
                 <string>MIPSIV</string>
+                <string>MIPS64</string>
             </array>
             <key>format</key>
             <string>31..26=0x20 25..21:base#2r 20..16:rt#1w 15..0:off16#3r</string>
@@ -2773,6 +3085,7 @@
                 <string>MIPSII</string>
                 <string>MIPSIII</string>
                 <string>MIPSIV</string>
+                <string>MIPS64</string>
             </array>
             <key>format</key>
             <string>31..26=0x24 25..21:base#2r 20..16:rt#1w 15..0:off16#3r</string>
@@ -2797,6 +3110,7 @@
             <array>
                 <string>MIPSIII</string>
                 <string>MIPSIV</string>
+                <string>MIPS64</string>
             </array>
             <key>format</key>
             <string>31..26=0x37 25..21:base#2r 20..16:rt#1w 15..0:off16#3r</string>
@@ -2813,6 +3127,7 @@
                 <string>MIPSII</string>
                 <string>MIPSIII</string>
                 <string>MIPSIV</string>
+                <string>MIPS64</string>
             </array>
             <key>format</key>
             <string>31..26=0x35 25..21:base#2r 20..16:ft#1w 15..0:off16#3r</string>
@@ -2828,6 +3143,7 @@
                 <string>MIPSII</string>
                 <string>MIPSIII</string>
                 <string>MIPSIV</string>
+                <string>MIPS64</string>
             </array>
             <key>format</key>
             <string>31..26=0x36 25..21:base#2r 20..16:coprt#1w 15..0:off16#3r</string>
@@ -2849,6 +3165,7 @@
             <array>
                 <string>MIPSIII</string>
                 <string>MIPSIV</string>
+                <string>MIPS64</string>
             </array>
             <key>format</key>
             <string>31..26=0x1a 25..21:base#2r 20..16:rt#1w 15..0:off16#3r</string>
@@ -2860,6 +3177,7 @@
             <array>
                 <string>MIPSIII</string>
                 <string>MIPSIV</string>
+                <string>MIPS64</string>
             </array>
             <key>format</key>
             <string>31..26=0x1b 25..21:base#2r 20..16:rt#1w 15..0:off16#3r</string>
@@ -2889,6 +3207,7 @@
                 <string>MIPSII</string>
                 <string>MIPSIII</string>
                 <string>MIPSIV</string>
+                <string>MIPS64</string>
             </array>
             <key>format</key>
             <string>31..26=0x21 25..21:base#2r 20..16:rt#1w 15..0:off16#3r</string>
@@ -2919,6 +3238,7 @@
                 <string>MIPSII</string>
                 <string>MIPSIII</string>
                 <string>MIPSIV</string>
+                <string>MIPS64</string>
             </array>
             <key>format</key>
             <string>31..26=0x25 25..21:base#2r 20..16:rt#1w 15..0:off16#3r</string>
@@ -2947,6 +3267,7 @@
                 <string>MIPSII</string>
                 <string>MIPSIII</string>
                 <string>MIPSIV</string>
+                <string>MIPS64</string>
             </array>
             <key>format</key>
             <string>31..26=0x30 25..21:base#2r 20..16:rt#1w 15..0:off16#3r</string>
@@ -2968,6 +3289,7 @@
             <array>
                 <string>MIPSIII</string>
                 <string>MIPSIV</string>
+                <string>MIPS64</string>
             </array>
             <key>format</key>
             <string>31..26=0x34 25..21:base#2r 20..16:rt#1w 15..0:off16#3r</string>
@@ -3027,6 +3349,7 @@
                 <string>MIPSII</string>
                 <string>MIPSIII</string>
                 <string>MIPSIV</string>
+                <string>MIPS64</string>
             </array>
             <key>format</key>
             <string>31..26=0xf 25..21=0 20..16:rt#1w 15..0:uimm#2r</string>
@@ -3070,6 +3393,7 @@
                 <string>MIPSII</string>
                 <string>MIPSIII</string>
                 <string>MIPSIV</string>
+                <string>MIPS64</string>
             </array>
             <key>format</key>
             <string>31..26=0x23 25..21:base#2r 20..16:rt#1w 15..0:off16#3r</string>
@@ -3087,6 +3411,7 @@
                 <string>MIPSII</string>
                 <string>MIPSIII</string>
                 <string>MIPSIV</string>
+                <string>MIPS64</string>
             </array>
             <key>format</key>
             <string>31..26=0x31 25..21:base#2r 20..16:ft#1w 15..0:off16#3r</string>
@@ -3103,6 +3428,7 @@
                 <string>MIPSII</string>
                 <string>MIPSIII</string>
                 <string>MIPSIV</string>
+                <string>MIPS64</string>
             </array>
             <key>format</key>
             <string>31..26=0x32 25..21:base#2r 20..16:coprt#1w 15..0:off16#3r</string>
@@ -3155,6 +3481,7 @@
                 <string>MIPSII</string>
                 <string>MIPSIII</string>
                 <string>MIPSIV</string>
+                <string>MIPS64</string>
             </array>
             <key>format</key>
             <string>31..26=0x22 25..21:base#2r 20..16:rt#1w 15..0:off16#3r</string>
@@ -3193,6 +3520,7 @@
                 <string>MIPSII</string>
                 <string>MIPSIII</string>
                 <string>MIPSIV</string>
+                <string>MIPS64</string>
             </array>
             <key>format</key>
             <string>31..26=0x26 25..21:base#2r 20..16:rt#1w 15..0:off16#3r</string>
@@ -3216,6 +3544,7 @@
             <array>
                 <string>MIPSIII</string>
                 <string>MIPSIV</string>
+                <string>MIPS64</string>
             </array>
             <key>format</key>
             <string>31..26=0x27 25..21:base#2r 20..16:rt#1w 15..0:off16#3r</string>
@@ -3240,6 +3569,7 @@
                 <string>MIPS32</string>
                 <string>MIPS32R2</string>
                 <string>MIPS32R5</string>
+                <string>MIPS64</string>
             </array>
             <key>format</key>
             <string>31..26=0x1c 25..21:rs#1r 20..16:rt#2r 15..11=0 10..6=0 5..0=0</string>
@@ -3308,6 +3638,7 @@
                 <string>MIPS32</string>
                 <string>MIPS32R2</string>
                 <string>MIPS32R5</string>
+                <string>MIPS64</string>
             </array>
             <key>format</key>
             <string>31..26=0x1c 25..21:rs#1r 20..16:rt#2r 15..11=0 10..6=0 5..0=1</string>
@@ -3363,6 +3694,7 @@
                 <string>MIPS32R2</string>
                 <string>MIPS32R5</string>
                 <string>MIPS32R6</string>
+                <string>MIPS64</string>
             </array>
             <key>format</key>
             <string>31..26=0x10 25..21=0 20..16:coprt#1w 15..11:coprd#2r 10..0=0</string>
@@ -3376,6 +3708,7 @@
                 <string>MIPS32R2</string>
                 <string>MIPS32R5</string>
                 <string>MIPS32R6</string>
+                <string>MIPS64</string>
             </array>
             <key>format</key>
             <string>31..26=0x10 25..21=0 20..16:coprt#1w 15..11:coprd#2r 10..3=0 2..0:uimm</string>
@@ -3389,11 +3722,11 @@
                 <string>MIPS32R2</string>
                 <string>MIPS32R5</string>
                 <string>MIPS32R6</string>
+                <string>MIPS64</string>
             </array>
             <key>format</key>
             <string>31..26=0x11 25..21=0 20..16:rt#1w 15..11:fs#2r 10..0=0</string>
         </dict>
-<!--
         <dict>
             <key>mnemonic</key>
             <string>mfc2</string>
@@ -3405,9 +3738,10 @@
                 <string>MIPS32R2</string>
                 <string>MIPS32R5</string>
                 <string>MIPS32R6</string>
+                <string>MIPS64</string>
             </array>
             <key>format</key>
-            <string>31..26=0x12 25..21=0 20..16:coprt#1w 15..11:coprd#2r 10..0=0</string>
+            <string>31..26=0x12 25..21=0 20..16:rt#1w 15..11:coprd#2r 10..0=0</string>
         </dict>
         <dict>
             <key>mnemonic</key>
@@ -3420,11 +3754,11 @@
                 <string>MIPS32R2</string>
                 <string>MIPS32R5</string>
                 <string>MIPS32R6</string>
+                <string>MIPS64</string>
             </array>
             <key>format</key>
-            <string>31..26=0x12 25..21=0 20..16:coprt#1w 15..3:ignored 2..0:uimm</string>
+            <string>31..26=0x12 25..21=0 20..16:rt#1w 15..11:coprd#2r 2..0:uimm</string>
         </dict>
--->
         <dict>
             <key>mnemonic</key>
             <string>mfhc0</string>
@@ -3503,6 +3837,7 @@
                 <string>MIPSII</string>
                 <string>MIPSIII</string>
                 <string>MIPSIV</string>
+                <string>MIPS64</string>
             </array>
             <key>format</key>
             <string>31..26=0 25..16=0 15..11:rd#1w 10..6=0 5..0=0x10</string>
@@ -3519,6 +3854,7 @@
                 <string>MIPSII</string>
                 <string>MIPSIII</string>
                 <string>MIPSIV</string>
+                <string>MIPS64</string>
             </array>
             <key>format</key>
             <string>31..26=0 25..16=0 15..11:rd#1w 10..6=0 5..0=0x12</string>
@@ -3592,6 +3928,7 @@
                 <string>MIPS32R2</string>
                 <string>MIPS32R5</string>
                 <string>MIPS32R6</string>
+                <string>MIPS64</string>
             </array>
             <key>format</key>
             <string>31..26=0x11 25..21=0x10 20..16=0 15..11:fs#2r 10..6:fd#1w 5..0=6</string>
@@ -3605,6 +3942,7 @@
                 <string>MIPS32R2</string>
                 <string>MIPS32R5</string>
                 <string>MIPS32R6</string>
+                <string>MIPS64</string>
             </array>
             <key>format</key>
             <string>31..26=0x11 25..21=0x11 20..16=0 15..11:fs#2r 10..6:fd#1w 5..0=6</string>
@@ -3629,6 +3967,7 @@
                 <string>MIPS32</string>
                 <string>MIPS32R2</string>
                 <string>MIPS32R5</string>
+                <string>MIPS64</string>
             </array>
             <key>format</key>
             <string>31..26=00 25..21:rs#2r 20..18:fcc#3r 17..17=0 16..16=0 15..11:rd#1w 10..6=0 5..0=1</string>
@@ -3641,6 +3980,8 @@
                 <string>MIPS32</string>
                 <string>MIPS32R2</string>
                 <string>MIPS32R5</string>
+                <string>MIPS64</string>
+                <string>MIPSIV</string>
             </array>
             <key>format</key>
             <string>31..26=0x11 25..21=0x10 20..18:fcc#3r 17..17=0 16..16=0 15..11:fs#2r 10..6:fd#1w 5..0=0x11</string>
@@ -3653,6 +3994,8 @@
                 <string>MIPS32</string>
                 <string>MIPS32R2</string>
                 <string>MIPS32R5</string>
+                <string>MIPSIV</string>
+                <string>MIPS64</string>
             </array>
             <key>format</key>
             <string>31..26=0x11 25..21=0x11 20..18:fcc#3r 17..17=0 16..16=0 15..11:fs#2r 10..6:fd#1w 5..0=0x11</string>
@@ -3678,6 +4021,7 @@
                 <string>MIPS32R2</string>
                 <string>MIPS32R5</string>
                 <string>MIPSIV</string>
+                <string>MIPS64</string>
             </array>
             <key>format</key>
             <string>31..26=0 25..21:rs#2r 20..16:rt#3r 15..11:rd#1w 10..6=0 5..0=0xb</string>
@@ -3690,6 +4034,8 @@
                 <string>MIPS32</string>
                 <string>MIPS32R2</string>
                 <string>MIPS32R5</string>
+                <string>MIPSIV</string>
+                <string>MIPS64</string>
             </array>
             <key>format</key>
             <string>31..26=0x11 25..21=0x10 20..16:rt#3r 15..11:fs#2r 10..6:fd#1w 5..0=0x13</string>
@@ -3702,6 +4048,8 @@
                 <string>MIPS32</string>
                 <string>MIPS32R2</string>
                 <string>MIPS32R5</string>
+                <string>MIPSIV</string>
+                <string>MIPS64</string>
             </array>
             <key>format</key>
             <string>31..26=0x11 25..21=0x11 20..16:rt#3r 15..11:fs#2r 10..6:fd#1w 5..0=0x13</string>
@@ -3726,6 +4074,8 @@
                 <string>MIPS32</string>
                 <string>MIPS32R2</string>
                 <string>MIPS32R5</string>
+                <string>MIPSIV</string>
+                <string>MIPS64</string>
             </array>
             <key>format</key>
             <string>31..26=00 25..21:rs#2r 20..18:fcc#3r 17..17=0 16..16=1 15..11:rd#1w 10..6=0 5..0=1</string>
@@ -3738,6 +4088,8 @@
                 <string>MIPS32</string>
                 <string>MIPS32R2</string>
                 <string>MIPS32R5</string>
+                <string>MIPSIV</string>
+                <string>MIPS64</string>
             </array>
             <key>format</key>
             <string>31..26=0x11 25..21=0x10 20..18:fcc#3r 17..17=0 16..16=1 15..11:fs#2r 10..6:fd#1w 5..0=0x11</string>
@@ -3750,6 +4102,8 @@
                 <string>MIPS32</string>
                 <string>MIPS32R2</string>
                 <string>MIPS32R5</string>
+                <string>MIPSIV</string>
+                <string>MIPS64</string>
             </array>
             <key>format</key>
             <string>31..26=0x11 25..21=0x11 20..18:fcc#3r 17..17=0 16..16=1 15..11:fs#2r 10..6:fd#1w 5..0=0x11</string>
@@ -3775,6 +4129,7 @@
                 <string>MIPS32R2</string>
                 <string>MIPS32R5</string>
                 <string>MIPSIV</string>
+                <string>MIPS64</string>
             </array>
             <key>format</key>
             <string>31..26=0 25..21:rs#2r 20..16:rt#3r 15..11:rd#1w 10..6=0 5..0=0xa</string>
@@ -3787,6 +4142,8 @@
                 <string>MIPS32</string>
                 <string>MIPS32R2</string>
                 <string>MIPS32R5</string>
+                <string>MIPSIV</string>
+                <string>MIPS64</string>
             </array>
             <key>format</key>
             <string>31..26=0x11 25..21=0x10 20..16:rt#3r 15..11:fs#2r 10..6:fd#1w 5..0=0x12</string>
@@ -3799,6 +4156,8 @@
                 <string>MIPS32</string>
                 <string>MIPS32R2</string>
                 <string>MIPS32R5</string>
+                <string>MIPSIV</string>
+                <string>MIPS64</string>
             </array>
             <key>format</key>
             <string>31..26=0x11 25..21=0x11 20..16:rt#3r 15..11:fs#2r 10..6:fd#1w 5..0=0x12</string>
@@ -3834,6 +4193,7 @@
             <array>
                 <string>MIPS32R2</string>
                 <string>MIPS32R5</string>
+                <string>MIPSIV</string>
                 <string>MIPS64</string>
             </array>
             <key>format</key>
@@ -3846,6 +4206,7 @@
             <array>
                 <string>MIPS32R2</string>
                 <string>MIPS32R5</string>
+                <string>MIPSIV</string>
                 <string>MIPS64</string>
             </array>
             <key>format</key>
@@ -3891,6 +4252,7 @@
                 <string>MIPS32</string>
                 <string>MIPS32R2</string>
                 <string>MIPS32R5</string>
+                <string>MIPS64</string>
             </array>
             <key>format</key>
             <string>31..26=0x1c 25..21:rs#1r 20..16:rt#2r 15..11=0 10..6=0 5..0=5</string>
@@ -3906,6 +4268,7 @@
                 <string>MIPS32R2</string>
                 <string>MIPS32R5</string>
                 <string>MIPS32R6</string>
+                <string>MIPS64</string>
             </array>
             <key>format</key>
             <string>31..26=0x10 25..21=4 20..16:rt#1r 15..11:coprd#2w 10..0=0</string>
@@ -3919,6 +4282,7 @@
                 <string>MIPS32R2</string>
                 <string>MIPS32R5</string>
                 <string>MIPS32R6</string>
+                <string>MIPS64</string>
             </array>
             <key>format</key>
             <string>31..26=0x10 25..21=4 20..16:rt#1r 15..11:coprd#2w 10..3 2..0:uimm#3r</string>
@@ -3932,11 +4296,11 @@
                 <string>MIPS32R2</string>
                 <string>MIPS32R5</string>
                 <string>MIPS32R6</string>
+                <string>MIPS64</string>
             </array>
             <key>format</key>
             <string>31..26=0x11 25..21=4 20..16:rt#1r 15..11:fs#2w 10..0=0</string>
         </dict>
-<!--
         <dict>
             <key>mnemonic</key>
             <string>mtc2</string>
@@ -3948,9 +4312,10 @@
                 <string>MIPS32R2</string>
                 <string>MIPS32R5</string>
                 <string>MIPS32R6</string>
+                <string>MIPS64</string>
             </array>
             <key>format</key>
-            <string>31..26=0x12 25..21=4 20..16:coprt#1w 15..11:coprd#2r 10..0=0</string>
+            <string>31..26=0x12 25..21=4 20..16:rt#1w 15..11:coprd#2r 10..0=0</string>
         </dict>
         <dict>
             <key>mnemonic</key>
@@ -3963,11 +4328,11 @@
                 <string>MIPS32R2</string>
                 <string>MIPS32R5</string>
                 <string>MIPS32R6</string>
+                <string>MIPS64</string>
             </array>
             <key>format</key>
-            <string>31..26=0x12 25..21=4 20..16:coprt#1w 15..3:ignored 2..0:uimm</string>
+            <string>31..26=0x12 25..21=4 20..16:rt#1w 15..3:ignored 2..0:uimm</string>
         </dict>
--->
         <dict>
             <key>mnemonic</key>
             <string>mthc0</string>
@@ -4045,6 +4410,7 @@
                 <string>MIPSII</string>
                 <string>MIPSIII</string>
                 <string>MIPSIV</string>
+                <string>MIPS64</string>
             </array>
             <key>format</key>
             <string>31..26=0 25..21:rs#1r 20..6=0 5..0=0x11</string>
@@ -4061,6 +4427,7 @@
                 <string>MIPSII</string>
                 <string>MIPSIII</string>
                 <string>MIPSIV</string>
+                <string>MIPS64</string>
             </array>
             <key>format</key>
             <string>31..26=0 25..21:rs#1r 20..6=0 5..0=0x13</string>
@@ -4073,6 +4440,7 @@
                 <string>MIPS32</string>
                 <string>MIPS32R2</string>
                 <string>MIPS32R5</string>
+                <string>MIPS64</string>
             </array>
             <key>format</key>
             <string>31..26=0x1c 25..21:rs#2r 20..16:rt#3r 15..11:rd#1w 10..6=0 5..0=2</string>
@@ -4126,6 +4494,7 @@
                 <string>MIPS32R2</string>
                 <string>MIPS32R5</string>
                 <string>MIPS32R6</string>
+                <string>MIPS64</string>
             </array>
             <key>format</key>
             <string>31..26=0x11 25..21=0x10 20..16:ft#3r 15..11:fs#2r 10..6:fd#1w 5..0=2</string>
@@ -4139,6 +4508,7 @@
                 <string>MIPS32R2</string>
                 <string>MIPS32R5</string>
                 <string>MIPS32R6</string>
+                <string>MIPS64</string>
             </array>
             <key>format</key>
             <string>31..26=0x11 25..21=0x11 20..16:ft#3r 15..11:fs#2r 10..6:fd#1w 5..0=2</string>
@@ -4167,6 +4537,7 @@
                 <string>MIPSII</string>
                 <string>MIPSIII</string>
                 <string>MIPSIV</string>
+                <string>MIPS64</string>
             </array>
             <key>format</key>
             <string>31..26=0 25..21:rs#1r 20..16:rt#rr 15..6=0 5..0=0x18</string>
@@ -4183,6 +4554,7 @@
                 <string>MIPSII</string>
                 <string>MIPSIII</string>
                 <string>MIPSIV</string>
+                <string>MIPS64</string>
             </array>
             <key>format</key>
             <string>31..26=0 25..21:rs#1r 20..16:rt#rr 15..6=0 5..0=0x19</string>
@@ -4222,6 +4594,7 @@
                 <string>MIPS32R2</string>
                 <string>MIPS32R5</string>
                 <string>MIPS32R6</string>
+                <string>MIPS64</string>
             </array>
             <key>format</key>
             <string>31..26=0x11 25..21=0x10 20..16=0 15..11:fs#2r 10..6:fd#1w 5..0=7</string>
@@ -4235,6 +4608,7 @@
                 <string>MIPS32R2</string>
                 <string>MIPS32R5</string>
                 <string>MIPS32R6</string>
+                <string>MIPS64</string>
             </array>
             <key>format</key>
             <string>31..26=0x11 25..21=0x11 20..16=0 15..11:fs#2r 10..6:fd#1w 5..0=7</string>
@@ -4340,6 +4714,7 @@
                 <string>MIPSII</string>
                 <string>MIPSIII</string>
                 <string>MIPSIV</string>
+                <string>MIPS64</string>
             </array>
             <key>format</key>
             <string>31..0=0</string>
@@ -4361,6 +4736,7 @@
                 <string>MIPSII</string>
                 <string>MIPSIII</string>
                 <string>MIPSIV</string>
+                <string>MIPS64</string>
             </array>
             <key>format</key>
             <string>31..26=0 25..21:rs#2r 20..16=0 15..11:rd#1w 10..6=0 5..0=0x27</string>
@@ -4378,6 +4754,7 @@
                 <string>MIPSII</string>
                 <string>MIPSIII</string>
                 <string>MIPSIV</string>
+                <string>MIPS64</string>
             </array>
             <key>format</key>
             <string>31..26=0 25..21:rs#2r 20..16:rt#3r 15..11:rd#1w 10..6=0 5..0=0x27</string>
@@ -4417,6 +4794,7 @@
                 <string>MIPSII</string>
                 <string>MIPSIII</string>
                 <string>MIPSIV</string>
+                <string>MIPS64</string>
             </array>
             <key>format</key>
             <string>31..26=0 25..21:rs#2r 20..16=0 15..11:rd#1w 10..6=0 5..0=0x25</string>
@@ -4434,6 +4812,7 @@
                 <string>MIPSII</string>
                 <string>MIPSIII</string>
                 <string>MIPSIV</string>
+                <string>MIPS64</string>
             </array>
             <key>format</key>
             <string>31..26=0 25..21:rs#2r 20..16:rt#3r 15..11:rd#1w 10..6=0 5..0=0x25</string>
@@ -4451,6 +4830,7 @@
                 <string>MIPSII</string>
                 <string>MIPSIII</string>
                 <string>MIPSIV</string>
+                <string>MIPS64</string>
             </array>
             <key>format</key>
             <string>31..26=0xd 25..21:rs#2r 20..16:rt#1w 15..0:imm16#3r</string>
@@ -4500,6 +4880,7 @@
                 <string>MIPS32R2</string>
                 <string>MIPS32R5</string>
                 <string>MIPSIV</string>
+                <string>MIPS64</string>
             </array>
             <key>format</key>
             <string>31..26=0x33 25..21:base#2r 20..16:uimm#1r 15..0:off16#3r</string>
@@ -4748,6 +5129,7 @@
                 <string>MIPSII</string>
                 <string>MIPSIII</string>
                 <string>MIPSIV</string>
+                <string>MIPS64</string>
             </array>
             <key>format</key>
             <string>31..26=0x28 25..21:base#2r 20..16:rt#1r 15..0:off16#3r</string>
@@ -4776,6 +5158,7 @@
                 <string>MIPSII</string>
                 <string>MIPSIII</string>
                 <string>MIPSIV</string>
+                <string>MIPS64</string>
             </array>
             <key>format</key>
             <string>31..26=0x38 25..21:base#2r 20..16:rt#1r 15..0:off16#3r</string>
@@ -4797,6 +5180,7 @@
             <array>
                 <string>MIPSIII</string>
                 <string>MIPSIV</string>
+                <string>MIPS64</string>
             </array>
             <key>format</key>
             <string>31..26=0x3c 25..21:base#2r 20..16:rt#1r 15..0:off16#3r</string>
@@ -4841,6 +5225,7 @@
             <array>
                 <string>MIPSIII</string>
                 <string>MIPSIV</string>
+                <string>MIPS64</string>
             </array>
             <key>format</key>
             <string>31..26=0x3f 25..21:base#2r 20..16:rt#1r 15..0:off16#3r</string>
@@ -4855,6 +5240,8 @@
                 <string>MIPS32</string>
                 <string>MIPS32R2</string>
                 <string>MIPS32R5</string>
+                <string>MIPS64</string>
+                <string>EJTAG</string>
             </array>
             <key>format</key>
             <string>31..26=0x1c 25..6=0 5..0=0x3f</string>
@@ -4867,6 +5254,8 @@
                 <string>MIPS32</string>
                 <string>MIPS32R2</string>
                 <string>MIPS32R5</string>
+                <string>MIPS64</string>
+                <string>EJTAG</string>
             </array>
             <key>format</key>
             <string>31..26=0x1c 25..6:uimm#1r 5..0=0x3f</string>
@@ -4905,6 +5294,7 @@
                 <string>MIPSII</string>
                 <string>MIPSIII</string>
                 <string>MIPSIV</string>
+                <string>MIPS64</string>
             </array>
             <key>format</key>
             <string>31..26=0x3d 25..21:base#2r 20..16:ft#1w 15..0:off16#3r</string>
@@ -4920,6 +5310,7 @@
                 <string>MIPSII</string>
                 <string>MIPSIII</string>
                 <string>MIPSIV</string>
+                <string>MIPS64</string>
             </array>
             <key>format</key>
             <string>31..26=0x3e 25..21:base#2r 20..16:coprt#1w 15..0:off16#3r</string>
@@ -4941,6 +5332,7 @@
             <array>
                 <string>MIPSIII</string>
                 <string>MIPSIV</string>
+                <string>MIPS64</string>
             </array>
             <key>format</key>
             <string>31..26=0x2c 25..21:base#2r 20..16:rt#1r 15..0:off16#3r</string>
@@ -4952,6 +5344,7 @@
             <array>
                 <string>MIPSIII</string>
                 <string>MIPSIV</string>
+                <string>MIPS64</string>
             </array>
             <key>format</key>
             <string>31..26=0x2d 25..21:base#2r 20..16:rt#1r 15..0:off16#3r</string>
@@ -5085,6 +5478,7 @@
                 <string>MIPSII</string>
                 <string>MIPSIII</string>
                 <string>MIPSIV</string>
+                <string>MIPS64</string>
             </array>
             <key>format</key>
             <string>31..26=0x29 25..21:base#2r 20..16:rt#1r 15..0:off16#3r</string>
@@ -5125,6 +5519,7 @@
                 <string>MIPSII</string>
                 <string>MIPSIII</string>
                 <string>MIPSIV</string>
+                <string>MIPS64</string>
             </array>
             <key>format</key>
             <string>31..26=0 25..21=0 20..16:rt#2r 15..11:rd#1w 10..6:sa#3r 5..0=0</string>
@@ -5142,6 +5537,7 @@
                 <string>MIPSII</string>
                 <string>MIPSIII</string>
                 <string>MIPSIV</string>
+                <string>MIPS64</string>
             </array>
             <key>format</key>
             <string>31..26=0 25..21:rs#3r 20..16:rt#2r 15..11:rd#1w 10..6=0 5..0=4</string>
@@ -5159,6 +5555,7 @@
                 <string>MIPSII</string>
                 <string>MIPSIII</string>
                 <string>MIPSIV</string>
+                <string>MIPS64</string>
             </array>
             <key>format</key>
             <string>31..26=0 25..21:rs#2r 20..16:rt#3r 15..11:rd#1w 10..6=0 5..0=0x2a</string>
@@ -5176,6 +5573,7 @@
                 <string>MIPSII</string>
                 <string>MIPSIII</string>
                 <string>MIPSIV</string>
+                <string>MIPS64</string>
             </array>
             <key>format</key>
             <string>31..26=0xa 25..21:rs#2r 20..16:rt#1w 15..0:imm16#3r</string>
@@ -5193,6 +5591,7 @@
                 <string>MIPSII</string>
                 <string>MIPSIII</string>
                 <string>MIPSIV</string>
+                <string>MIPS64</string>
             </array>
             <key>format</key>
             <string>31..26=0xb 25..21:rs#2r 20..16:rt#1w 15..0:imm16#3r</string>
@@ -5210,6 +5609,7 @@
                 <string>MIPSII</string>
                 <string>MIPSIII</string>
                 <string>MIPSIV</string>
+                <string>MIPS64</string>
             </array>
             <key>format</key>
             <string>31..26=0 25..21:rs#2r 20..16:rt#3r 15..11:rd#1w 10..6=0 5..0=0x2b</string>
@@ -5223,6 +5623,7 @@
                 <string>MIPS32R2</string>
                 <string>MIPS32R5</string>
                 <string>MIPS32R6</string>
+                <string>MIPS64</string>
             </array>
             <key>format</key>
             <string>31..26=0x11 25..21=0x10 20..16=0 15..11:fs#2r 10..6:fd#1w 5..0=4</string>
@@ -5236,6 +5637,7 @@
                 <string>MIPS32R2</string>
                 <string>MIPS32R5</string>
                 <string>MIPS32R6</string>
+                <string>MIPS64</string>
             </array>
             <key>format</key>
             <string>31..26=0x11 25..21=0x11 20..16=0 15..11:fs#2r 10..6:fd#1w 5..0=4</string>
@@ -5253,6 +5655,7 @@
                 <string>MIPSII</string>
                 <string>MIPSIII</string>
                 <string>MIPSIV</string>
+                <string>MIPS64</string>
             </array>
             <key>format</key>
             <string>31..26=0 25..21=0 20..16:rt#2r 15..11:rd#1w 10..6:sa#3r 5..0=3</string>
@@ -5270,6 +5673,7 @@
                 <string>MIPSII</string>
                 <string>MIPSIII</string>
                 <string>MIPSIV</string>
+                <string>MIPS64</string>
             </array>
             <key>format</key>
             <string>31..26=0 25..21:rs#3r 20..16:rt#2r 15..11:rd#1w 10..6=0 5..0=7</string>
@@ -5287,6 +5691,7 @@
                 <string>MIPSII</string>
                 <string>MIPSIII</string>
                 <string>MIPSIV</string>
+                <string>MIPS64</string>
             </array>
             <key>format</key>
             <string>31..26=0 25..22=0 21..21=0 20..16:rt#2r 15..11:rd#1w 10..6:sa#3r 5..0=2</string>
@@ -5304,6 +5709,7 @@
                 <string>MIPSII</string>
                 <string>MIPSIII</string>
                 <string>MIPSIV</string>
+                <string>MIPS64</string>
             </array>
             <key>format</key>
             <string>31..26=0 25..21:rs#3r 20..16:rt#2r 15..11:rd#1w 10..7=0 6..6=0 5..0=6</string>
@@ -5321,6 +5727,7 @@
                 <string>MIPS32R2</string>
                 <string>MIPS32R5</string>
                 <string>MIPS32R6</string>
+                <string>MIPS64</string>
             </array>
             <key>format</key>
             <string>31..26=0 25..21=0 20..16=0 15..11=0 10..6=1 5..0=0</string>
@@ -5338,6 +5745,7 @@
                 <string>MIPSII</string>
                 <string>MIPSIII</string>
                 <string>MIPSIV</string>
+                <string>MIPS64</string>
             </array>
             <key>format</key>
             <string>31..26=0 25..21:rs#2r 20..16:rt#3r 15..11:rd#1w 10..6=0 5..0=0x22</string>
@@ -5351,6 +5759,7 @@
                 <string>MIPS32R2</string>
                 <string>MIPS32R5</string>
                 <string>MIPS32R6</string>
+                <string>MIPS64</string>
             </array>
             <key>format</key>
             <string>31..26=0x11 25..21=0x10 20..16:ft#3r 15..11:fs#2r 10..6:fd#1w 5..0=1</string>
@@ -5364,6 +5773,7 @@
                 <string>MIPS32R2</string>
                 <string>MIPS32R5</string>
                 <string>MIPS32R6</string>
+                <string>MIPS64</string>
             </array>
             <key>format</key>
             <string>31..26=0x11 25..21=0x11 20..16:ft#3r 15..11:fs#2r 10..6:fd#1w 5..0=1</string>
@@ -5393,6 +5803,7 @@
                 <string>MIPSII</string>
                 <string>MIPSIII</string>
                 <string>MIPSIV</string>
+                <string>MIPS64</string>
             </array>
             <key>format</key>
             <string>31..26=0 25..21:rs#2r 20..16:rt#3r 15..11:rd#1w 10..6=0 5..0=0x23</string>
@@ -5422,6 +5833,7 @@
                 <string>MIPSII</string>
                 <string>MIPSIII</string>
                 <string>MIPSIV</string>
+                <string>MIPS64</string>
             </array>
             <key>format</key>
             <string>31..26=0x2b 25..21:base#2r 20..16:rt#1r 15..0:off16#3r</string>
@@ -5439,6 +5851,7 @@
                 <string>MIPSII</string>
                 <string>MIPSIII</string>
                 <string>MIPSIV</string>
+                <string>MIPS64</string>
             </array>
             <key>format</key>
             <string>31..26=0x39 25..21:base#2r 20..16:ft#1r 15..0:off16#3r</string>
@@ -5455,6 +5868,7 @@
                 <string>MIPSII</string>
                 <string>MIPSIII</string>
                 <string>MIPSIV</string>
+                <string>MIPS64</string>
             </array>
             <key>format</key>
             <string>31..26=0x3a 25..21:base#2r 20..16:coprt#1r 15..0:off16#3r</string>
@@ -5507,6 +5921,7 @@
                 <string>MIPSII</string>
                 <string>MIPSIII</string>
                 <string>MIPSIV</string>
+                <string>MIPS64</string>
             </array>
             <key>format</key>
             <string>31..26=0x2a 25..21:base#2r 20..16:rt#1r 15..0:off16#3r</string>
@@ -5535,6 +5950,7 @@
                 <string>MIPSII</string>
                 <string>MIPSIII</string>
                 <string>MIPSIV</string>
+                <string>MIPS64</string>
             </array>
             <key>format</key>
             <string>31..26=0x2e 25..21:base#2r 20..16:rt#1r 15..0:off16#3r</string>
@@ -5577,6 +5993,7 @@
                 <string>MIPSII</string>
                 <string>MIPSIII</string>
                 <string>MIPSIV</string>
+                <string>MIPS64</string>
             </array>
             <key>format</key>
             <string>31..26=0 25..11=0 10..6=0 5..0=0xf</string>
@@ -5593,6 +6010,7 @@
                 <string>MIPSII</string>
                 <string>MIPSIII</string>
                 <string>MIPSIV</string>
+                <string>MIPS64</string>
             </array>
             <key>format</key>
             <string>31..26=0 25..11=0 10..6:uimm#1r 5..0=0xf</string>
@@ -5620,6 +6038,7 @@
                 <string>MIPS32R2</string>
                 <string>MIPS32R5</string>
                 <string>MIPS32R6</string>
+                <string>MIPS64</string>
             </array>
             <key>format</key>
             <string>31..26=0 25..6=0 5..0=0xc</string>
@@ -5637,6 +6056,7 @@
                 <string>MIPSII</string>
                 <string>MIPSIII</string>
                 <string>MIPSIV</string>
+                <string>MIPS64</string>
             </array>
             <key>format</key>
             <string>31..26=0 25..6:uimm#1r 5..0=0xc</string>
@@ -5655,6 +6075,7 @@
                 <string>MIPSII</string>
                 <string>MIPSIII</string>
                 <string>MIPSIV</string>
+                <string>MIPS64</string>
             </array>
             <key>format</key>
             <string>31..26=0 25..21:rs#1r 20..16:rt#2r 15..6=0 5..0=0x34</string>
@@ -5671,6 +6092,7 @@
                 <string>MIPSII</string>
                 <string>MIPSIII</string>
                 <string>MIPSIV</string>
+                <string>MIPS64</string>
             </array>
             <key>format</key>
             <string>31..26=0 25..21:rs#1r 20..16:rt#2r 15..6:uimm#3r 5..0=0x34</string>
@@ -5686,6 +6108,7 @@
                 <string>MIPSII</string>
                 <string>MIPSIII</string>
                 <string>MIPSIV</string>
+                <string>MIPS64</string>
             </array>
             <key>format</key>
             <string>31..26=1 25..21:rs#1r 20..16=0xc 15..0:imm16#2r</string>
@@ -5704,6 +6127,7 @@
                 <string>MIPSII</string>
                 <string>MIPSIII</string>
                 <string>MIPSIV</string>
+                <string>MIPS64</string>
             </array>
             <key>format</key>
             <string>31..26=0 25..21:rs#1r 20..16:rt#2r 15..6=0 5..0=0x30</string>
@@ -5735,6 +6159,7 @@
                 <string>MIPSII</string>
                 <string>MIPSIII</string>
                 <string>MIPSIV</string>
+                <string>MIPS64</string>
             </array>
             <key>format</key>
             <string>31..26=1 25..21:rs#1r 20..16=8 15..0:imm16#2r</string>
@@ -5750,6 +6175,7 @@
                 <string>MIPSII</string>
                 <string>MIPSIII</string>
                 <string>MIPSIV</string>
+                <string>MIPS64</string>
             </array>
             <key>format</key>
             <string>31..26=1 25..21:rs#1r 20..16=9 15..0:imm16#2r</string>
@@ -5768,6 +6194,7 @@
                 <string>MIPSII</string>
                 <string>MIPSIII</string>
                 <string>MIPSIV</string>
+                <string>MIPS64</string>
             </array>
             <key>format</key>
             <string>31..26=0 25..21:rs#1r 20..16:rt#2r 15..6=0 5..0=0x31</string>
@@ -5823,6 +6250,7 @@
                 <string>MIPS32R2</string>
                 <string>MIPS32R5</string>
                 <string>MIPS32R6</string>
+                <string>MIPS64</string>
             </array>
             <key>format</key>
             <string>31..26=0x10 25..25=1 24..6=0 5..0=8</string>
@@ -5836,6 +6264,7 @@
                 <string>MIPS32R2</string>
                 <string>MIPS32R5</string>
                 <string>MIPS32R6</string>
+                <string>MIPS64</string>
             </array>
             <key>format</key>
             <string>31..26=0x10 25..25=1 24..6=0 5..0=1</string>
@@ -5849,6 +6278,7 @@
                 <string>MIPS32R2</string>
                 <string>MIPS32R5</string>
                 <string>MIPS32R6</string>
+                <string>MIPS64</string>
             </array>
             <key>format</key>
             <string>31..26=0x10 25..25=1 24..6=0 5..0=2</string>
@@ -5862,6 +6292,7 @@
                 <string>MIPS32R2</string>
                 <string>MIPS32R5</string>
                 <string>MIPS32R6</string>
+                <string>MIPS64</string>
             </array>
             <key>format</key>
             <string>31..26=0x10 25..25=1 24..6=0 5..0=6</string>
@@ -5880,6 +6311,7 @@
                 <string>MIPSII</string>
                 <string>MIPSIII</string>
                 <string>MIPSIV</string>
+                <string>MIPS64</string>
             </array>
             <key>format</key>
             <string>31..26=0 25..21:rs#1r 20..16:rt#2r 15..6=0 5..0=0x32</string>
@@ -5896,6 +6328,7 @@
                 <string>MIPSII</string>
                 <string>MIPSIII</string>
                 <string>MIPSIV</string>
+                <string>MIPS64</string>
             </array>
             <key>format</key>
             <string>31..26=0 25..21:rs#1r 20..16:rt#2r 15..6:uimm#3r 5..0=0x32</string>
@@ -5911,6 +6344,7 @@
                 <string>MIPSII</string>
                 <string>MIPSIII</string>
                 <string>MIPSIV</string>
+                <string>MIPS64</string>
             </array>
             <key>format</key>
             <string>31..26=1 25..21:rs#1r 20..16=0xa 15..0:imm16#2r</string>
@@ -5944,6 +6378,7 @@
                 <string>MIPSII</string>
                 <string>MIPSIII</string>
                 <string>MIPSIV</string>
+                <string>MIPS64</string>
             </array>
             <key>format</key>
             <string>31..26=0 25..21:rs#1r 20..16:rt#2r 15..6=0 5..0=0x33</string>
@@ -5960,6 +6395,7 @@
                 <string>MIPSII</string>
                 <string>MIPSIII</string>
                 <string>MIPSIV</string>
+                <string>MIPS64</string>
             </array>
             <key>format</key>
             <string>31..26=0 25..21:rs#1r 20..16:rt#2r 15..6:uimm#3r 5..0=0x33</string>
@@ -5978,6 +6414,7 @@
                 <string>MIPSII</string>
                 <string>MIPSIII</string>
                 <string>MIPSIV</string>
+                <string>MIPS64</string>
             </array>
             <key>format</key>
             <string>31..26=0 25..21:rs#1r 20..16:rt#2r 15..6=0 5..0=0x36</string>
@@ -5994,6 +6431,7 @@
                 <string>MIPSII</string>
                 <string>MIPSIII</string>
                 <string>MIPSIV</string>
+                <string>MIPS64</string>
             </array>
             <key>format</key>
             <string>31..26=0 25..21:rs#1r 20..16:rt#2r 15..6:uimm#3r 5..0=0x36</string>
@@ -6009,6 +6447,7 @@
                 <string>MIPSII</string>
                 <string>MIPSIII</string>
                 <string>MIPSIV</string>
+                <string>MIPS64</string>
             </array>
             <key>format</key>
             <string>31..26=1 25..21:rs#1r 20..16=0xe 15..0:imm16#2r</string>
@@ -6048,6 +6487,7 @@
                 <string>MIPS32R2</string>
                 <string>MIPS32R5</string>
                 <string>MIPS32R6</string>
+                <string>MIPS64</string>
             </array>
             <key>format</key>
             <string>31..26=0x11 25..21=0x10 20..16=0 15..11:fs#2r 10..6:fd#1w 5..0=0xd</string>
@@ -6061,6 +6501,7 @@
                 <string>MIPS32R2</string>
                 <string>MIPS32R5</string>
                 <string>MIPS32R6</string>
+                <string>MIPS64</string>
             </array>
             <key>format</key>
             <string>31..26=0x11 25..21=0x11 20..16=0 15..11:fs#2r 10..6:fd#1w 5..0=0xd</string>
@@ -6074,6 +6515,7 @@
                 <string>MIPS32R2</string>
                 <string>MIPS32R5</string>
                 <string>MIPS32R6</string>
+                <string>MIPS64</string>
             </array>
             <key>format</key>
             <string>31..26=0x10 25..25=1 24..6:ignored 5..0=0x20</string>
@@ -6115,6 +6557,7 @@
                 <string>MIPSII</string>
                 <string>MIPSIII</string>
                 <string>MIPSIV</string>
+                <string>MIPS64</string>
             </array>
             <key>format</key>
             <string>31..26=0 25..21:rs#2r 20..16:rt#3r 15..11:rd#1w 10..6=0 5..0=0x26</string>
@@ -6132,6 +6575,7 @@
                 <string>MIPSII</string>
                 <string>MIPSIII</string>
                 <string>MIPSIV</string>
+                <string>MIPS64</string>
             </array>
             <key>format</key>
             <string>31..26=0xe 25..21:rs#2r 20..16:rt#1w 15..0:uimm#3r</string>

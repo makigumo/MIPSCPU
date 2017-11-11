@@ -77,7 +77,7 @@ Instruction opcodes and their operands are defined in `opcodes.plist`. This file
 * Idiom: Optional boolean.
 * Conditions: Optional conditions that must be satisfied, e.g. for MIPS32R6.
     * compare operand and operand, or
-        * `#1=#2`
+        * `#1==#2`
     * compare operand and value
         * `#1!=0`
     * operands are designated by their position from the left inside the format string `0..n-1`

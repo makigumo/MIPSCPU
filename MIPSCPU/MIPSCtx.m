@@ -4,6 +4,7 @@
 //
 
 #import <Hopper/Hopper.h>
+#import <Hopper/DisasmStruct.h>
 #import "MIPSCtx.h"
 #import "NSArray+BitRange.h"
 #import "Insn.h"
@@ -15,6 +16,7 @@
 @implementation MIPSCtx {
     MIPSCPU *_cpu;
     NSObject <HPDisassembledFile> *_file;
+    CPUEndianess _cpuEndianess;
 };
 
 + (NSArray<NSString *> *const)condStrings {
@@ -103,6 +105,10 @@
                 @"MIPSIII": @(MIPS_III),
                 @"MIPSIV": @(MIPS_IV),
                 @"MIPS64": @(MIPS64),
+                @"MIPS64R2": @(MIPS64R2),
+                @"MIPS64R3": @(MIPS64R3),
+                @"MIPS64R5": @(MIPS64R5),
+                @"EJTAG": @(EJTAG), // CPU in debug mode
         };
     });
     return _releases;
@@ -140,6 +146,11 @@
     if (self = [super init]) {
         _cpu = cpu;
         _file = file;
+        if ([_file.cpuFamily isEqualToString:@"mipsel"]) {
+            self.cpuEndianess = CPUEndianess_Little;
+        } else if ([_file.cpuFamily isEqualToString:@"mipseb"]) {
+            self.cpuEndianess = CPUEndianess_Big;
+        }
         if ([_file.cpuSubFamily isEqualToString:@"mips32r2"]) {
             self.isaRelease = MIPS32R2;
         } else if ([_file.cpuSubFamily isEqualToString:@"mips32r5"]) {
@@ -154,6 +165,8 @@
             self.isaRelease = MIPS_III;
         } else if ([_file.cpuSubFamily isEqualToString:@"mips IV"]) {
             self.isaRelease = MIPS_IV;
+        } else if ([_file.cpuSubFamily isEqualToString:@"mips64"]) {
+            self.isaRelease = MIPS64;
         } else {
             self.isaRelease = MIPS32;
         }
@@ -176,7 +189,9 @@
             NSAssert1(releases != nil, @"missing key 'release' in %@", opDict);
             NSAssert1(releases.count > 0, @"no releases specified in %@", opDict);
             for (NSString *const r in releases) {
-                __release |= [MIPSCtx isaReleases][r].integerValue;
+                NSNumber *const type = [MIPSCtx isaReleases][r];
+                NSAssert1(type != nil, @"unknown isa release: %@", r);
+                __release |= type.integerValue;
             }
             NSString *const format = opDict[@"format"];
             NSAssert1(format != nil, @"missing key 'format' in %@", opDict);
@@ -309,7 +324,10 @@ static inline void clear_operands_from(DisasmStruct *disasm, int index) {
     disasm->instruction.branchType = DISASM_BRANCH_NONE;
     disasm->instruction.pcRegisterValue = disasm->virtualAddr + 4;
 
-    uint32_t bytes = _MyOSReadInt32(disasm->bytes, 0);
+    uint32_t bytes = (self.cpuEndianess == CPUEndianess_Little) ?
+            disasm->bytes[0] | disasm->bytes[1] << 8 | disasm->bytes[2] << 16 | disasm->bytes[3] << 24 :
+            disasm->bytes[3] | disasm->bytes[2] << 8 | disasm->bytes[1] << 16 | disasm->bytes[0] << 24;
+
     Insn *const insn = [self getInsnForBytes:bytes];
     if (insn) {
         NSArray<InsOp *> *const operands = insn.insDef.operands;
