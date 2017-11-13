@@ -45,6 +45,9 @@ typedef NS_ENUM(NSUInteger, InsOpType) {
     OTYPE_UIMM, // unsigned immediate (length determined by bitcount)
     OTYPE_UIMM_PLUS_ONE, // unsigned immediate (length determined by bitcount) + 1
     OTYPE_SIZE, // unsigned immediate - 1
+    OTYPE_MSBDMINUS32, // size (unsigned immediate) - 1 - 32
+    OTYPE_LSBMINUS32, // pos (unsigned immediate) - 32
+    OTYPE_MSBMINUS32, // pos + unsigned immediate - 1 - 32
     OTYPE_POSSIZE, // pos + unsigned immediate - 1
     OTYPE_JMP_ADR, // unsigned immediate left shifted by 2 bits
     OTYPE_BYTE_POS, // 2-bit byte position

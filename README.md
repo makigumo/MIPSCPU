@@ -33,16 +33,17 @@ Follow above instructions for building with *cmake*.
 
 ## Status
 
-* Little and big endianess
-    * support for MIPS I
-    * support for MIPS II
-    * support for MIPS III
-    * support for MIPS IV
-    * support for MIPS32 (release 1)
-    * support for MIPS32 release 2
-    * support for MIPS32 release 5
-    * support for MIPS32 release 6
-    * support for MIPS64 (release 1)
+[x] Little and big endianess
+[x] MIPS I
+[x] MIPS II
+[x] MIPS III
+[x] MIPS IV
+[x] MIPS32 (release 1)
+[x] MIPS32 release 2
+[x] MIPS32 release 5
+[x] MIPS32 release 6
+[x] MIPS64 (release 1)
+[x] MIPS64 release 2
 * Branch typing is incomplete (still need to figure out the different `DISASM_BRANCH_*` types)
 * NOPping should work
 

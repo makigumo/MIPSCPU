@@ -108,6 +108,7 @@
                 @"MIPS64R2": @(MIPS64R2),
                 @"MIPS64R3": @(MIPS64R3),
                 @"MIPS64R5": @(MIPS64R5),
+                @"MIPS64R6": @(MIPS64R6),
                 @"EJTAG": @(EJTAG), // CPU in debug mode
         };
     });
@@ -167,6 +168,8 @@
             self.isaRelease = MIPS_IV;
         } else if ([_file.cpuSubFamily isEqualToString:@"mips64"]) {
             self.isaRelease = MIPS64;
+        } else if ([_file.cpuSubFamily isEqualToString:@"mips64r2"]) {
+            self.isaRelease = MIPS64R2;
         } else {
             self.isaRelease = MIPS32;
         }
@@ -546,11 +549,32 @@ static inline void clear_operands_from(DisasmStruct *disasm, int index) {
                     disasm->operand[idx].size = [operand bitCount] + 1;
                     disasm->operand[idx].accessMode = operand.accessMode;
                     break;
+                case OTYPE_MSBDMINUS32:
+                    disasm->operand[idx].type = DISASM_OPERAND_CONSTANT_TYPE;
+                    disasm->operand[idx].immediateValue = operandValue + 1 + 32;
+                    disasm->operand[idx].size = [operand bitCount] + 1;
+                    disasm->operand[idx].accessMode = operand.accessMode;
+                    break;
+                case OTYPE_LSBMINUS32:
+                    disasm->operand[idx].type = DISASM_OPERAND_CONSTANT_TYPE;
+                    disasm->operand[idx].immediateValue = operandValue + 32;
+                    disasm->operand[idx].size = [operand bitCount] + 1;
+                    disasm->operand[idx].accessMode = operand.accessMode;
+                    break;
                 case OTYPE_POSSIZE:
                     if (idx > 0) {
                         uint8_t pos = (uint8_t) [insn operandValue:idx - 1].unsignedIntValue;
                         disasm->operand[idx].type = DISASM_OPERAND_CONSTANT_TYPE;
                         disasm->operand[idx].immediateValue = operandValue - pos + 1;
+                        disasm->operand[idx].size = [operand bitCount] + 1;
+                        disasm->operand[idx].accessMode = operand.accessMode;
+                    }
+                    break;
+                case OTYPE_MSBMINUS32:
+                    if (idx > 0) {
+                        uint8_t pos = (uint8_t) [insn operandValue:idx - 1].unsignedIntValue;
+                        disasm->operand[idx].type = DISASM_OPERAND_CONSTANT_TYPE;
+                        disasm->operand[idx].immediateValue = operandValue - pos + 1 + 32;
                         disasm->operand[idx].size = [operand bitCount] + 1;
                         disasm->operand[idx].accessMode = operand.accessMode;
                     }

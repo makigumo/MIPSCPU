@@ -25,7 +25,8 @@ typedef NS_ENUM(NSUInteger, isa_release) {
     MIPS64R2 = 1 << 10,
     MIPS64R3 = 1 << 11,
     MIPS64R5 = 1 << 12,
-    EJTAG = 1 << 13,
+    MIPS64R6 = 1 << 13,
+    EJTAG = 1 << 14,
 };
 
 @interface InsDef : NSObject {
