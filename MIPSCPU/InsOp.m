@@ -31,7 +31,7 @@
     const NSMutableArray<BitRange *> *bitRanges = [[NSMutableArray alloc] init];
     for (NSString *const bitrangeString in bitrangeArray) {
         const NSArray<NSString *> *bits = [bitrangeString componentsSeparatedByString:@".."];
-        NSAssert1([bits count] == 2, @"invalid bitrange: %@", bitrangeString);
+        NSAssert2([bits count] == 2, @"invalid bitrange: '%@' in '%@'", bitrangeString, string);
         NSAssert2([bits[0] length] > 0, @"invalid bitrange start: %@ in %@", bits[0], bitrangeString);
         NSAssert2([bits[0] isDigitAtIndex:0], @"invalid bitrange start: %@ in %@", bits[0], bitrangeString);
         const uint8_t first = (uint8_t) bits[0].intValue;

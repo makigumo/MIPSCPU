@@ -24,13 +24,14 @@
     self = [super init];
     if (self) {
         self._release = aRelease;
-        self.mnemonic = aMnemonic;
-        self.format = aFormat;
+        self.mnemonic = [aMnemonic stringByTrimmingCharactersInSet:NSCharacterSet.whitespaceAndNewlineCharacterSet];
+        self.format = [aFormat stringByTrimmingCharactersInSet:NSCharacterSet.whitespaceAndNewlineCharacterSet];
         [self parseFormat];
         if (conditionStrings) {
             NSMutableArray *conds = [NSMutableArray arrayWithCapacity:conditionStrings.count];
             for (NSString *const condString in conditionStrings) {
-                [conds addObject:[InsCond condWith:condString andOps:_op_parts]];
+                [conds addObject:[InsCond condWith:[condString stringByTrimmingCharactersInSet:NSCharacterSet.whitespaceAndNewlineCharacterSet]
+                                            andOps:_op_parts]];
             }
             self.conditions = conds;
         } else {
@@ -121,6 +122,8 @@
         NSMutableArray<InsOp *> *ret = [[NSMutableArray alloc] init];
         NSArray<NSString *> *compArray = [self.format componentsSeparatedByCharactersInSet:NSCharacterSet.whitespaceCharacterSet];
         for (NSString *comp in compArray) {
+            NSAssert2([comp length] > 0, @"empty component (multiple whitespace characters?) for %@ in %@",
+                    self.mnemonic, self.format);
             InsOp *insOp = [InsOp insOpFromString:comp];
             if (insOp.type == OTYPE_INVALID) {
                 NSLog(@"invalid type: in %@ for op %@ in format: %@", self.mnemonic, comp, self.format);
