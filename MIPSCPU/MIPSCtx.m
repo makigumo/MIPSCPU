@@ -16,7 +16,6 @@
 @implementation MIPSCtx {
     MIPSCPU *_cpu;
     NSObject <HPDisassembledFile> *_file;
-    CPUEndianess _cpuEndianess;
 };
 
 + (NSArray<NSString *> *const)condStrings {
@@ -170,6 +169,10 @@
             self.isaRelease = MIPS64;
         } else if ([_file.cpuSubFamily isEqualToString:@"mips64r2"]) {
             self.isaRelease = MIPS64R2;
+        } else if ([_file.cpuSubFamily isEqualToString:@"mips64r3"]) {
+            self.isaRelease = MIPS64R3;
+        } else if ([_file.cpuSubFamily isEqualToString:@"mips64r5"]) {
+            self.isaRelease = MIPS64R5;
         } else {
             self.isaRelease = MIPS32;
         }

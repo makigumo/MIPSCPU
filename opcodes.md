@@ -4,9 +4,9 @@ Instruction opcodes and their operands are defined in `opcodes.plist`. This file
 
 * Mnemonic: String with the instruction mnemonic. Doesn't have to be unique.
 * Comment: String with an optional comment.
-* Release: An array of ISA releases this instruction belongs to. Mustn't be empty.
+* Release: An array of ISA releases this instruction definition belongs to. Mustn't be empty.
 * Branchtype: Optional string specifying a branch type.
-    * `ALWAYS`
+    * `ALWAYS` unconditional jump
     * `EQUAL_ZERO`
     * `GREATER_EQUAL`
     * `GREATER_EQUAL_ZERO`
@@ -25,24 +25,25 @@ Instruction opcodes and their operands are defined in `opcodes.plist`. This file
     * `FALSE`
 * Format: A string describing the instruction format. Consisting of bit range definitions describing the instruction parts.
     * Instruction parts are separated by one space.
-    * Each instruction part must have at least bit range defined.
-    * Bit range(s) have the form of `n..m` with n > m >=0 denoting the leftmost und rightmost bit.
+    * Each instruction part must have at least a bit range defined.
+    * Bit range(s) have the form of `n..m` with n > m >=0 denoting the leftmost (n) und rightmost (m) bit.
         * a single bit has to be denoted as `n..n`
         * non-continuous bit ranges can be expressed as a comma-separated list, e.g. `31..29,26..23`
-    * Values: values in decimal or hex notation, `=1`, `=0x1`
+    * Values: values follow a bit range and can be in decimal `=1` or hex notation `=0x1`
+        * e.g. `31..26=0x14`
     * If operand is branch destination: `B`
-    * Operand position: `#1`
+    * Operand position: `#n` with n > 0
         * If operand is read and/or written: `#1w`, `#2r`, `#3rw`
         * Operands without a position are not considered for output.
     * Operand type
-        * `rt` GPR
+        * `rt` General Purpose Register (GPR)
         * `rs` GPR
         * `rd` GPR
-        * `coprt` CPR
+        * `coprt` Coprocessor Register (CPR)
         * `coprs` CPR
         * `coprd` CPR
-        * `hwrd` HWR
-        * `ft` FPR
+        * `hwrd` Hardware Register (HWR)
+        * `ft` Floating Point Register (FPR)
         * `fs` FPR
         * `fd` FPR
         * `uimm` unsigned immediate of size determined by bit range length.
@@ -73,8 +74,14 @@ Instruction opcodes and their operands are defined in `opcodes.plist`. This file
         * `sa`
         * `sa+1`
         * `op`
-        * `ignored`
-* Idiom: Optional boolean.
+        * `msb`
+        * `msbd`
+        * `msbminus32`
+        * `msbdminus32`
+        * `lsb`
+        * `lsbminus32`
+        * `ignored` ignored value
+* Idiom: Optional boolean for an idiom of another instruction.
 * Conditions: Optional conditions that must be satisfied, e.g. for MIPS32R6.
     * compare operand and operand, or
         * `#1==#2`
