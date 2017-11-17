@@ -6,6 +6,7 @@
         .global _start
         .text
 _start:
+	bgtz $zero, 0
 	addiu $sp,$sp,-8
 	nop
 #	lapc $t0,data # alias for addiupc

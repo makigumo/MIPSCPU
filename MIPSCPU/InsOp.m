@@ -105,6 +105,7 @@
                 @"off11": @(OTYPE_OFF11),
                 @"off16": @(OTYPE_OFF16),
                 @"off18": @(OTYPE_OFF18),
+                @"off18sl3": @(OTYPE_OFF18SL3),
                 @"off21": @(OTYPE_OFF21),
                 @"off23": @(OTYPE_OFF23),
                 @"off28": @(OTYPE_OFF28),

@@ -173,6 +173,8 @@
             self.isaRelease = MIPS64R3;
         } else if ([_file.cpuSubFamily isEqualToString:@"mips64r5"]) {
             self.isaRelease = MIPS64R5;
+        } else if ([_file.cpuSubFamily isEqualToString:@"mips64r6"]) {
+            self.isaRelease = MIPS64R6;
         } else {
             self.isaRelease = MIPS32;
         }
@@ -378,7 +380,7 @@ static inline void clear_operands_from(DisasmStruct *disasm, int index) {
                 case OTYPE_BYTE_POS:
                     disasm->operand[idx].type = DISASM_OPERAND_CONSTANT_TYPE;
                     disasm->operand[idx].immediateValue = operandValue;
-                    disasm->operand[idx].size = 2;
+                    disasm->operand[idx].size = [operand bitCount];
                     disasm->operand[idx].accessMode = operand.accessMode;
                     break;
                 case OTYPE_IMM16:
@@ -440,6 +442,14 @@ static inline void clear_operands_from(DisasmStruct *disasm, int index) {
                     if (operand.isBranchDestination) {
                         disasm->operand[idx].isBranchDestination = 1;
                     }
+                    disasm->operand[idx].accessMode = operand.accessMode;
+                    break;
+                case OTYPE_OFF18SL3: //memory[ (PC&~0x7) + sign_extend( offset << 3) ]
+                    disasm->operand[idx].type = DISASM_OPERAND_CONSTANT_TYPE | DISASM_OPERAND_RELATIVE;
+                    disasm->operand[idx].immediateValue = ((int32_t) (operandValue << 14)) >> 11;
+                    disasm->operand[idx].size = 21;
+                    disasm->instruction.addressValue = (Address) (disasm->virtualAddr & ~0x7) + (
+                            ((int32_t) (operandValue << 14)) >> 11);
                     disasm->operand[idx].accessMode = operand.accessMode;
                     break;
                 case OTYPE_OFF21:

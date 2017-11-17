@@ -43,7 +43,8 @@
                 [file.cpuSubFamily isEqualToString:@"mips64"] ||
                 [file.cpuSubFamily isEqualToString:@"mips64r2"] ||
                 [file.cpuSubFamily isEqualToString:@"mips64r3"] ||
-                [file.cpuSubFamily isEqualToString:@"mips64r5"]
+                [file.cpuSubFamily isEqualToString:@"mips64r5"] ||
+                [file.cpuSubFamily isEqualToString:@"mips64r6"]
                 ) {
             MIPSCtx *mipsCtx = [[MIPSCtx alloc] initWithCPU:self andFile:file];
             return mipsCtx;
@@ -89,7 +90,7 @@
 }
 
 - (NSString *)pluginVersion {
-    return @"0.2.2";
+    return @"0.2.4";
 }
 
 - (NSString *)commandLineIdentifier {
@@ -120,6 +121,7 @@
                 @"mips64r2",
                 @"mips64r3",
                 @"mips64r5",
+                @"mips64r6",
         ];
     }
     return nil;
@@ -147,6 +149,7 @@
         if ([subFamily isEqualToString:@"mips64r2"]) return 64;
         if ([subFamily isEqualToString:@"mips64r3"]) return 64;
         if ([subFamily isEqualToString:@"mips64r5"]) return 64;
+        if ([subFamily isEqualToString:@"mips64r6"]) return 64;
     }
     return 0;
 }

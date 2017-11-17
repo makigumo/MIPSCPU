@@ -77,6 +77,9 @@ A docker image with a precompiled Hopper SDK for Linux is also available, just r
 - [x] MIPS32 release 6
 - [x] MIPS64 (release 1)
 - [x] MIPS64 release 2
+- [x] MIPS64 release 3
+- [x] MIPS64 release 5
+- [x] MIPS64 release 6
 * Branch typing is incomplete (still need to figure out the different `DISASM_BRANCH_*` types)
 * NOPping should work
 
@@ -91,4 +94,4 @@ A docker image with a precompiled Hopper SDK for Linux is also available, just r
 
 ## Resources
 
-* https://imgtec.com/documentation/
+* https://www.mips.com/downloads/

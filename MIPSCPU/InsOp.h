@@ -30,6 +30,7 @@ typedef NS_ENUM(NSUInteger, InsOpType) {
     OTYPE_OFF11, // signed 11-bit offset
     OTYPE_OFF16, // signed 16-bit offset
     OTYPE_OFF18, // signed 18-bit offset (16-bit offset field shifted left by 2 bits)
+    OTYPE_OFF18SL3, // sign extended 18-bit offset field shifted left by 3 bits
     OTYPE_OFF21, // signed 21-bit offset (19-bit offset field shifted left by 2 bits)
     OTYPE_OFF23, // signed 23-bit offset (21-bit offset field shifted left by 2 bits)
     OTYPE_OFF28, // signed 28-bit offset (26-bit offset field shifted left by 2 bits)
@@ -50,7 +51,7 @@ typedef NS_ENUM(NSUInteger, InsOpType) {
     OTYPE_MSBMINUS32, // pos + unsigned immediate - 1 - 32
     OTYPE_POSSIZE, // pos + unsigned immediate - 1
     OTYPE_JMP_ADR, // unsigned immediate left shifted by 2 bits
-    OTYPE_BYTE_POS, // 2-bit byte position
+    OTYPE_BYTE_POS, // 2-bit or 3-bit byte position
 };
 
 @interface InsOp : NSObject {
