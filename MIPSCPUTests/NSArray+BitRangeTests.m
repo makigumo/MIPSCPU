@@ -84,4 +84,23 @@
     XCTAssertEqual([array valueFromBytes:0x4c000000], 0x13);
 }
 
+- (void)testBitcount {
+    XCTAssertEqual([@[[BitRange range32WithFirst:31 last:26]] bitCount], 6);
+    XCTAssertEqual([@[[BitRange range32WithFirst:25 last:21]] bitCount], 5);
+    XCTAssertEqual([@[[BitRange range32WithFirst:20 last:16]] bitCount], 5);
+    XCTAssertEqual([@[[BitRange range32WithFirst:15 last:11]] bitCount], 5);
+    XCTAssertEqual([@[[BitRange range32WithFirst:5 last:0]] bitCount], 6);
+}
+
+- (void)testBitcount_multiple {
+    NSArray *const array = @[
+            [BitRange range32WithFirst:31 last:26],
+            [BitRange range32WithFirst:25 last:21],
+            [BitRange range32WithFirst:20 last:16],
+            [BitRange range32WithFirst:15 last:11],
+            [BitRange range32WithFirst:5 last:0],
+    ];
+    XCTAssertEqual([array bitCount], 27);
+}
+
 @end

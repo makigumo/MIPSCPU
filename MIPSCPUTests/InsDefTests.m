@@ -122,4 +122,22 @@ InsDef *insDef;
             NSException, NSInternalInconsistencyException, @"should throw NSInternalInconsistencyException");
 }
 
+- (void)testLength {
+    InsDef *def = [InsDef defWithMnemonic:@"test" release:MIPS32 format:@"31..26=0 25..21:rs#1r 20..16:rt#2r 15..6=0 5..0=0x1f"];
+    XCTAssertEqual(def.length, 32);
+    XCTAssertEqual(def.lengthInBytes, 4);
+}
+
+- (void)testLength_uprounded {
+    InsDef *def = [InsDef defWithMnemonic:@"test" release:MIPS32 format:@"31..26=0 25..21:rs#1r 20..16:rt#2r 15..11=0 5..0=0x1f"];
+    XCTAssertEqual(def.length, 27);
+    XCTAssertEqual(def.lengthInBytes, 4);
+}
+
+- (void)testLength_uprounded_2 {
+    InsDef *def = [InsDef defWithMnemonic:@"test" release:MIPS32 format:@"30..26=0 25..21:rs#1r 20..16:rt#2r 15..6=0 5..0=0x1f"];
+    XCTAssertEqual(def.length, 31);
+    XCTAssertEqual(def.lengthInBytes, 4);
+}
+
 @end

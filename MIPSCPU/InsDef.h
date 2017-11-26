@@ -67,6 +67,7 @@ typedef NS_ENUM(NSUInteger, isa_release) {
 
 - (NSString *)description;
 
-- (uint8_t)instructionLength;
+- (uint8_t)lengthInBytes;
 
+- (uint8_t)length;
 @end

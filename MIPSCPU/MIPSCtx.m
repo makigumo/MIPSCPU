@@ -598,8 +598,8 @@ static inline void clear_operands_from(DisasmStruct *disasm, int index) {
                     break;
             }
         }];
-        disasm->instruction.pcRegisterValue = disasm->virtualAddr + [insn.insDef instructionLength];
-        disasm->instruction.length = [insn.insDef instructionLength];
+        disasm->instruction.pcRegisterValue = disasm->virtualAddr + [insn.insDef lengthInBytes];
+        disasm->instruction.length = [insn.insDef lengthInBytes];
         if (insn.insDef.branchType) {
             disasm->instruction.branchType = (DisasmBranchType) insn.insDef.branchType.integerValue;
         }
@@ -611,7 +611,7 @@ static inline void clear_operands_from(DisasmStruct *disasm, int index) {
             [self calculateAddress:disasm withInsn:insn andOp:BUILDOP_OR];
         }
 
-        len = [insn.insDef instructionLength];
+        len = [insn.insDef lengthInBytes];
     }
 
 
@@ -638,7 +638,7 @@ static inline void clear_operands_from(DisasmStruct *disasm, int index) {
     const uint8_t STEPS_BACK = 2;
     for (int stepBack = 1; stepBack <= STEPS_BACK; stepBack++) {
         // fetch previous instruction
-        Insn *prevIn = [self getInsnAtAddress:disasm->virtualAddr - ([in.insDef instructionLength] * stepBack)];
+        Insn *prevIn = [self getInsnAtAddress:disasm->virtualAddr - ([in.insDef lengthInBytes] * stepBack)];
         if (prevIn) {
             if ([self calculateAddress:disasm withPrev:prevIn andInsDef:in andOp:op]) {
                 break;

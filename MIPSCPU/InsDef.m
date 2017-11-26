@@ -156,10 +156,24 @@
     return description;
 }
 
-- (uint8_t)instructionLength {
+/**
+ * Returns instruction byte length.
+ * @return instruction length in bytes.
+ */
+- (uint8_t)lengthInBytes {
+    uint8_t len = [self length];
+    const uint8_t mod = (len % 8) == 0 ? (uint8_t) 0 : (uint8_t) 1;
+    return (uint8_t) (len / 8) + mod;
+}
+
+/**
+ * Returns instruction bit length.
+ * @return instruction length in bits.
+ */
+- (uint8_t)length {
     uint8_t len = 0;
     for (InsOp *iop in _op_parts) len += iop.bits.bitCount;
-    return (uint8_t) (len / 8);
+    return (uint8_t) len;
 }
 
 @end

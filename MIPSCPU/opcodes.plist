@@ -2458,7 +2458,7 @@
                 <string>MIPS64R5</string>
             </array>
             <key>format</key>
-            <string>31..26=0 25..21:rs#1r 20..16:rt#2r 15..11=0 5..0=0x1f</string>
+            <string>31..26=0 25..21:rs#1r 20..16:rt#2r 15..6=0 5..0=0x1f</string>
         </dict>
         <dict>
             <key>mnemonic</key>
