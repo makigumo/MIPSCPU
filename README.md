@@ -2,7 +2,7 @@
 
 # MIPS CPU plugin for Hopper Disassembler
 
-This is an experimental, unsophisticated plugin prototype using a custom disassembler and the [capstone](https://github.com/aquynh/capstone) (http://www.capstone-engine.org/) engine for the MIPS architecture (currently 32 bit EL only) whose main purpose is to provide a play and learning ground for the Hopper plugin system and the MIPS architecture and some assembly language in general.
+This is an experimental, unsophisticated plugin prototype using a custom disassembler and the [capstone](https://github.com/aquynh/capstone) (http://www.capstone-engine.org/) engine for the MIPS architecture whose main purpose is to provide a play and learning ground for the Hopper plugin system and the MIPS architecture and some assembly language in general.
 
 There are currently two disassembler engines:
 * capstone based engine for MIPS32
@@ -28,10 +28,11 @@ There are currently two disassembler engines:
 ### Linux
 
 The Linux build requires the compilation of the Hopper SDK.
+Please also refer the official [SDK Documentation](https://github.com/makigumo/HopperSDK-v4/blob/master/SDK%20Documentation.pdf). 
 
 #### Compile SDK
 
-* download and extract the SDK from hopperapp.com
+* download and extract the Hopper SDK from https://hopperapp.com
     ```
     mkdir HopperSDK
     cd HopperSDK
@@ -56,6 +57,8 @@ The Linux build requires the compilation of the Hopper SDK.
     ```
 
 ### Linux (Docker)
+
+A docker image with a precompiled Hopper SDK for Linux is also available, just run
 
 ```
 ./docker/linux-build.sh
