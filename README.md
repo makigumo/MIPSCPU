@@ -6,7 +6,7 @@ This is an experimental, unsophisticated plugin prototype using a custom disasse
 
 There are currently two disassembler engines:
 * capstone based engine for MIPS32
-* custom engine for MIPS I, II, III, IV and MIPS32
+* custom engine for MIPS I, II, III, IV and MIPS32/MIPS64
 
 ## Requirements
 
@@ -27,9 +27,39 @@ There are currently two disassembler engines:
     ```
 ### Linux
 
-Run `install.sh` from the Hopper-SDK.
-Then adjust your `PATH` to include the created `gnustep-Linux-x86_64/bin/` path.
-Follow above instructions for building with *cmake*.
+The Linux build requires the compilation of the Hopper SDK.
+
+#### Compile SDK
+
+* download and extract the SDK from hopperapp.com
+    ```
+    mkdir HopperSDK
+    cd HopperSDK
+    unzip HopperSDK-*.zip # your downloaded SDK file
+    ```
+* build the SDK
+    ```
+    cd Linux
+    ./install.sh
+    ```
+* add the newly created bin-path to your `PATH`
+    ```
+    export PATH="$PATH":gnustep-Linux-x86_64/bin/
+    ```
+
+#### Build plugin
+
+* follow the instructions for building with *cmake*
+* or, run
+    ```
+    ./build.sh
+    ```
+
+### Linux (Docker)
+
+```
+./docker/linux-build.sh
+```
 
 ## Status
 
