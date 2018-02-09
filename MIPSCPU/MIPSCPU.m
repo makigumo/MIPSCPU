@@ -163,7 +163,7 @@
     return @[@"generic"];
 }
 
-- (NSString *)framePointerRegisterNameForFile:(NSObject <HPDisassembledFile> *)file {
+- (NSString *)framePointerRegisterNameForFile:(NSObject <HPDisassembledFile> *)file cpuMode:(uint8_t)cpuMode {
     return @"gp";
 }
 
@@ -195,15 +195,23 @@
     return 0;
 }
 
-- (BOOL)registerIndexIsStackPointer:(NSUInteger)reg ofClass:(RegClass)reg_class {
+- (BOOL)registerIndexIsStackPointer:(NSUInteger)reg
+                            ofClass:(RegClass)reg_class
+                            cpuMode:(uint8_t)cpuMode
+                               file:(NSObject <HPDisassembledFile> *)file {
     return reg_class == RegClass_GeneralPurposeRegister && reg == 29;
 }
 
-- (BOOL)registerIndexIsFrameBasePointer:(NSUInteger)reg ofClass:(RegClass)reg_class {
+- (BOOL)registerIndexIsFrameBasePointer:(NSUInteger)reg
+                                ofClass:(RegClass)reg_class
+                                cpuMode:(uint8_t)cpuMode
+                                   file:(NSObject <HPDisassembledFile> *)file {
     return reg_class == RegClass_GeneralPurposeRegister && reg == 30;
 }
 
-- (BOOL)registerIndexIsProgramCounter:(NSUInteger)reg {
+- (BOOL)registerIndexIsProgramCounter:(NSUInteger)reg
+                              cpuMode:(uint8_t)cpuMode
+                                 file:(NSObject <HPDisassembledFile> *)file {
     return reg == 1;
 }
 
