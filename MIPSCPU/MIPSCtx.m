@@ -716,7 +716,7 @@ static inline void clear_operands_from(DisasmStruct *disasm, int index) {
                    forProcedure:(NSObject <HPProcedure> *)procedure
                      basicBlock:(NSObject <HPBasicBlock> *)basicBlock
                       ofSegment:(NSObject <HPSegment> *)segment
-                calledAddresses:(NSMutableArray<NSNumber *> *)calledAddresses
+                calledAddresses:(NSMutableArray<NSObject <HPCallDestination> *> *)calledAddresses
                       callsites:(NSMutableArray<NSNumber *> *)callSitesAddresses {
 
 }

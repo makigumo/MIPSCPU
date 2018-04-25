@@ -1137,7 +1137,7 @@ static inline RegClass capstoneRegisterToRegClass(mips_reg reg) {
                    forProcedure:(NSObject <HPProcedure> *)procedure
                      basicBlock:(NSObject <HPBasicBlock> *)basicBlock
                       ofSegment:(NSObject <HPSegment> *)segment
-                calledAddresses:(NSMutableArray<NSNumber *> *)calledAddresses
+                calledAddresses:(NSMutableArray<NSObject <HPCallDestination> *> *)calledAddresses
                       callsites:(NSMutableArray<NSNumber *> *)callSitesAddresses {
 /*
     cs_insn *insn = (cs_insn*)disasm->instruction.userData;
