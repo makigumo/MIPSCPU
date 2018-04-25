@@ -1395,6 +1395,11 @@ static inline int regIndexFromType(uint64_t type) {
     return NO;
 }
 
+- (BOOL)instructionConditionCPUModeAtTargetAddress:(DisasmStruct *)disasmStruct
+                                     resultCPUMode:(uint8_t *)cpuMode {
+    return NO;
+}
+
 - (BOOL)instructionMayBeASwitchStatement:(DisasmStruct *)disasmStruct {
     if (strncmp(disasmStruct->instruction.mnemonic, "jr", 2) == 0) {
         return YES;
