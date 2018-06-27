@@ -88,6 +88,10 @@
     return @"0.2.2";
 }
 
+- (NSString *)commandLineIdentifier {
+    return @"mips";
+}
+
 - (NSArray<NSString *> *)cpuSubFamiliesForFamily:(NSString *)family {
     if ([family isEqualToString:@"mips (capstone)"])
         return @[
