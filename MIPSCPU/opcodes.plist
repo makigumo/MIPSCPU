@@ -5850,6 +5850,8 @@
         <dict>
             <key>mnemonic</key>
             <string>rdhwr</string>
+            <key>comment</key>
+            <string>special case of rdhwr rt, rd, sel=0</string>
             <key>release</key>
             <array>
                 <string>MIPS32R2</string>
@@ -5861,6 +5863,21 @@
             </array>
             <key>format</key>
             <string>31..26=0x1f 25..21=0 20..16:rt#1w 15..11:hwrd#2r 10..6=0 5..0=0x3b</string>
+        </dict>
+        <dict>
+            <key>mnemonic</key>
+            <string>rdhwr</string>
+            <key>release</key>
+            <array>
+                <string>MIPS32R2</string>
+                <string>MIPS32R5</string>
+                <string>MIPS32R6</string>
+                <string>MIPS64R2</string>
+                <string>MIPS64R3</string>
+                <string>MIPS64R5</string>
+            </array>
+            <key>format</key>
+            <string>31..26=0x1f 25..21=0 20..16:rt#1w 15..11:hwrd#2r 10..9=0 8..6:uimm 5..0=0x3b</string>
         </dict>
         <dict>
             <key>mnemonic</key>
