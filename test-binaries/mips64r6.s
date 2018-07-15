@@ -38,6 +38,11 @@ _scd:
 	#scdp $t0, $t1, $t3
 	.byte 0x67, 0x58, 0x09, 0x7d
 
+	.global _crc32
+_crc32:
+	crc32b $t0, $t1, $t0
+
+
 	.global _data
 	.data
 	.align 8

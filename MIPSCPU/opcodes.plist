@@ -2181,6 +2181,92 @@
         </dict>
         <dict>
             <key>mnemonic</key>
+            <string>crc32b</string>
+            <key>release</key>
+            <array>
+                <string>MIPS32R6</string>
+                <string>MIPS64R6</string>
+            </array>
+            <key>format</key>
+            <string>31..26=0x1f 25..21:rs#2r 20..16:rt#1rw 15..11=0 10..8=0 7..6=0 5..0=0x0f</string>
+        </dict>
+        <dict>
+            <key>mnemonic</key>
+            <string>crc32h</string>
+            <key>release</key>
+            <array>
+                <string>MIPS32R6</string>
+                <string>MIPS64R6</string>
+            </array>
+            <key>format</key>
+            <string>31..26=0x1f 25..21:rs#2r 20..16:rt#1rw 15..11=0 10..8=0 7..6=1 5..0=0x0f</string>
+        </dict>
+        <dict>
+            <key>mnemonic</key>
+            <string>crc32w</string>
+            <key>release</key>
+            <array>
+                <string>MIPS32R6</string>
+                <string>MIPS64R6</string>
+            </array>
+            <key>format</key>
+            <string>31..26=0x1f 25..21:rs#2r 20..16:rt#1rw 15..11=0 10..8=0 7..6=2 5..0=0x0f</string>
+        </dict>
+        <dict>
+            <key>mnemonic</key>
+            <string>crc32d</string>
+            <key>release</key>
+            <array>
+                <string>MIPS64R6</string>
+            </array>
+            <key>format</key>
+            <string>31..26=0x1f 25..21:rs#2r 20..16:rt#1rw 15..11=0 10..8=0 7..6=3 5..0=0x0f</string>
+        </dict>
+        <dict>
+            <key>mnemonic</key>
+            <string>crc32cb</string>
+            <key>release</key>
+            <array>
+                <string>MIPS32R6</string>
+                <string>MIPS64R6</string>
+            </array>
+            <key>format</key>
+            <string>31..26=0x1f 25..21:rs#2r 20..16:rt#1rw 15..11=0 10..8=1 7..6=0 5..0=0x0f</string>
+        </dict>
+        <dict>
+            <key>mnemonic</key>
+            <string>crc32ch</string>
+            <key>release</key>
+            <array>
+                <string>MIPS32R6</string>
+                <string>MIPS64R6</string>
+            </array>
+            <key>format</key>
+            <string>31..26=0x1f 25..21:rs#2r 20..16:rt#1rw 15..11=0 10..8=1 7..6=1 5..0=0x0f</string>
+        </dict>
+        <dict>
+            <key>mnemonic</key>
+            <string>crc32cw</string>
+            <key>release</key>
+            <array>
+                <string>MIPS32R6</string>
+                <string>MIPS64R6</string>
+            </array>
+            <key>format</key>
+            <string>31..26=0x1f 25..21:rs#2r 20..16:rt#1rw 15..11=0 10..8=1 7..6=2 5..0=0x0f</string>
+        </dict>
+        <dict>
+            <key>mnemonic</key>
+            <string>crc32cd</string>
+            <key>release</key>
+            <array>
+                <string>MIPS64R6</string>
+            </array>
+            <key>format</key>
+            <string>31..26=0x1f 25..21:rs#2r 20..16:rt#1rw 15..11=0 10..8=1 7..6=3 5..0=0x0f</string>
+        </dict>
+        <dict>
+            <key>mnemonic</key>
             <string>ctc1</string>
             <key>release</key>
             <array>
@@ -3545,6 +3631,28 @@
             </array>
             <key>format</key>
             <string>31..26=0x11 25..21=0x11 20..16=0 15..11:fs#2r 10..6:fd#1w 5..0=0xf</string>
+        </dict>
+        <dict>
+            <key>mnemonic</key>
+            <string>ginvi</string>
+            <key>release</key>
+            <array>
+                <string>MIPS32R6</string>
+                <string>MIPS64R6</string>
+            </array>
+            <key>format</key>
+            <string>31..26=0x1f 25..21:rs#1r 20..8=0 7..6=0 5..0=0x3d</string>
+        </dict>
+        <dict>
+            <key>mnemonic</key>
+            <string>ginvt</string>
+            <key>release</key>
+            <array>
+                <string>MIPS32R6</string>
+                <string>MIPS64R6</string>
+            </array>
+            <key>format</key>
+            <string>31..26=0x1f 25..21:rs#1r 20..16=0 15..10=0 9..8:uimm#2r 7..6=2 5..0=0x3d</string>
         </dict>
         <dict>
             <key>mnemonic</key>
