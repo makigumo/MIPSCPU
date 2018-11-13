@@ -1732,13 +1732,41 @@
                 <string>MIPS32</string>
                 <string>MIPS32R2</string>
                 <string>MIPS32R5</string>
+                <string>MIPS32R6</string>
+                <string>MIPSI</string>
+                <string>MIPSII</string>
+                <string>MIPSIII</string>
+                <string>MIPSIV</string>
                 <string>MIPS64</string>
                 <string>MIPS64R2</string>
                 <string>MIPS64R3</string>
                 <string>MIPS64R5</string>
+                <string>MIPS64R6</string>
             </array>
             <key>format</key>
             <string>31..26=0 25..16:code10#1r 15..6=0 5..0=0xd</string>
+        </dict>
+        <dict>
+            <key>mnemonic</key>
+            <string>break</string>
+            <key>release</key>
+            <array>
+                <string>MIPS32</string>
+                <string>MIPS32R2</string>
+                <string>MIPS32R5</string>
+                <string>MIPS32R6</string>
+                <string>MIPSI</string>
+                <string>MIPSII</string>
+                <string>MIPSIII</string>
+                <string>MIPSIV</string>
+                <string>MIPS64</string>
+                <string>MIPS64R2</string>
+                <string>MIPS64R3</string>
+                <string>MIPS64R5</string>
+                <string>MIPS64R6</string>
+            </array>
+            <key>format</key>
+            <string>31..26=0 25..6:code20#1r 5..0=0xd</string>
         </dict>
         <dict>
             <key>mnemonic</key>
