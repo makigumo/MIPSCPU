@@ -90,7 +90,7 @@
 }
 
 - (NSString *)pluginVersion {
-    return @"0.2.4";
+    return @"0.2.5";
 }
 
 - (NSString *)commandLineIdentifier {
@@ -127,7 +127,8 @@
     return nil;
 }
 
-- (int)addressSpaceWidthInBitsForCPUFamily:(NSString *)family andSubFamily:(NSString *)subFamily {
+- (int)addressSpaceWidthInBitsForCPUFamily:(NSString *)family
+                              andSubFamily:(NSString *)subFamily {
     if ([family isEqualToString:@"mips (capstone)"]) {
         if ([subFamily isEqualToString:@"mips32"]) return 32;
         if ([subFamily isEqualToString:@"mipsIII"]) return 32;
@@ -156,6 +157,34 @@
 
 - (CPUEndianess)endianess {
     return CPUEndianess_Little;
+}
+
+- (int)integerWidthInBitsForCPUFamily:(NSString *)family
+                         andSubFamily:(NSString *)subFamily {
+    if ([family isEqualToString:@"mips (capstone)"]) {
+        if ([subFamily isEqualToString:@"mips32"]) return 32;
+        if ([subFamily isEqualToString:@"mipsIII"]) return 32;
+        if ([subFamily isEqualToString:@"microMIPS"]) return 32;
+        if ([subFamily isEqualToString:@"micro32r6"]) return 32;
+        //if ([subFamily isEqualToString:@"mips64"]) return 64;
+    }
+    if ([family isEqualToString:@"mipsel"] ||
+            [family isEqualToString:@"mipseb"]) {
+        if ([subFamily isEqualToString:@"mips32"]) return 32;
+        if ([subFamily isEqualToString:@"mips32r2"]) return 32;
+        if ([subFamily isEqualToString:@"mips32r5"]) return 32;
+        if ([subFamily isEqualToString:@"mips32r6"]) return 32;
+        if ([subFamily isEqualToString:@"mips I"]) return 32;
+        if ([subFamily isEqualToString:@"mips II"]) return 32;
+        if ([subFamily isEqualToString:@"mips III"]) return 32;
+        if ([subFamily isEqualToString:@"mips IV"]) return 32;
+        if ([subFamily isEqualToString:@"mips64"]) return 64;
+        if ([subFamily isEqualToString:@"mips64r2"]) return 64;
+        if ([subFamily isEqualToString:@"mips64r3"]) return 64;
+        if ([subFamily isEqualToString:@"mips64r5"]) return 64;
+        if ([subFamily isEqualToString:@"mips64r6"]) return 64;
+    }
+    return 0;
 }
 
 - (NSUInteger)syntaxVariantCount {
