@@ -57,7 +57,7 @@
     return HOPPER_CURRENT_SDK_VERSION;
 }
 
-- (HopperUUID *)pluginUUID {
+- (NSObject <HPHopperUUID> *)pluginUUID {
     return [_services UUIDWithString:@"6fc51517-1dbe-4761-989c-905cb83ad096"];
 }
 
