@@ -93,8 +93,8 @@
     return @"0.2.5";
 }
 
-- (NSString *)commandLineIdentifier {
-    return @"mips";
+- (nonnull NSArray<NSString *> *)commandLineIdentifiers {
+    return @[@"mips"];
 }
 
 - (NSArray<NSString *> *)cpuSubFamiliesForFamily:(NSString *)family {

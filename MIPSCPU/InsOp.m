@@ -45,7 +45,7 @@
             [bitRanges addObject:bitRange];
         }
     }
-    return bitRanges;
+    return [bitRanges copy];
 }
 
 + (InsOpType)getOperandTypeFromString:(NSString *)string {

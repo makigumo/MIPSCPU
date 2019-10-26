@@ -226,7 +226,7 @@ static inline uint32_t capstoneRegisterToRegIndex(mips_reg reg) {
     };
 
     if ((int) reg >= 0 && (int) reg < MIPS_REG_ENDING) {
-        return idx[reg];
+        return (uint32_t) idx[reg];
     }
 
     return (uint32_t) -1;
@@ -433,6 +433,8 @@ static inline RegClass capstoneRegisterToRegClass(mips_reg reg) {
                         case MIPS_INS_BNEZ:
                             strcpy(disasm->instruction.mnemonic, "blt");
                             disasm->instruction.branchType = DISASM_BRANCH_JL;
+                            break;
+                        default:
                             break;
                     }
                     disasm->instruction.addressValue = (Address) imm;
