@@ -6160,6 +6160,28 @@
         </dict>
         <dict>
             <key>mnemonic</key>
+            <string>rfe</string>
+            <key>release</key>
+            <array>
+                <string>MIPS32</string>
+                <string>MIPS32R2</string>
+                <string>MIPS32R5</string>
+                <string>MIPS32R6</string>
+                <string>MIPSI</string>
+                <string>MIPSII</string>
+                <string>MIPSIII</string>
+                <string>MIPSIV</string>
+                <string>MIPS64</string>
+                <string>MIPS64R2</string>
+                <string>MIPS64R3</string>
+                <string>MIPS64R5</string>
+                <string>MIPS64R6</string>
+            </array>
+            <key>format</key>
+            <string>31..0=0x42000010</string>
+        </dict>
+        <dict>
+            <key>mnemonic</key>
             <string>not</string>
             <key>idiom</key>
             <true/>

@@ -418,7 +418,8 @@ trunc:
 	xori $s2,$s0,0xffff
 cop1x:
 	alnv.ps $f0,$f2,$f4,$t1
-
+rfe:
+	rfe
 
 	.data
 message:
