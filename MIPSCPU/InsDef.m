@@ -107,12 +107,16 @@
 }
 
 - (uint32_t)numberOfMaskBitsSet {
+#if defined(__x86_64__)
     uint32_t i = self.mask;
     __asm__(
     "popcnt %0, %0  \n\t"
     : "+r" (i)
     );
     return i;
+#else
+    return __builtin_popcount(self.mask);
+#endif
 }
 
 - (void)parseFormat {
