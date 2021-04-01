@@ -1,4 +1,4 @@
-[![Build Status](https://travis-ci.org/makigumo/MIPSCPU.svg?branch=master)](https://travis-ci.org/makigumo/MIPSCPU)
+[![Build Status](https://travis-ci.com/makigumo/MIPSCPU.svg?branch=master)](https://travis-ci.com/makigumo/MIPSCPU)
 
 # MIPS CPU plugin for Hopper Disassembler
 
