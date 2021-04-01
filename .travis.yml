@@ -10,7 +10,7 @@ before_install:
       gem install xcpretty-travis-formatter;
     fi
 
-matrix:
+jobs:
   include:
     - os: osx
       osx_image: xcode12.4
@@ -21,7 +21,6 @@ matrix:
       env: BUILD_TYPE=cmake COMPILER=clang++ C_COMPILER=clang -DCMAKE_OSX_ARCHITECTURES="arm64;x86_64"
     - os: linux
       dist: trusty
-      sudo: required
       services:
         - docker
       env: BUILD_TYPE=docker
