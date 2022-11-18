@@ -1,0 +1,45 @@
+name: build
+on: [push, pull_request]
+jobs:
+  build-macos:
+    runs-on: ${{ matrix.os }}
+    strategy:
+      fail-fast: false
+      matrix:
+        os : [macos-11, macos-latest]
+        type: [xcode, cmake]
+        arch: [arm64, x86_64]
+
+    steps:
+
+      - name: Checkout
+        uses: actions/checkout@v3
+        with:
+          submodules: recursive
+
+      - name: Run Xcode - ${{ matrix.os }} / ${{ matrix.arch }}
+        if: ${{ matrix.type == 'xcode' }}
+        run: |
+          xcodebuild -project MIPSCPU.xcodeproj -scheme MIPSCPU -arch ${{ matrix.arch }} -configuration Release build
+          xcodebuild -project MIPSCPU.xcodeproj -scheme MIPSCPUTests -arch ${{ matrix.arch }} -configuration Release test
+
+      - name: Run CMake - ${{ matrix.os }} / ${{ matrix.arch }}
+        if: ${{ matrix.type == 'cmake' }}
+        env:
+          CMAKE_OSX_ARCHITECTURES: ${{ matrix.arch }}
+        run: |
+          cmake . -Bbuild
+          cmake --build build --
+
+  build-linux:
+    runs-on: ubuntu-latest
+    steps:
+
+      - name: Checkout
+        uses: actions/checkout@v2
+        with:
+          submodules: recursive
+
+      - name: Run CMake (dockerized)
+        run: |
+          ./docker/linux-build.sh
