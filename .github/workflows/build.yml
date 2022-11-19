@@ -25,7 +25,7 @@ jobs:
       - name: Run Xcode Tests - ${{ matrix.os }} / ${{ matrix.arch }}
         if: ${{ matrix.type == 'xcode' && matrix.arch == 'x86_64' }}
         run: |
-          xcodebuild -project MIPSCPU.xcodeproj -scheme MIPSCPUTests -arch ${{ matrix.arch }} -configuration Release test
+          xcodebuild -project MIPSCPU.xcodeproj -scheme MIPSCPUTests -arch ${{ matrix.arch }} test
 
       - name: Run CMake - ${{ matrix.os }} / ${{ matrix.arch }}
         if: ${{ matrix.type == 'cmake' }}
