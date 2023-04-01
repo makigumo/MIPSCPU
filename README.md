@@ -1,6 +1,6 @@
-[![Build Status](https://travis-ci.com/makigumo/MIPSCPU.svg?branch=master)](https://travis-ci.com/makigumo/MIPSCPU)
-
 # MIPS CPU plugin for Hopper Disassembler
+
+[![build](https://github.com/makigumo/MIPSCPU/actions/workflows/build.yml/badge.svg)](https://github.com/makigumo/MIPSCPU/actions/workflows/build.yml)
 
 This is an experimental, unsophisticated plugin prototype using a custom disassembler and the [capstone](https://github.com/aquynh/capstone) (http://www.capstone-engine.org/) engine for the MIPS architecture whose main purpose is to provide a play and learning ground for the Hopper plugin system and the MIPS architecture and some assembly language in general.
 
